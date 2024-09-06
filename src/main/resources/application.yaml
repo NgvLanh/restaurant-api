@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: ${APPLICATION_NAME}
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+  datasource:
+    url: ${DB_URL}
+    username: root
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+
