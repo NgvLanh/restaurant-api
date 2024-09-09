@@ -1,8 +1,6 @@
 package org.edu.restaurantapi.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -11,14 +9,13 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "branchStatus")
-public class BranchStatus {
+@Entity(name = "carts")
+public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Integer id;
+    Long id;
 
-    @NotBlank(message = "Branch status name cannot be empty")
-    @Size(max = 50, message = "Branch status name cannot exceed 50 characters")
-    @Column(unique = true)
-    String name;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    User user;
 }
