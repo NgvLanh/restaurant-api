@@ -1,7 +1,6 @@
 package org.edu.restaurantapi.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -13,7 +12,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "tablesReservations")
-public class Table_Reservation {
+public class TableReservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;

@@ -11,4 +11,10 @@ spring:
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+jwt:
+  signer: ${SIGNER_KEY}
+
+test:
+  test: "this is a test"
+
 
