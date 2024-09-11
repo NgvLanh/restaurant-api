@@ -10,7 +10,7 @@ public class Main {
     public static void main(String[] args) {
         // Load .env file and set environment variables
         Dotenv dotenv = Dotenv.configure().directory(".").load();
-        String[] keys = {"APPLICATION_NAME", "DB_URL", "DB_PASSWORD"};
+        String[] keys = {"APPLICATION_NAME", "DB_URL", "DB_PASSWORD", "SIGNER_KEY"};
 
         for (String key : keys) {
             System.setProperty(key, dotenv.get(key));
