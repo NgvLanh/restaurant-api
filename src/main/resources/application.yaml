@@ -26,5 +26,11 @@ spring:
 jwt:
   signer: ${SIGNER_KEY}
 
+# level log
+logging:
+  level:
+    root: ERROR
+
+
 
 
