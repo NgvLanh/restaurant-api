@@ -27,8 +27,8 @@ public class ApiResponse <T> {
     }
 
     // Static method to create a bad request response with 400 code
-    public static <T> ApiResponse<T> BAD_REQUEST() {
-        return new ApiResponse<>(400, false, "bad request", null);
+    public static <T> ApiResponse<T> BAD_REQUEST(String message) {
+        return new ApiResponse<>(400, false, message, null);
     }
 
     // Static method to create an unauthorized response with 401 code
@@ -42,8 +42,8 @@ public class ApiResponse <T> {
     }
 
     // Static method to create a not found response with 404 code
-    public static <T> ApiResponse<T> NOT_FOUND() {
-        return new ApiResponse<>(404, false, "not found", null);
+    public static <T> ApiResponse<T> NOT_FOUND(String message) {
+        return new ApiResponse<>(404, false, message, null);
     }
 
     // Static method to create a server error response with 500 code

@@ -28,8 +28,9 @@ public class SecurityConfig {
     private final String[] POST_API = {
             "/auth/login",
     };
+
     private final String[] GET_API = {
-//            "/api/roles"
+            "/api/files/*"
     };
 
     @Bean
