@@ -1,20 +1,30 @@
 spring:
+
+#  application name
   application:
     name: ${APPLICATION_NAME}
+
+#  jpa to generate model - update
   jpa:
     hibernate:
       ddl-auto: update
 
+# datasource to connect database (mysql)
   datasource:
     url: ${DB_URL}
     username: root
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+# config file size upload
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+#  singer key for jwt
 jwt:
   signer: ${SIGNER_KEY}
 
-test:
-  test: "this is a test"
 
 

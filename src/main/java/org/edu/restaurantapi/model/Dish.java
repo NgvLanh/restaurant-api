@@ -19,6 +19,9 @@ public class Dish {
     @NotBlank(message = "Dish name cannot be empty")
     String name;
 
+    @NotBlank(message = "Dish image cannot be empty")
+    String image;
+
     @NotBlank(message = "Dish description cannot be empty")
     String description;
 
