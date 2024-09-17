@@ -10,6 +10,7 @@ import java.util.Set;
 
 @Service
 public class RoleService {
+
     @Autowired
     private RoleRepository roleRepository;
 

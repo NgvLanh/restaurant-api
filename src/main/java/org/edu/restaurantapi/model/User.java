@@ -25,6 +25,8 @@ public class User {
     @Size(max = 100, message = "Full name cannot exceed 100 characters")
     String fullName;
 
+    String image;
+
     @NotBlank(message = "Phone number cannot be empty")
     @Pattern(regexp = "^\\d{10,11}$", message = "Phone number must be 10 or 11 digits")
     @Column(unique = true)

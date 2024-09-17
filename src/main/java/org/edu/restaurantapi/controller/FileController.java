@@ -19,7 +19,7 @@ import java.net.MalformedURLException;
 @RequestMapping("/api/files")
 public class FileController {
 
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/upload")
     private ResponseEntity<?> uploadFile(@RequestParam(name = "file", required = false) MultipartFile[] file) {
         try {
@@ -27,7 +27,7 @@ public class FileController {
             return ResponseEntity.status(urlFile == null ? HttpStatus.BAD_REQUEST : HttpStatus.OK)
                     .body(ApiResponse.SUCCESS(urlFile == null ? "Only one file is allowed" : urlFile));
         } catch (Exception e) {
-            return ResponseEntity.status(500)
+            return ResponseEntity.badRequest()
                     .body(ApiResponse.BAD_REQUEST("Upload failed"));
         }
     }

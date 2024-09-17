@@ -1,5 +1,6 @@
 package org.edu.restaurantapi.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,57 +23,64 @@ import javax.crypto.spec.SecretKeySpec;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    @Value("${jwt.signer}")
-    private String jwtSecret;
+    @Value("${jwt.signerKey}")
+    private String singerKey;
 
     private final String[] POST_API = {
             "/auth/login",
+            "/api/users",
     };
 
     private final String[] GET_API = {
             "/api/files/*"
     };
 
+    @Autowired
+    private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+
+    // Cấu hình bảo mật cho ứng dụng
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+        // Định nghĩa các URL nào yêu cầu xác thực và URL nào thì không
         httpSecurity
                 .authorizeHttpRequests(request -> {
                     request
-                            .requestMatchers(HttpMethod.POST, POST_API).permitAll()
-                            .requestMatchers(HttpMethod.GET , GET_API).permitAll()
-                            // khá thủ công
-//                            .requestMatchers(HttpMethod.GET, "/api/users").hasRole(Roles.ADMIN.name())
-                            .anyRequest().authenticated();
-                });
-        // TODO: Cấu hình OAuth2 Resource Server để sử dụng JWT cho việc xác thực.
-        httpSecurity
-                .oauth2ResourceServer(oauth2 -> {
-                    oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())
-                            .jwtAuthenticationConverter(jwtAuthenticationConverter()));
-                });
+                            .requestMatchers(HttpMethod.POST, POST_API).permitAll() // Các API POST không cần xác thực
+                            .requestMatchers(HttpMethod.GET, GET_API).permitAll()  // Các API GET không cần xác thực
+                            .anyRequest().authenticated();  // Các yêu cầu khác phải xác thực
+                })
+                // Cấu hình sử dụng OAuth2 Resource Server và JWT để xác thực
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())  // Sử dụng decoder cho JWT
+                                .jwtAuthenticationConverter(jwtAuthenticationConverter())) // Sử dụng converter để lấy roles từ JWT
+                )
+                // Cấu hình xử lý lỗi xác thực bằng CustomAuthenticationEntryPoint
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(customAuthenticationEntryPoint))
+                // Vô hiệu hóa CSRF protection vì ứng dụng không sử dụng session
+                .csrf(AbstractHttpConfigurer::disable);
 
-        // TODO: Vô hiệu hóa CSRF (Cross-Site Request Forgery) protection.
-        // TODO: Điều này thường cần thiết khi ứng dụng không sử dụng session.
-        httpSecurity.csrf(AbstractHttpConfigurer::disable);
-        // TODO: TODO: Xây dựng và trả về cấu hình SecurityFilterChain.
-        return httpSecurity.build();
+        return httpSecurity.build();  // Xây dựng SecurityFilterChain
     }
 
+    // Bean để chuyển đổi token JWT thành quyền (authorities) cho người dùng
     @Bean
     JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_"); // Đặt tiền tố "ROLE_" cho các quyền
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter); // Sử dụng converter để lấy các quyền từ token
         return jwtAuthenticationConverter;
     }
 
+    // Bean tạo decoder để giải mã và xác thực token JWT
     @Bean
     JwtDecoder jwtDecoder() {
-        SecretKeySpec secretKeySpec = new SecretKeySpec(jwtSecret.getBytes(), "HS512");
+        // Tạo SecretKeySpec từ chuỗi secret key để giải mã JWT sử dụng thuật toán HS512
+        SecretKeySpec secretKeySpec = new SecretKeySpec(singerKey.getBytes(), "HS512");
         return NimbusJwtDecoder
-                .withSecretKey(secretKeySpec) // TODO: Cung cấp secret key cho JWT decoder.
-                .macAlgorithm(MacAlgorithm.HS512) // TODO: Sử dụng thuật toán HS512 cho chữ ký JWT.
-                .build(); // TODO: Xây dựng và trả về JwtDecoder.
+                .withSecretKey(secretKeySpec) // Cung cấp secret key
+                .macAlgorithm(MacAlgorithm.HS512) // Sử dụng thuật toán HS512 để xác minh chữ ký
+                .build(); // Xây dựng và trả về JwtDecoder
     }
 }

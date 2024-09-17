@@ -14,6 +14,7 @@ import java.text.ParseException;
 @RestController
 @RequestMapping("/auth")
 public class AuthenticationController {
+
     @Autowired
     private AuthenticationService authenticationService;
 
@@ -33,7 +34,7 @@ public class AuthenticationController {
             throws ParseException, JOSEException {
         var introspected = authenticationService.introspect(authHeader);
         if (introspected.getValid()) {
-            return ResponseEntity.status(HttpStatus.OK)
+            return ResponseEntity.ok()
                     .body(ApiResponse.SUCCESS(introspected));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

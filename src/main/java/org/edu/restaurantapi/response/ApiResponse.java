@@ -10,10 +10,10 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class ApiResponse <T> {
+public class ApiResponse<T> {
     Integer code;
     Boolean status;
-    String message;
+    Object message;
     T data;
 
     // Static method to create a success response with 200 code
@@ -37,8 +37,8 @@ public class ApiResponse <T> {
     }
 
     // Static method to create a forbidden response with 403 code
-    public static <T> ApiResponse<T> FORBIDDEN() {
-        return new ApiResponse<>(403, false, "forbidden", null);
+    public static <T> ApiResponse<T> FORBIDDEN(String message) {
+        return new ApiResponse<>(403, false, message, null);
     }
 
     // Static method to create a not found response with 404 code
@@ -47,7 +47,17 @@ public class ApiResponse <T> {
     }
 
     // Static method to create a server error response with 500 code
-    public static <T> ApiResponse<T> SERVER_ERROR() {
-        return new ApiResponse<>(500, false, "internal server error", null);
+    public static <T> ApiResponse<T> SERVER_ERROR(String message) {
+        return new ApiResponse<>(500, false, message, null);
     }
+
+    public static <T> ApiResponse<T> BAD_REQUEST_VALIDATION(T message) {
+        return new ApiResponse<>(400, false, message, null);
+    }
+
+    // Static method to create a success response with 200 code
+    public static <T> ApiResponse<T> DELETE(String message) {
+        return new ApiResponse<>(200, true, message, null);
+    }
+
 }

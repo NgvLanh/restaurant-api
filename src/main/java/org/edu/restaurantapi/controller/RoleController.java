@@ -29,7 +29,7 @@ public class RoleController {
     @GetMapping
     private ResponseEntity<?> getRoles() {
         List<Role> response = roleService.getRoles();
-        return ResponseEntity.status(HttpStatus.OK)
+        return ResponseEntity.ok()
                 .body(ApiResponse.SUCCESS(response));
     }
 

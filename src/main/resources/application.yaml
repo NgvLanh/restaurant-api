@@ -24,12 +24,12 @@ spring:
 
 #  singer key for jwt
 jwt:
-  signer: ${SIGNER_KEY}
+  signerKey: ${SIGNER_KEY}
 
 # level log
-logging:
-  level:
-    root: ERROR
+#logging:
+#  level:
+#    root: ERROR
 
 
 

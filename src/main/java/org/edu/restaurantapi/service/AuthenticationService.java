@@ -9,7 +9,7 @@ import org.edu.restaurantapi.repository.UserRepository;
 import org.edu.restaurantapi.request.AuthenticationRequest;
 import org.edu.restaurantapi.response.AuthenticationResponse;
 import org.edu.restaurantapi.response.IntrospectResponse;
-import org.edu.restaurantapi.util.JWTUtil;
+import org.edu.restaurantapi.util.JwtUtil;
 import org.edu.restaurantapi.util.PasswordUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,8 +20,9 @@ import java.util.Date;
 
 @Service
 public class AuthenticationService {
-    @Value("${jwt.signer}")
-    private String signer;
+
+    @Value("${jwt.signerKey}")
+    private String signerKey;
     
     @Autowired
     private UserRepository userRepository;
@@ -32,7 +33,7 @@ public class AuthenticationService {
         if (user != null) {
             var result = PasswordUtil.checkPassword(request.getPassword(), user.getPassword());
             if (result) {
-                JWTUtil jwtUtil = new JWTUtil();
+                JwtUtil jwtUtil = new JwtUtil();
                 var token = jwtUtil.generateToken(user);
                 return AuthenticationResponse.builder().authenticated(true).token(token).build();
             }
@@ -48,7 +49,7 @@ public class AuthenticationService {
         // Trích xuất token từ header
         String token = authHeader.substring(7);
         // Chữ ký để kiểm tra JWT
-        JWSVerifier verifier = new MACVerifier(signer.getBytes());
+        JWSVerifier verifier = new MACVerifier(signerKey.getBytes());
         // Phân tích JWT
         SignedJWT signedJWT = SignedJWT.parse(token);
         // Kiểm tra chữ ký
