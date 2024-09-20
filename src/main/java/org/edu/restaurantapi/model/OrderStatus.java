@@ -24,4 +24,5 @@ public class OrderStatus {
     @Column(unique = true)
     String name;
 
+    Boolean isDelete = false;
 }

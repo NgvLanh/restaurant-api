@@ -21,4 +21,6 @@ public class InvoiceStatus {
     @NotBlank(message = "Invoice status cannot be empty")
     @Column(unique = true)
     String name;
+
+    Boolean isDelete = false;
 }

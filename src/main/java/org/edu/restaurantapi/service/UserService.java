@@ -48,18 +48,20 @@ public class UserService {
 
     @PreAuthorize("hasRole('ADMIN')")
     public Page<User> getUsers(Pageable pageable) {
-        return userRepository.findAll(pageable);
+        return userRepository.findUserByIsDeleteFalse(pageable);
     }
+
     public User getUser(Long id) {
         return userRepository.findById(id).orElse(null);
     }
 
-    public Boolean deleteUser(Long id) {
-        if (userRepository.existsById(id)) {
-            userRepository.deleteById(id);
-            return true;
+    public User deleteUser(Long id) {
+        User user = userRepository.findById(id).orElse(null);
+        if(user.getIsDelete()) {
+            return null;
         }
-        return false;
+        user.setIsDelete(true);
+        return userRepository.save(user);
     }
 
     // check email + phone number

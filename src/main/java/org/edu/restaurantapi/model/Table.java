@@ -4,9 +4,11 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
+@Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,7 +26,6 @@ public class Table {
     @Max(value = 20, message = "Seats cannot exceed 20")
     Integer seats;
 
-
     @ManyToOne
     @JoinColumn(name = "table_status_id")
     TableStatus tableStatus;
@@ -36,4 +37,6 @@ public class Table {
     @ManyToOne
     @JoinColumn(name = "branch_id")
     Branch branch;
+
+    Boolean isDelete = false;
 }

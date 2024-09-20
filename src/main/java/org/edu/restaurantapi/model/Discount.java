@@ -44,4 +44,6 @@ public class Discount {
     @NotNull(message = "Value must not be null")
     @Positive(message = "Value must be greater than 0")
     Double value;
+
+    Boolean isDelete = false;
 }
