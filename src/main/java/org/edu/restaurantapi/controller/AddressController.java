@@ -53,6 +53,10 @@ public class AddressController {
     private ResponseEntity<?> updateAddress(@PathVariable Long id, @RequestBody Address address) {
         try {
             Address response = addressService.updateAddress(id, address);
+            if (response == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(ApiResponse.NOT_FOUND("Not found the Address with id: " + id));
+            }
             return ResponseEntity.ok()
                     .body(ApiResponse.SUCCESS(response));
         } catch (Exception e) {
