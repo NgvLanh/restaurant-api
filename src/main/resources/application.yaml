@@ -26,10 +26,17 @@ spring:
 jwt:
   signerKey: ${SIGNER_KEY}
 
+
+# VN Pay
+VNP:
+  vnp_TmnCode: ${VNP_TMN_CODE}
+  vnp_HashSecret: ${VNP_HASH_SECRET}
+  vnp_Url: ${VNP_URL}
+
 # level log
-#logging:
-#  level:
-#    root: ERROR
+logging:
+  level:
+    root: ERROR
 
 
 

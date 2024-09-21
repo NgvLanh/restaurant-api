@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+@Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,4 +17,6 @@ public class Zone {
     String address;
     @NotBlank(message = "Zone address details cannot be empty")
     String addressDetails;
+
+    Boolean isDelete = false;
 }

@@ -19,4 +19,6 @@ public class Payment {
     String name;
     @NotBlank(message = "Payment description cannot be empty")
     String description;
+
+    Boolean isDelete = false;
 }

@@ -39,4 +39,6 @@ public class Invoice {
     @ManyToOne
     @JoinColumn(name = "payment_id")
     Payment payment;
+
+    Boolean isDelete = false;
 }

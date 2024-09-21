@@ -27,4 +27,6 @@ public class TableReservation {
     @ManyToOne
     @JoinColumn(name = "reservation_id")
     Reservation reservation;
+
+    Boolean isDelete = false;
 }

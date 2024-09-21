@@ -43,4 +43,6 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "discount_id")
     Discount discount;
+
+    Boolean isDelete = false;
 }

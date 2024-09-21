@@ -34,4 +34,6 @@ public class CartItem {
     @ManyToOne
     @JoinColumn(name = "dish_id")
     Dish dish;
+
+    Boolean isDelete = false;
 }

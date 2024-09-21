@@ -29,10 +29,12 @@ public class SecurityConfig {
     private final String[] POST_API = {
             "/auth/login",
             "/api/users",
+            "/api/vnpay",
     };
 
     private final String[] GET_API = {
-            "/api/files/*"
+            "/api/files/*",
+            "/api/vnpay/*"
     };
 
     @Autowired

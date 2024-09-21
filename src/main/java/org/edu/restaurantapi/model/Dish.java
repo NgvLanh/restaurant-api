@@ -33,4 +33,6 @@ public class Dish {
     @ManyToOne
     @JoinColumn(name = "branch_id")
     Branch branch;
+
+    Boolean isDelete = false;
 }

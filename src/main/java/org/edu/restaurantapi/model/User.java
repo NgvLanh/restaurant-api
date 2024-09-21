@@ -1,5 +1,6 @@
 package org.edu.restaurantapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -50,4 +51,7 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "branch_id")
     Branch branch;
+
+    @JsonIgnore
+    Boolean isDelete = false;
 }

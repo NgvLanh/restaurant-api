@@ -21,4 +21,6 @@ public class BranchStatus {
     @Size(max = 50, message = "Branch status name cannot exceed 50 characters")
     @Column(unique = true)
     String name;
+
+    Boolean isDelete = false;
 }

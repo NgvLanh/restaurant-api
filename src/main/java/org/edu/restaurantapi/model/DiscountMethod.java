@@ -23,4 +23,6 @@ public class DiscountMethod {
     @Size(max = 50, message = "Discount method cannot exceed 50 characters")
     @Column(unique = true)
     String name;
+
+    Boolean isDelete = false;
 }

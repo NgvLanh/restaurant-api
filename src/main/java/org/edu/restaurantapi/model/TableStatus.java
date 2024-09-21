@@ -4,10 +4,12 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "tableStatus")
@@ -20,4 +22,6 @@ public class TableStatus {
     @Size(max = 50, message = "Table status name cannot exceed 50 characters")
     @Column(unique = true)
     String name;
+
+    Boolean isDelete = false;
 }

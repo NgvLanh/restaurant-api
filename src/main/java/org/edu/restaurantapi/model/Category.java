@@ -21,4 +21,6 @@ public class Category {
 
     @NotBlank(message = "Category description cannot be empty.")
     String description;
+
+    Boolean isDelete = false;
 }

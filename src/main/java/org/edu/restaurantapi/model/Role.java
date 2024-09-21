@@ -1,5 +1,6 @@
 package org.edu.restaurantapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -19,4 +20,7 @@ public class Role {
     String name;
     @NotBlank(message = "Role permissions cannot be empty")
     String permissions;
+
+    @JsonIgnore
+    Boolean isDelete = false;
 }

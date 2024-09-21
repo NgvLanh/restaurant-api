@@ -19,10 +19,9 @@ public class CustomAuthenticationEntryPoint  implements AuthenticationEntryPoint
                          HttpServletResponse response,
                          AuthenticationException authException)
             throws IOException {
-        String errorMessage = "Token expired or invalid";
+        String errorMessage = "-- NHẬP TOKEN ĐĂNG NHẬP ĐỂ TIẾP TỤC --";
 
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        System.out.println(HttpStatus.UNAUTHORIZED.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.getWriter().write(String.format("{\"code\":401, \"status\":false, \"message\":\"%s\"}", errorMessage));
     }

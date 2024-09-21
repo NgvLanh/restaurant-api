@@ -41,4 +41,6 @@ public class Branch {
     @ManyToOne
     @JoinColumn(name = "branch_status_id")
     BranchStatus branchStatus;
+
+    Boolean isDelete = false;
 }

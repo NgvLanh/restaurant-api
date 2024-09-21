@@ -23,4 +23,6 @@ public class OrderType {
     @Size(max = 50, message = "Order type name cannot exceed 50 characters")
     @Column(unique = true)
     String name;
+
+    Boolean isDelete = false;
 }

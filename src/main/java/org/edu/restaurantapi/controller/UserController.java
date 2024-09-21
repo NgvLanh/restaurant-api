@@ -1,7 +1,6 @@
 package org.edu.restaurantapi.controller;
 
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 import org.edu.restaurantapi.model.User;
 import org.edu.restaurantapi.response.ApiResponse;
 import org.edu.restaurantapi.service.UserService;
@@ -12,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Slf4j
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -86,17 +84,17 @@ public class UserController {
     @DeleteMapping("/{id}")
     private ResponseEntity<?> deleteUser(@PathVariable Long id) {
         try {
-            Boolean response = userService.deleteUser(id);
-           if (response) {
-               return ResponseEntity.ok()
-                       .body(ApiResponse.DELETE("User deleted successfully"));
-           } else {
-               return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                       .body(ApiResponse.NOT_FOUND("User with id " + id + " not found"));
-           }
+            User response = userService.deleteUser(id);
+            if (response != null) {
+                return ResponseEntity.ok()
+                        .body(ApiResponse.DELETE("User deleted successfully"));
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(ApiResponse.NOT_FOUND("User with id " + id + " not found"));
+            }
         } catch (Exception e) {
-        return ResponseEntity.internalServerError()
-                .body(ApiResponse.SERVER_ERROR("Error deleting user: " + e.getMessage()));
+            return ResponseEntity.internalServerError()
+                    .body(ApiResponse.SERVER_ERROR("Error deleting user: " + e.getMessage()));
         }
     }
 }
