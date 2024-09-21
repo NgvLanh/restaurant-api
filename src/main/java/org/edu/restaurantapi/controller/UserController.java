@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -73,11 +75,16 @@ public class UserController {
     private ResponseEntity<?> getUser(@PathVariable Long id) {
         try {
             User response = userService.getUser(id);
-            response.setPassword(null);
-            return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
+            if (response != null) {
+                response.setPassword(null);
+                return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(ApiResponse.NOT_FOUND("Not found the user with id: " + id));
+            }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.NOT_FOUND("Not found the user with id: " + id));
+            return ResponseEntity.internalServerError()
+                    .body(ApiResponse.SERVER_ERROR("Get user: " + e.getMessage()));
         }
     }
 

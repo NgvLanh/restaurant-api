@@ -59,6 +59,7 @@ public class ApiResponse<T> {
     public static <T> ApiResponse<T> DELETE(String message) {
         return new ApiResponse<>(200, true, message, null);
     }
+
     // Static method to create a cancel response with appropriate status code
     public static <T> ApiResponse<T> CANCEL(T data) {
         return new ApiResponse<>(202, false, "cancelled", data);

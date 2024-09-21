@@ -17,7 +17,9 @@ public class Main {
                 "SIGNER_KEY",
                 "VNP_TMN_CODE",
                 "VNP_HASH_SECRET",
-                "VNP_URL"
+                "VNP_URL",
+                "EMAIL",
+                "EMAIL_PASSWORD"
         };
         for (String key : keys) {
             System.setProperty(key, dotenv.get(key));

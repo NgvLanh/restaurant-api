@@ -11,14 +11,14 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class VnPayRequest {
+public class EmailRequest {
 
-    @NotNull(message = "Order id can not be empty.")
-    Long orderId;
+    @NotNull(message = "To can not be empty.")
+    String to;
 
-    @NotNull(message = "User id can not be empty.")
-    Long userId;
+    @NotNull(message = "Subject can not be empty.")
+    String subject;
 
-    @NotNull(message = "Amount can not be empty.")
-    Integer amount;
+    @NotNull(message = "Text can not be empty.")
+    String text;
 }
