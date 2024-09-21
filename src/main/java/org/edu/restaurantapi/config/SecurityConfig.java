@@ -15,7 +15,6 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
-
 import javax.crypto.spec.SecretKeySpec;
 
 @Configuration
@@ -30,6 +29,8 @@ public class SecurityConfig {
             "/auth/login",
             "/api/users",
             "/api/vnpay",
+            "/api/email/send",
+            "/api/email/send-html",
     };
 
     private final String[] GET_API = {

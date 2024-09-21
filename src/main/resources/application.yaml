@@ -1,31 +1,41 @@
 spring:
-
-#  application name
+  #  application name
   application:
     name: ${APPLICATION_NAME}
 
-#  jpa to generate model - update
+  #  jpa to generate model - update
   jpa:
     hibernate:
       ddl-auto: update
 
-# datasource to connect database (mysql)
+  # datasource to connect database (mysql)
   datasource:
     url: ${DB_URL}
     username: root
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-# config file size upload
+  # config file size upload
   servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${EMAIL}
+    password: ${EMAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
 #  singer key for jwt
 jwt:
   signerKey: ${SIGNER_KEY}
-
 
 # VN Pay
 VNP:
@@ -33,10 +43,14 @@ VNP:
   vnp_HashSecret: ${VNP_HASH_SECRET}
   vnp_Url: ${VNP_URL}
 
+# Email
+email:
+  owner: ${EMAIL}
+
 # level log
-logging:
-  level:
-    root: ERROR
+#logging:
+#  level:
+#    root: ERROR
 
 
 
