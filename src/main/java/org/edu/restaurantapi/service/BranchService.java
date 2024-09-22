@@ -8,30 +8,23 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
 public class BranchService {
 
-    private final BranchRepository branchRepository;
-
     @Autowired
-    public BranchService(BranchRepository branchRepository) {
-        this.branchRepository = branchRepository;
-    }
+    private BranchRepository branchRepository;
 
     // Thêm
     @PreAuthorize("hasRole('ADMIN')")
     public Branch createBranch(Branch branch) {
-        Optional<Branch> existingDiscount = branchRepository.findByPhoneNumber(branch.getPhoneNumber());
-        if (existingDiscount.isPresent()) {
-            return null;  // Trả về null nếu mã giảm giá đã tồn tại
+        Optional<Branch> existingBranch = branchRepository.findByPhoneNumber(branch.getPhoneNumber());
+        if (existingBranch.isPresent()) {
+            return null;  // Trả về null nếu chi nhánh đã tồn tại
         }
         return branchRepository.save(branch);
     }
-
-
 
     // Xem
     @PreAuthorize("hasRole('ADMIN')")
@@ -39,7 +32,7 @@ public class BranchService {
         return branchRepository.findAll(pageable);
     }
 
-// Tìm
+    // Tìm
     public Branch getBranchById(Long id) {
         return branchRepository.findById(id).orElse(null);
     }
@@ -58,7 +51,6 @@ public class BranchService {
         }).orElseThrow(() -> new RuntimeException("Không tìm thấy id này " + id));
     }
 
-
     // Xóa
     @PreAuthorize("hasRole('ADMIN')")
     public boolean deleteBranch(Long id) {
@@ -68,8 +60,9 @@ public class BranchService {
         }
         return false;
     }
-    //check
-    public boolean branchExists(Branch branch) {
+
+    // Kiểm tra
+    public boolean branchPhoneNumberExists(Branch branch) {
         return branchRepository.findByPhoneNumber(branch.getPhoneNumber()).isPresent();
     }
 }

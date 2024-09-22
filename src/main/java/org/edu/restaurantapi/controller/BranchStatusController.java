@@ -70,7 +70,7 @@ public class BranchStatusController {
     // Update BranchStatus by ID
     @PatchMapping("/{id}")
     public ResponseEntity<?> updateBranchStatus(@PathVariable Long id, @RequestBody BranchStatus branchStatusUpdate) {
-        if (branchStatusService.branchStatusExist(branchStatusUpdate)) {
+        if (branchStatusService.branchStatusNameExist(branchStatusUpdate)) {
             return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Branch status name already exists"));
         } else {
             try {

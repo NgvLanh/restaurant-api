@@ -59,7 +59,7 @@ public class BranchStatusService {
         return branchStatusRepository.findByName(name);
     }
 
-    public Boolean branchStatusExist(BranchStatus branchStatus) {
+    public Boolean branchStatusNameExist(BranchStatus branchStatus) {
         return branchStatusRepository.findByName(branchStatus.getName()).isPresent();
     }
 }

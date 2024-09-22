@@ -27,7 +27,7 @@ public class BranchController {
     // Create a new branch
     @PostMapping
     public ResponseEntity<?> createBranch(@RequestBody Branch branch) {
-        if (branchService.branchExists(branch)) {
+        if (branchService.branchPhoneNumberExists(branch)) {
             return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Branch already exists"));
         } else {
             try {
@@ -68,21 +68,27 @@ public class BranchController {
     // Update a branch by ID
     @PatchMapping("/{id}")
     public ResponseEntity<?> updateBranch(@PathVariable Long id, @RequestBody Branch branchDetails) {
-        // Kiểm tra xem số điện thoại có bị trùng không
+        Branch existingBranch = branchService.getBranchById(id); // Lấy chi nhánh hiện tại theo ID
+        if (existingBranch == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.NOT_FOUND("Not found the branch with id: " + id));
+        }
 
-            try {
-                Branch updatedBranch = branchService.updateBranch(id, branchDetails);
-                if (updatedBranch == null) {
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                            .body(ApiResponse.NOT_FOUND("Not found the branch with id: " + id));
-                }
-                return ResponseEntity.ok().body(ApiResponse.SUCCESS(updatedBranch));
-            } catch (Exception e) {
-                return ResponseEntity.internalServerError()
-                        .body(ApiResponse.SERVER_ERROR("Update branch failed: " + e.getMessage()));
-            }
+        // Chỉ kiểm tra trùng số điện thoại nếu số điện thoại đã thay đổi
+        if (!existingBranch.getPhoneNumber().equals(branchDetails.getPhoneNumber()) &&
+                branchService.branchPhoneNumberExists(branchDetails)) {
+            return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Phone number already exists for another branch."));
+        }
 
+        try {
+            Branch updatedBranch = branchService.updateBranch(id, branchDetails);
+            return ResponseEntity.ok().body(ApiResponse.SUCCESS(updatedBranch));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body(ApiResponse.SERVER_ERROR("Update branch failed: " + e.getMessage()));
+        }
     }
+
 
 
     // Delete a branch by ID
