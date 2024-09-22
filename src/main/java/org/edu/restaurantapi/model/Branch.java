@@ -6,12 +6,14 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 @Entity(name = "branches")
 public class Branch {
     @Id
@@ -24,6 +26,7 @@ public class Branch {
 
     @NotBlank(message = "Phone number cannot be empty")
     @Pattern(regexp = "^\\d{10,11}$", message = "Phone number must be 10 or 11 digits")
+    @Column(unique = true)
     String phoneNumber;
 
     @NotBlank(message = "Address cannot be empty")
