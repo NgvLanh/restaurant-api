@@ -10,19 +10,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/api/branchstatus")
 public class BranchStatusController {
 
-    private final BranchStatusService branchStatusService;
-
     @Autowired
-    public BranchStatusController(BranchStatusService branchStatusService) {
-        this.branchStatusService = branchStatusService;
-    }
+    private BranchStatusService branchStatusService;
 
     // Get all BranchStatuses
     @GetMapping
@@ -48,8 +41,6 @@ public class BranchStatusController {
         }
     }
 
-
-
     // Create new BranchStatus
     @PostMapping
     public ResponseEntity<?> createBranchStatus(@Valid @RequestBody BranchStatus branchStatus) {
@@ -65,7 +56,6 @@ public class BranchStatusController {
             }
         }
     }
-
 
     // Update BranchStatus by ID
     @PatchMapping("/{id}")
@@ -87,7 +77,6 @@ public class BranchStatusController {
         }
     }
 
-
     // Delete BranchStatus by ID
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteBranchStatus(@PathVariable Long id) {
@@ -104,5 +93,4 @@ public class BranchStatusController {
                     .body(ApiResponse.SERVER_ERROR("Error deleting branch status: " + e.getMessage()));
         }
     }
-
 }

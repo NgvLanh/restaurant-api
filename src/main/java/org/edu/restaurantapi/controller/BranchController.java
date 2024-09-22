@@ -10,19 +10,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/api/branches")
 public class BranchController {
 
-    private final BranchService branchService;
-
     @Autowired
-    public BranchController(BranchService branchService) {
-        this.branchService = branchService;
-    }
+    private BranchService branchService;
 
     // Create a new branch
     @PostMapping
@@ -40,29 +33,27 @@ public class BranchController {
         }
     }
 
-
     // Get all branches
     @GetMapping
     public ResponseEntity<?> getAllBranches(Pageable pageable) {
-        Page<Branch> reponse = branchService.getAllBranches(pageable);
-        return ResponseEntity.ok().body(ApiResponse.SUCCESS(reponse));
+        Page<Branch> response = branchService.getAllBranches(pageable);
+        return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
 
     // Get a single branch by ID
     @GetMapping("/{id}")
     public ResponseEntity<?> getBranchById(@PathVariable Long id) {
         try {
-            Branch respone = branchService.getBranchById(id);
-            if(respone == null) {
+            Branch response = branchService.getBranchById(id);
+            if (response == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(ApiResponse.NOT_FOUND("Not found the branch with id: " + id));
             }
-            return ResponseEntity.ok().body(ApiResponse.SUCCESS(respone));
+            return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(ApiResponse.NOT_FOUND("Not found the branch with id: " + id));
         }
-
     }
 
     // Update a branch by ID
@@ -89,8 +80,6 @@ public class BranchController {
         }
     }
 
-
-
     // Delete a branch by ID
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteBranch(@PathVariable Long id) {
@@ -109,6 +98,4 @@ public class BranchController {
                     .body(ApiResponse.SERVER_ERROR("Error deleting branch: " + e.getMessage()));
         }
     }
-
-
 }

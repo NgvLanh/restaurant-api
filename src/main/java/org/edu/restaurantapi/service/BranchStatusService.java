@@ -14,12 +14,8 @@ import java.util.Optional;
 @Service
 public class BranchStatusService {
 
-    private final BranchStatusRepository branchStatusRepository;
-
     @Autowired
-    public BranchStatusService(BranchStatusRepository branchStatusRepository) {
-        this.branchStatusRepository = branchStatusRepository;
-    }
+    private BranchStatusRepository branchStatusRepository;
 
     public Page<BranchStatus> getAllBranchStatuses(Pageable pageable) {
         return branchStatusRepository.findAll(pageable);
@@ -63,5 +59,3 @@ public class BranchStatusService {
         return branchStatusRepository.findByName(branchStatus.getName()).isPresent();
     }
 }
-
-
