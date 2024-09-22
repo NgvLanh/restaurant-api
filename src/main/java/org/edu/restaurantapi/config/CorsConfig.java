@@ -1,11 +1,14 @@
 package org.edu.restaurantapi.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+import java.util.List;
 
 @Configuration
-public class CorsConfig implements WebMvcConfigurer {
+public class CorsConfig {
 
     private final String[] origins = {
             "http://localhost:3000",
@@ -19,15 +22,19 @@ public class CorsConfig implements WebMvcConfigurer {
     };
 
     private final String[] headers = {
-            "Authorization"
+            "Authorization",
+            "Content-Type"
     };
 
-    @Override
-    public void addCorsMappings(CorsRegistry corsRegistry) {
-        corsRegistry.addMapping("/**")
-                .allowedOrigins(origins)
-                .allowedMethods(methods)
-                .allowedHeaders(headers)
-                .allowCredentials(true);
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);  // Cho phép gửi cookies và thông tin xác thực
+        config.setAllowedOrigins(List.of(origins));  // Cung cấp các origin được phép
+        config.setAllowedMethods(List.of(methods));  // Cho phép các phương thức HTTP
+        config.setAllowedHeaders(List.of(headers));  // Cho phép các header cụ thể
+        source.registerCorsConfiguration("/**", config);  // Áp dụng cấu hình cho tất cả các endpoint
+        return new CorsFilter(source);
     }
 }

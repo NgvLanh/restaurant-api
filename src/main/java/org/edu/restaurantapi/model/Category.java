@@ -1,5 +1,6 @@
 package org.edu.restaurantapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -22,5 +23,6 @@ public class Category {
     @NotBlank(message = "Category description cannot be empty.")
     String description;
 
+    @JsonIgnore
     Boolean isDelete = false;
 }

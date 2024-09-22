@@ -26,7 +26,6 @@ public class CategoryService {
             return categoryRepository.save(existingCategory);
         }).orElse(null);
     }
-    @PreAuthorize("hasRole('ADMIN')")
     public Page<Category> geCategories(Pageable pageable) {
         return categoryRepository.findAll(pageable);
     }

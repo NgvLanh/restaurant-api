@@ -15,14 +15,6 @@ public class DishService {
     @Autowired
     private DishRepository dishRepository;
 
-
-    public Dish getDishInfo() {
-        var context = SecurityContextHolder.getContext();
-        String id = context.getAuthentication().getName();
-        Dish dish = dishRepository.findById(Long.parseLong(id)).orElse(null);
-        return dish;
-    }
-
     public Dish createDish(Dish dish) {
         return dishRepository.save(dish);
     }
@@ -39,9 +31,8 @@ public class DishService {
         }).orElse(null);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public Page<Dish> getDishes(Pageable pageable) {
-        return dishRepository.findAll(pageable);
+        return dishRepository.findDishByIsDeleteFalse(pageable);
     }
     public Dish getDish(Long id) {
         return dishRepository.findById(id).orElse(null);

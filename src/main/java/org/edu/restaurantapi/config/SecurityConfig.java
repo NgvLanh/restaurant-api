@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -26,7 +27,7 @@ public class SecurityConfig {
     private String singerKey;
 
     private final String[] POST_API = {
-            "/auth/login",
+            "/api/auth/login",
             "/api/users",
             "/api/vnpay",
             "/api/email/send",
@@ -35,7 +36,9 @@ public class SecurityConfig {
 
     private final String[] GET_API = {
             "/api/files/*",
-            "/api/vnpay/*"
+            "/api/vnpay/*",
+            "/api/dishes",
+            "/api/categories",
     };
 
     @Autowired
@@ -52,6 +55,8 @@ public class SecurityConfig {
                             .requestMatchers(HttpMethod.GET, GET_API).permitAll()  // Các API GET không cần xác thực
                             .anyRequest().authenticated();  // Các yêu cầu khác phải xác thực
                 })
+                // Cấu hình CORS nếu cần
+                .cors(Customizer.withDefaults()) // Bật cấu hình CORS mặc định (phải có cấu hình `CorsConfig` nếu cần)
                 // Cấu hình sử dụng OAuth2 Resource Server và JWT để xác thực
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())  // Sử dụng decoder cho JWT

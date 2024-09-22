@@ -1,9 +1,7 @@
 package org.edu.restaurantapi.controller;
 
 
-import lombok.extern.slf4j.Slf4j;
 import org.edu.restaurantapi.model.Category;
-import org.edu.restaurantapi.model.Dish;
 import org.edu.restaurantapi.response.ApiResponse;
 import org.edu.restaurantapi.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,14 +12,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-@Slf4j
 @RestController
 @RequestMapping("/api/categories")
 public class CategoryController {
+
     @Autowired
     private CategoryService categoryService;
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<?> createCategory(@Validated @RequestBody Category category) {
         if (categoryService.userCategoryExists(category)) {
             return ResponseEntity.badRequest()
