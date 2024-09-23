@@ -51,9 +51,10 @@ public class SecurityConfig {
         httpSecurity
                 .authorizeHttpRequests(request -> {
                     request
-                            .requestMatchers(HttpMethod.POST, POST_API).permitAll() // Các API POST không cần xác thực
-                            .requestMatchers(HttpMethod.GET, GET_API).permitAll()  // Các API GET không cần xác thực
-                            .anyRequest().authenticated();  // Các yêu cầu khác phải xác thực
+                            .anyRequest().permitAll();
+//                            .requestMatchers(HttpMethod.POST, POST_API).permitAll() // Các API POST không cần xác thực
+//                            .requestMatchers(HttpMethod.GET, GET_API).permitAll()  // Các API GET không cần xác thực
+//                            .anyRequest().authenticated();  // Các yêu cầu khác phải xác thực
                 })
                 // Cấu hình CORS nếu cần
                 .cors(Customizer.withDefaults()) // Bật cấu hình CORS mặc định (phải có cấu hình `CorsConfig` nếu cần)
