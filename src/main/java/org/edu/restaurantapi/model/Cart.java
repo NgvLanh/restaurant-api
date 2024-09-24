@@ -1,5 +1,6 @@
 package org.edu.restaurantapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -19,5 +20,4 @@ public class Cart {
     @JoinColumn(name = "user_id")
     User user;
 
-    Boolean isDelete = false;
 }

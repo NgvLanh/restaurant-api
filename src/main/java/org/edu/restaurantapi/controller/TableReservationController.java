@@ -15,10 +15,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/table-reservations")
 public class TableReservationController {
+
     @Autowired
     private TableReservationService tableReservationService;
     @PostMapping
-    private ResponseEntity<?> TableReservation(@Valid @RequestBody TableReservation tableReservation) {
+    private ResponseEntity<?> tableReservation(@Valid @RequestBody TableReservation tableReservation) {
         try {
             TableReservation response = tableReservationService.createTableReservation(tableReservation);
             return ResponseEntity.status(HttpStatus.CREATED)

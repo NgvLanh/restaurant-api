@@ -4,11 +4,13 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 
+@Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,10 +25,6 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "order_status_id")
     OrderStatus orderStatus;
-
-    @ManyToOne
-    @JoinColumn(name = "order_type_id")
-    OrderType orderType;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
