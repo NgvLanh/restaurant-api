@@ -10,7 +10,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 @Service
-@PreAuthorize("hasRole('ADMIN')")
 public class TableStatusService {
 
     @Autowired
@@ -36,13 +35,12 @@ public class TableStatusService {
         return tableStatusRepository.findById(id).orElse(null);
     }
 
-    public TableStatus deleteTableStatus(Long id) {
-        TableStatus tableStatus = tableStatusRepository.findById(id).orElse(null);
-        if (tableStatus.getIsDelete()) {
-            return null;
-        }
-        tableStatus.setIsDelete(true);
-        return tableStatusRepository.save(tableStatus);
+    public Boolean deleteTableStatus(Long id) {
+        return tableStatusRepository.findById(id).map(tableStatus -> {
+            tableStatus.setIsDelete(true);
+            tableStatusRepository.save(tableStatus);
+            return true;
+        }).orElse(false);
     }
 
     // check table name status

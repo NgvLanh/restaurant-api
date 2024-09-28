@@ -26,7 +26,7 @@ public class JwtUtil {
                 .subject(String.valueOf(user.getId()))
                 .issuer("DLT")
                 .issueTime(new Date())
-                .expirationTime(new Date(Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()))
+                .expirationTime(new Date(Instant.now().plus(24, ChronoUnit.HOURS).toEpochMilli()))
                 .claim("scope", buildScope(user))
                 .build();
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());

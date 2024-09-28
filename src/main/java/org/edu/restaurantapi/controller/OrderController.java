@@ -4,6 +4,8 @@ import org.edu.restaurantapi.model.Order;
 import org.edu.restaurantapi.response.ApiResponse;
 import org.edu.restaurantapi.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,8 +34,8 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllOrders() {
-        List<Order> response = orderService.getAllOrders();
+    public ResponseEntity<?> getAllOrders(Pageable pageable) {
+        Page<Order> response = orderService.getAllOrders(pageable);
         return ResponseEntity.ok(ApiResponse.SUCCESS(response));
     }
 
@@ -49,8 +51,8 @@ public class OrderController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteOrder(@PathVariable Long id) {
-        Order response = orderService.deleteOrder(id);
-        if (response != null) {
+        Boolean response = orderService.deleteOrder(id);
+        if (response) {
             return ResponseEntity.ok(ApiResponse.SUCCESS("Order deleted successfully"));
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)

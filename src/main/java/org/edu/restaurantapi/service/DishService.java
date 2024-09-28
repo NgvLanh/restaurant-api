@@ -38,11 +38,11 @@ public class DishService {
         return dishRepository.findById(id).orElse(null);
     }
     public Boolean deleteDish(Long id) {
-        if (dishRepository.existsById(id)) {
-            dishRepository.deleteById(id);
+        return dishRepository.findById(id).map(dish -> {
+            dish.setIsDelete(true);
+            dishRepository.save(dish);
             return true;
-        }
-        return false;
+        }).orElse(false);
     }
     // check name
     public Boolean userDishExists(Dish dish) {

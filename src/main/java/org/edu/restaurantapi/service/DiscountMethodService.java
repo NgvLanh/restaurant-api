@@ -20,7 +20,7 @@ public class DiscountMethodService {
 
     // Lấy tất cả các discount method
     public Page<DiscountMethod> getAllDiscountMethods(Pageable pageable) {
-        return discountMethodRepository.findAll(pageable);
+        return discountMethodRepository.findDiscountMethodByIsDeleteFalse(pageable);
     }
 
     // Lấy discount method theo ID
@@ -29,7 +29,6 @@ public class DiscountMethodService {
     }
 
     // Tạo mới discount method
-    @PreAuthorize("hasRole('ADMIN')")
     public DiscountMethod createDiscountMethod(DiscountMethod discountMethod) {
         Optional<DiscountMethod> existingMethod = discountMethodRepository.findByName(discountMethod.getName());
         if (existingMethod.isPresent()) {
@@ -39,7 +38,6 @@ public class DiscountMethodService {
     }
 
     // Cập nhật discount method theo ID
-    @PreAuthorize("hasRole('ADMIN')")
     public DiscountMethod updateDiscountMethod(Long id, DiscountMethod updatedMethod) {
         return discountMethodRepository.findById(id).map(existingMethod -> {
             existingMethod.setName(updatedMethod.getName() != null ? updatedMethod.getName() : existingMethod.getName());
@@ -48,13 +46,12 @@ public class DiscountMethodService {
     }
 
     // Xóa discount method theo ID
-    @PreAuthorize("hasRole('ADMIN')")
     public Boolean deleteDiscountMethod(long id) {
-        if (discountMethodRepository.existsById(id)) {
-            discountMethodRepository.deleteById(id);
+        return discountMethodRepository.findById(id).map(discountMethod -> {
+            discountMethod.setIsDelete(true);
+            discountMethodRepository.save(discountMethod);
             return true;
-        }
-        return false;
+        }).orElse(false);
     }
 
     // Tìm discount method theo tên

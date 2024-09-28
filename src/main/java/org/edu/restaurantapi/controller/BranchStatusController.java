@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/branchstatus")
+@RequestMapping("/api/branch-status")
 public class BranchStatusController {
 
     @Autowired

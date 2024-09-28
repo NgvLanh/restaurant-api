@@ -60,8 +60,8 @@ public class TableStatusController {
     @DeleteMapping("/{id}")
     private ResponseEntity<?> deleteTableStatus(@PathVariable Long id) {
         try {
-            TableStatus response = tableStatusService.deleteTableStatus(id);
-            if (response != null) {
+            Boolean response = tableStatusService.deleteTableStatus(id);
+            if (response) {
                 return ResponseEntity.ok()
                         .body(ApiResponse.DELETE("Table status deleted successfully"));
             } else {

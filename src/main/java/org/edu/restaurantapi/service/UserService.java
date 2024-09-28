@@ -1,6 +1,8 @@
 package org.edu.restaurantapi.service;
 
+import org.edu.restaurantapi.model.Role;
 import org.edu.restaurantapi.model.User;
+import org.edu.restaurantapi.repository.RoleRepository;
 import org.edu.restaurantapi.repository.UserRepository;
 import org.edu.restaurantapi.util.PasswordUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,9 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private RoleRepository roleRepository;
+
     public User getUserInfo() {
         var context = SecurityContextHolder.getContext();
         String id = context.getAuthentication().getName();
@@ -27,6 +32,7 @@ public class UserService {
 
     public User createUser(User user) {
         user.setPassword(PasswordUtil.hashPassword(user.getPassword()));
+        user.setRole(roleRepository.findByName("USER").get());
         return userRepository.save(user);
     }
 
@@ -45,7 +51,6 @@ public class UserService {
         }).orElse(null);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public Page<User> getUsers(Pageable pageable) {
         return userRepository.findUserByIsDeleteFalse(pageable);
     }
@@ -54,13 +59,12 @@ public class UserService {
         return userRepository.findById(id).orElse(null);
     }
 
-    public User deleteUser(Long id) {
-        User user = userRepository.findById(id).orElse(null);
-        if(user.getIsDelete()) {
-            return null;
-        }
-        user.setIsDelete(true);
-        return userRepository.save(user);
+    public Boolean deleteUser(Long id) {
+        return userRepository.findById(id).map(user -> {
+            user.setIsDelete(true);
+            userRepository.save(user);
+            return true;
+        }).orElse(false);
     }
 
     // check email + phone number

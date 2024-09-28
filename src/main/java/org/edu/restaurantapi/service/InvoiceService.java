@@ -3,6 +3,8 @@ package org.edu.restaurantapi.service;
 import org.edu.restaurantapi.model.Invoice;
 import org.edu.restaurantapi.repository.InvoiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,8 +16,8 @@ public class InvoiceService {
     @Autowired
     private InvoiceRepository invoiceRepository;
 
-    public List<Invoice> getAllInvoices() {
-        return invoiceRepository.findAll();
+    public Page<Invoice> getAllInvoices(Pageable pageable) {
+        return invoiceRepository.findInvoiceByIsDeleteFalse(pageable);
     }
 
     public Optional<Invoice> getInvoiceById(Long id) {
@@ -34,13 +36,11 @@ public class InvoiceService {
         return invoiceRepository.save(invoice);
     }
 
-    public Invoice deleteInvoice(Long id) {
-        Invoice invoice = invoiceRepository.findById(id).orElse(null);
-        if (invoice == null || invoice.getIsDelete()) {
-            return null;
-        }
-        invoice.setIsDelete(true);
-        invoiceRepository.save(invoice);
-        return invoice;
+    public Boolean deleteInvoice(Long id) {
+        return invoiceRepository.findById(id).map(invoice -> {
+            invoice.setIsDelete(true);
+            invoiceRepository.save(invoice);
+            return true;
+        }).orElse(false);
     }
 }

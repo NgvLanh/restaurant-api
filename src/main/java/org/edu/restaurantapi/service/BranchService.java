@@ -16,8 +16,6 @@ public class BranchService {
     @Autowired
     private BranchRepository branchRepository;
 
-    // Thêm
-    @PreAuthorize("hasRole('ADMIN')")
     public Branch createBranch(Branch branch) {
         Optional<Branch> existingBranch = branchRepository.findByPhoneNumber(branch.getPhoneNumber());
         if (existingBranch.isPresent()) {
@@ -26,19 +24,14 @@ public class BranchService {
         return branchRepository.save(branch);
     }
 
-    // Xem
-    @PreAuthorize("hasRole('ADMIN')")
     public Page<Branch> getAllBranches(Pageable pageable) {
-        return branchRepository.findAll(pageable);
+        return branchRepository.findBranchByIsDeleteFalse(pageable);
     }
 
-    // Tìm
     public Branch getBranchById(Long id) {
         return branchRepository.findById(id).orElse(null);
     }
 
-    // Cập nhật
-    @PreAuthorize("hasRole('ADMIN')")
     public Branch updateBranch(Long id, Branch branchDetails) {
         return branchRepository.findById(id).map(existingBranch -> {
             existingBranch.setName(branchDetails.getName() != null ? branchDetails.getName() : existingBranch.getName());
@@ -51,17 +44,14 @@ public class BranchService {
         }).orElseThrow(() -> new RuntimeException("Không tìm thấy id này " + id));
     }
 
-    // Xóa
-    @PreAuthorize("hasRole('ADMIN')")
     public boolean deleteBranch(Long id) {
-        if (branchRepository.existsById(id)) {
-            branchRepository.deleteById(id);
+        return branchRepository.findById(id).map(branch -> {
+            branch.setIsDelete(true);
+            branchRepository.save(branch);
             return true;
-        }
-        return false;
+        }).orElse(false);
     }
 
-    // Kiểm tra
     public boolean branchPhoneNumberExists(Branch branch) {
         return branchRepository.findByPhoneNumber(branch.getPhoneNumber()).isPresent();
     }

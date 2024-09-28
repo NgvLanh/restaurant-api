@@ -27,17 +27,17 @@ public class CategoryService {
         }).orElse(null);
     }
     public Page<Category> geCategories(Pageable pageable) {
-        return categoryRepository.findAll(pageable);
+        return categoryRepository.findCategoryByIsDeleteFalse(pageable);
     }
     public Category getCategory(Long id) {
         return categoryRepository.findById(id).orElse(null);
     }
     public Boolean deleteCategory(Long id) {
-        if (categoryRepository.existsById(id)) {
-            categoryRepository.deleteById(id);
+        return categoryRepository.findById(id).map(category -> {
+            category.setIsDelete(true);
+            categoryRepository.save(category);
             return true;
-        }
-        return false;
+        }).orElse(false);
     }
     // check name
     public Boolean userCategoryExists(Category category) {

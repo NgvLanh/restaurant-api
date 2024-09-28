@@ -9,7 +9,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 @Service
-@PreAuthorize("hasRole('ADMIN')")
 public class ZoneService {
 
     @Autowired
@@ -37,16 +36,12 @@ public class ZoneService {
         return zoneRepository.findById(id).orElse(null);
     }
 
-    public Zone deleteZone(Long id) {
-        Zone zone = zoneRepository.findById(id).orElse(null);
-        if (zone != null && zone.getIsDelete()) {
-            return null;
-        }
-        if (zone != null) {
+    public Boolean deleteZone(Long id) {
+        return zoneRepository.findById(id).map(zone -> {
             zone.setIsDelete(true);
-            return zoneRepository.save(zone);
-        }
-        return null;
+            zoneRepository.save(zone);
+            return true;
+        }).orElse(false);
     }
 
     // Check zone name existence

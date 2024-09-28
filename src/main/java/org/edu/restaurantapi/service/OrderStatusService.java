@@ -3,6 +3,8 @@ package org.edu.restaurantapi.service;
 import org.edu.restaurantapi.model.OrderStatus;
 import org.edu.restaurantapi.repository.OrderStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,8 +24,8 @@ public class OrderStatusService {
         return orderStatusRepository.findById(id);
     }
 
-    public List<OrderStatus> getAllOrderStatuses() {
-        return orderStatusRepository.findAll();
+    public Page<OrderStatus> getAllOrderStatuses(Pageable pageable) {
+        return orderStatusRepository.findOrderStatusByIsDeleteFalse(pageable);
     }
 
     public OrderStatus updateOrderStatus(Long id, OrderStatus updatedOrderStatus) {
@@ -34,14 +36,12 @@ public class OrderStatusService {
         }).orElse(null);
     }
 
-    public OrderStatus deleteOrderStatus(Long id) {
-        OrderStatus orderStatus = orderStatusRepository.findById(id).orElse(null);
-        if (orderStatus == null || orderStatus.getIsDelete()) {
-            return null;
-        }
-        orderStatus.setIsDelete(true);
-        orderStatusRepository.save(orderStatus);
-        return orderStatus;
+    public Boolean deleteOrderStatus(Long id) {
+        return orderStatusRepository.findById(id).map(orderStatus -> {
+            orderStatus.setIsDelete(true);
+            orderStatusRepository.save(orderStatus);
+            return true;
+        }).orElse(false);
     }
 
     public boolean orderStatusNameExists(String name) {

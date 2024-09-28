@@ -3,6 +3,8 @@ package org.edu.restaurantapi.service;
 import org.edu.restaurantapi.model.Order;
 import org.edu.restaurantapi.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,8 +24,8 @@ public class OrderService {
         return orderRepository.findById(id);
     }
 
-    public List<Order> getAllOrders() {
-        return orderRepository.findAll();
+    public Page<Order> getAllOrders(Pageable pageable) {
+        return orderRepository.findOrdersByIsDeleteFalse(pageable);
     }
 
     public Order updateOrder(Long id, Order updatedOrder) {
@@ -44,13 +46,11 @@ public class OrderService {
         }).orElse(null);
     }
 
-    public Order deleteOrder(Long id) {
-        Order order = orderRepository.findById(id).orElse(null);
-        if (order == null || order.getIsDelete()) {
-            return null;
-        }
-        order.setIsDelete(true);
-        orderRepository.save(order);
-        return order;
+    public Boolean deleteOrder(Long id) {
+        return orderRepository.findById(id).map(order -> {
+            order.setIsDelete(true);
+            orderRepository.save(order);
+            return true;
+        }).orElse(false);
     }
 }

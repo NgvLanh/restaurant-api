@@ -65,8 +65,8 @@ public class ZoneController {
     @DeleteMapping("/{id}")
     private ResponseEntity<?> deleteZone(@PathVariable Long id) {
         try {
-            Zone response = zoneService.deleteZone(id);
-            if (response != null) {
+            Boolean response = zoneService.deleteZone(id);
+            if (response) {
                 return ResponseEntity.ok()
                         .body(ApiResponse.DELETE("Zone deleted successfully"));
             } else {

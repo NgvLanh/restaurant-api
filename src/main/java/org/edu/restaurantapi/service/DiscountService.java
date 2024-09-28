@@ -18,7 +18,7 @@ public class DiscountService {
     private DiscountRepository discountRepository;
 
     public Page<Discount> getAllDiscounts(Pageable pageable) {
-        return discountRepository.findAll(pageable);
+        return discountRepository.findDiscountByIsDeleteFalse(pageable);
     }
 
 
@@ -26,18 +26,16 @@ public class DiscountService {
         return discountRepository.findById(discountId).orElse(null);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public Discount createDiscount(Discount discount) {
 
         Optional<Discount> existingDiscount = discountRepository.findByCode(discount.getCode());
         if (existingDiscount.isPresent()) {
-            return null;  // Trả về null nếu mã giảm giá đã tồn tại
+            return null;
         }
         return discountRepository.save(discount);
     }
 
     // Cập nhật discount theo ID
-    @PreAuthorize("hasRole('ADMIN')")
     public Discount updateDiscount(Long discountId, Discount updatedDiscount) {
 
         return discountRepository.findById(discountId).map(existingDiscount -> {
@@ -51,17 +49,15 @@ public class DiscountService {
         }).orElse(null);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    public Boolean deleteDiscount(Long discountId) {
-        if (discountRepository.existsById(discountId)){
-            discountRepository.deleteById(discountId);
+    public Boolean deleteDiscount(Long id) {
+        return discountRepository.findById(id).map(discount -> {
+            discount.setIsDelete(true);
+            discountRepository.save(discount);
             return true;
-        }
-        return false;
+        }).orElse(false);
     }
 
     //check
-
     public  Boolean discountCodeExists(Discount discount){
         return discountRepository.findByCode(discount.getCode()).isPresent();
     }

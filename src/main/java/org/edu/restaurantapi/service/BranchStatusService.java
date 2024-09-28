@@ -18,14 +18,13 @@ public class BranchStatusService {
     private BranchStatusRepository branchStatusRepository;
 
     public Page<BranchStatus> getAllBranchStatuses(Pageable pageable) {
-        return branchStatusRepository.findAll(pageable);
+        return branchStatusRepository.findBranchStatusByIsDeleteFalse(pageable);
     }
 
     public BranchStatus getBranchStatusById(Long id) {
         return branchStatusRepository.findById(id).orElse(null);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public BranchStatus createBranchStatus(BranchStatus branchStatus) {
         Optional<BranchStatus> existingMethod = branchStatusRepository.findByName(branchStatus.getName());
         if (existingMethod.isPresent()) {
@@ -34,7 +33,6 @@ public class BranchStatusService {
         return branchStatusRepository.save(branchStatus);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public BranchStatus updateBranchStatus(Long id, BranchStatus branchStatusUpdate) {
         return branchStatusRepository.findById(id).map(branchStatus -> {
             branchStatus.setName(branchStatusUpdate.getName() != null ? branchStatusUpdate.getName() : branchStatus.getName());
@@ -42,13 +40,12 @@ public class BranchStatusService {
         }).orElse(null);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public Boolean deleteBranchStatus(Long id) {
-        if (branchStatusRepository.existsById(id)) {
-            branchStatusRepository.deleteById(id);
+        return branchStatusRepository.findById(id).map(branchStatus -> {
+            branchStatus.setIsDelete(true);
+            branchStatusRepository.save(branchStatus);
             return true;
-        }
-        return false;
+        }).orElse(false);
     }
 
     public Optional<BranchStatus> findByName(String name) {

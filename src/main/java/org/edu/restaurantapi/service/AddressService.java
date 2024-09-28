@@ -19,7 +19,7 @@ public class AddressService {
     }
 
     public Page<Address> getAddresses(Pageable pageable) {
-        return addressRepository.findAll(pageable);
+        return addressRepository.findAddressByIsDeleteFalse(pageable);
     }
 
     public Address updateAddress(Long addressId, Address updatedAddress) {
@@ -37,11 +37,11 @@ public class AddressService {
     }
 
     public Boolean deleteAddress(Long id) {
-        if (addressRepository.existsById(id)) {
-            addressRepository.deleteById(id);
+        return addressRepository.findById(id).map(address -> {
+            address.setIsDelete(true);
+            addressRepository.save(address);
             return true;
-        }
-        return false;
+        }).orElse(false);
     }
 
     public Address getAddress(Long id) {

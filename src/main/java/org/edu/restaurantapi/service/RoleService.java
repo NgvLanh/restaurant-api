@@ -19,12 +19,11 @@ public class RoleService {
     }
 
     public Boolean deleteRole(Long id) {
-        if (roleRepository.existsById(id)) {
-            roleRepository.deleteById(id);
+        return roleRepository.findById(id).map(role -> {
+            role.setIsDelete(true);
+            roleRepository.save(role);
             return true;
-        } else {
-            return false;
-        }
+        }).orElse(false);
     }
 
     public List<Role> getRoles() {

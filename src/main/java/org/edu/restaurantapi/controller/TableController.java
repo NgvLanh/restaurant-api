@@ -59,8 +59,8 @@ public class TableController {
     @DeleteMapping("/{id}")
     private ResponseEntity<?> deleteTable(@PathVariable Long id) {
         try {
-            Table response = tableService.deleteTable(id);
-            if (response != null) {
+            Boolean response = tableService.deleteTable(id);
+            if (response) {
                 return ResponseEntity.ok()
                         .body(ApiResponse.DELETE("Table deleted successfully"));
             } else {

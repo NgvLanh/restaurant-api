@@ -9,7 +9,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 @Service
-@PreAuthorize("hasRole('ADMIN')")
 public class TableService {
 
     @Autowired
@@ -37,15 +36,11 @@ public class TableService {
         return tableRepository.findById(id).orElse(null);
     }
 
-    public Table deleteTable(Long id) {
-        Table table = tableRepository.findById(id).orElse(null);
-        if (table != null && table.getIsDelete()) {
-            return null;
-        }
-        if (table != null) {
+    public Boolean deleteTable(Long id) {
+        return tableRepository.findById(id).map(table -> {
             table.setIsDelete(true);
-            return tableRepository.save(table);
-        }
-        return null;
+            tableRepository.save(table);
+            return true;
+        }).orElse(false);
     }
 }
