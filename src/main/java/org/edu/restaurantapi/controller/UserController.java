@@ -29,10 +29,10 @@ public class UserController {
     @PostMapping
     private ResponseEntity<?> createUser(@Valid @RequestBody User user) {
         if (userService.userPhoneNumberExists(user)) {
-            return ResponseEntity.badRequest()
+            return ResponseEntity.ok()
                     .body(ApiResponse.BAD_REQUEST("Phone number already exists"));
         } else if (userService.userEmailExists(user)) {
-            return ResponseEntity.badRequest()
+            return ResponseEntity.ok()
                     .body(ApiResponse.BAD_REQUEST("Email already exists"));
         } else {
             try {
