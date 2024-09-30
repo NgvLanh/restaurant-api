@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface DiscountRepository extends JpaRepository<Discount, Long> {
-    Optional<Discount> findByCode(String id);
+    Optional<Discount> findByCodeAndIsDeleteFalse(String id);
 
     Page<Discount> findDiscountByIsDeleteFalse(Pageable pageable);
 }

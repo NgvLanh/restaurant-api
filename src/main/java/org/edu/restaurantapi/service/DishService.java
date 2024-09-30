@@ -45,8 +45,8 @@ public class DishService {
         }).orElse(false);
     }
     // check name
-    public Boolean userDishExists(Dish dish) {
-        return dishRepository.findByName(dish.getName()).isPresent();
+    public Boolean dishExists(Dish dish) {
+        return dishRepository.findByNameAndIsDeleteFalse(dish.getName()).isPresent();
     }
 
 }

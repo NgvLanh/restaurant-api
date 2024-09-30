@@ -24,6 +24,10 @@ public class TableService {
                     ? table.getZone() : existingTable.getZone());
             existingTable.setTableStatus(table.getTableStatus() != null
                     ? table.getTableStatus() : existingTable.getTableStatus());
+            existingTable.setSeats(table.getSeats() != null
+                    ? table.getSeats() : existingTable.getSeats());
+            existingTable.setBranch(table.getBranch() != null
+                    ? table.getBranch() : existingTable.getBranch());
             return tableRepository.save(existingTable);
         }).orElse(null);
     }
@@ -43,4 +47,12 @@ public class TableService {
             return true;
         }).orElse(false);
     }
+
+    public boolean numberExists(Integer number, Long excludeId) {
+        return tableRepository.existsByNumberAndIsDeleteFalseAndIdNot(number, excludeId);
+    }
+    public boolean existsByNumber(Integer number) {
+        return tableRepository.existsByNumber(number);
+    }
+
 }

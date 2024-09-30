@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface DishRepository extends JpaRepository<Dish, Long> {
-    Optional<Dish> findByName(String name);
+    Optional<Dish> findByNameAndIsDeleteFalse(String name);
 
     Page<Dish> findDishByIsDeleteFalse(Pageable pageable);
 }

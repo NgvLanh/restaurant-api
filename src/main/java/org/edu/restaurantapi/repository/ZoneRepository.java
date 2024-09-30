@@ -11,5 +11,5 @@ import java.util.Optional;
 public interface ZoneRepository extends JpaRepository<Zone, Long> {
     Page<Zone> findZoneByIsDeleteFalse(Pageable pageable);
 
-    Optional<Zone> findZoneByAddress(String address);
+    Optional<Zone> findZoneByAddressAndIsDeleteFalse(String address);
 }

@@ -7,6 +7,7 @@ import org.edu.restaurantapi.repository.UserRepository;
 import org.edu.restaurantapi.util.PasswordUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,7 +33,7 @@ public class UserService {
 
     public User createUser(User user) {
         user.setPassword(PasswordUtil.hashPassword(user.getPassword()));
-        user.setRole(roleRepository.findByName("USER").get());
+        user.setRole(roleRepository.findByNameAndIsDeleteFalse("USER").get());
         return userRepository.save(user);
     }
 
@@ -74,5 +75,13 @@ public class UserService {
 
     public Boolean userPhoneNumberExists(User user) {
         return userRepository.findByPhoneNumber(user.getPhoneNumber()).isPresent();
+    }
+
+    public Page<User> getUsersByBranch(String branchId, Pageable pageable) {
+        Long branch = Long.valueOf(branchId);
+        if (branchId.isEmpty()) {
+            return userRepository.findUserByIsDeleteFalse(pageable);
+        }
+        return userRepository.findByBranchId(branch, pageable);
     }
 }

@@ -14,5 +14,5 @@ import java.util.Optional;
 public interface TableStatusRepository extends JpaRepository<TableStatus, Long> {
     Page<TableStatus> findTableStatusByIsDeleteFalse(Pageable pageable);
 
-    Optional<TableStatus> findTableStatusByName(String tableStatusName);
+    Optional<TableStatus> findTableStatusByNameAndIsDeleteFalse(String tableStatusName);
 }

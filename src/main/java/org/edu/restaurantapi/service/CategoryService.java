@@ -40,7 +40,7 @@ public class CategoryService {
         }).orElse(false);
     }
     // check name
-    public Boolean userCategoryExists(Category category) {
-        return categoryRepository.findByName(category.getName()).isPresent();
+    public Boolean categoryExists(Category category) {
+        return categoryRepository.findByNameAndIsDeleteFalse(category.getName()).isPresent();
     }
 }

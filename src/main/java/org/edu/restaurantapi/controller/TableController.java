@@ -33,20 +33,33 @@ public class TableController {
     // Tạo mới một bàn
     @PostMapping
     private ResponseEntity<?> createTable(@Valid @RequestBody Table table) {
-            try {
-                Table response = tableService.createTable(table);
-                return ResponseEntity.status(HttpStatus.CREATED)
-                        .body(ApiResponse.CREATED(response));
-            } catch (Exception e) {
-                return ResponseEntity.internalServerError()
-                        .body(ApiResponse.SERVER_ERROR("Created table failed: " + e.getMessage()));
+        try {
+            // Check if a table with the same number already exists
+            if (tableService.existsByNumber(table.getNumber())) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body(ApiResponse.NOT_FOUND("Number already exists"));
             }
+
+            Table response = tableService.createTable(table);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(ApiResponse.CREATED(response));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body(ApiResponse.SERVER_ERROR("Created table failed: " + e.getMessage()));
+        }
     }
+
 
     // Cập nhật thông tin một bàn
     @PatchMapping("/{id}")
-    private ResponseEntity<?> updateTable(@PathVariable Long id, @RequestBody Table table) {
+    private ResponseEntity<?> updateTable(@PathVariable Long id, @Valid @RequestBody Table table) {
         try {
+            // Check if the number exists in another table
+            if (tableService.numberExists(table.getNumber(), id)) {
+                return ResponseEntity.badRequest()
+                        .body(ApiResponse.SERVER_ERROR("Number already exists."));
+            }
+
             Table response = tableService.updateTable(id, table);
             return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
         } catch (Exception e) {
@@ -54,6 +67,7 @@ public class TableController {
                     .body(ApiResponse.SERVER_ERROR("Updated table failed: " + e.getMessage()));
         }
     }
+
 
     // Xóa một bàn (đánh dấu đã xóa)
     @DeleteMapping("/{id}")

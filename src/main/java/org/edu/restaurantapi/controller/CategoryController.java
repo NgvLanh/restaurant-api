@@ -21,7 +21,7 @@ public class CategoryController {
 
     @PostMapping
     public ResponseEntity<?> createCategory(@Validated @RequestBody Category category) {
-        if (categoryService.userCategoryExists(category)) {
+        if (categoryService.categoryExists(category)) {
             return ResponseEntity.badRequest()
                     .body(ApiResponse.BAD_REQUEST("Name already exists"));
         } else {
@@ -38,7 +38,7 @@ public class CategoryController {
 
     @PatchMapping("/{id}")
     private ResponseEntity<?> updateCategory(@PathVariable Long id, @RequestBody Category category) {
-        if (categoryService.userCategoryExists(category)) {
+        if (categoryService.categoryExists(category)) {
             return ResponseEntity.badRequest()
                     .body(ApiResponse.BAD_REQUEST("Name already exists"));
         } else {

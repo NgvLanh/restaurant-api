@@ -30,7 +30,7 @@ public class DiscountMethodService {
 
     // Tạo mới discount method
     public DiscountMethod createDiscountMethod(DiscountMethod discountMethod) {
-        Optional<DiscountMethod> existingMethod = discountMethodRepository.findByName(discountMethod.getName());
+        Optional<DiscountMethod> existingMethod = discountMethodRepository.findByNameAndIsDeleteFalse(discountMethod.getName());
         if (existingMethod.isPresent()) {
             return null;  // Trả về null nếu phương thức đã tồn tại
         }
@@ -56,12 +56,12 @@ public class DiscountMethodService {
 
     // Tìm discount method theo tên
     public Optional<DiscountMethod> findByName(String name) {
-        return discountMethodRepository.findByName(name);
+        return discountMethodRepository.findByNameAndIsDeleteFalse(name);
     }
 
     //check
     public Boolean discountMethodExists(DiscountMethod discountMethod) {
-        return discountMethodRepository.findByName(discountMethod.getName()).isPresent();
+        return discountMethodRepository.findByNameAndIsDeleteFalse(discountMethod.getName()).isPresent();
     }
 
 }

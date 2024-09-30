@@ -17,7 +17,7 @@ public class BranchService {
     private BranchRepository branchRepository;
 
     public Branch createBranch(Branch branch) {
-        Optional<Branch> existingBranch = branchRepository.findByPhoneNumber(branch.getPhoneNumber());
+        Optional<Branch> existingBranch = branchRepository.findByPhoneNumberAndIsDeleteFalse(branch.getPhoneNumber());
         if (existingBranch.isPresent()) {
             return null;  // Trả về null nếu chi nhánh đã tồn tại
         }
@@ -53,6 +53,6 @@ public class BranchService {
     }
 
     public boolean branchPhoneNumberExists(Branch branch) {
-        return branchRepository.findByPhoneNumber(branch.getPhoneNumber()).isPresent();
+        return branchRepository.findByPhoneNumberAndIsDeleteFalse(branch.getPhoneNumber()).isPresent();
     }
 }

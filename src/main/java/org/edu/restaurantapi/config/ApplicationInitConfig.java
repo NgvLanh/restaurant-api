@@ -25,13 +25,13 @@ public class ApplicationInitConfig {
                                         RoleRepository roleRepository) {
         return args -> {
             Role role;
-            if (roleRepository.findByName(roleName).isEmpty()) {
+            if (roleRepository.findByNameAndIsDeleteFalse(roleName).isEmpty()) {
                 role = roleRepository.save(Role.builder()
                         .name(roleName)
                         .permissions("ALL")
                         .build());
             } else {
-                role = roleRepository.findByName(roleName).get();
+                role = roleRepository.findByNameAndIsDeleteFalse(roleName).get();
             }
             if (userRepository.findByEmail(email).isEmpty()) {
                 User user = User.builder()

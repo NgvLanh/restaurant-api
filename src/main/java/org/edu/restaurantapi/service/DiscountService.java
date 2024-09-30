@@ -28,7 +28,7 @@ public class DiscountService {
 
     public Discount createDiscount(Discount discount) {
 
-        Optional<Discount> existingDiscount = discountRepository.findByCode(discount.getCode());
+        Optional<Discount> existingDiscount = discountRepository.findByCodeAndIsDeleteFalse(discount.getCode());
         if (existingDiscount.isPresent()) {
             return null;
         }
@@ -59,7 +59,7 @@ public class DiscountService {
 
     //check
     public  Boolean discountCodeExists(Discount discount){
-        return discountRepository.findByCode(discount.getCode()).isPresent();
+        return discountRepository.findByCodeAndIsDeleteFalse(discount.getCode()).isPresent();
     }
 
 }

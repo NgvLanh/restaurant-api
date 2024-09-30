@@ -46,6 +46,6 @@ public class ZoneService {
 
     // Check zone name existence
     public Boolean zoneNameExists(String address) {
-        return zoneRepository.findZoneByAddress(address).isPresent();
+        return zoneRepository.findZoneByAddressAndIsDeleteFalse(address).isPresent();
     }
 }

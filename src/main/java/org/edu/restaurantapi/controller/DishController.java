@@ -22,7 +22,7 @@ public class DishController {
 
     @PostMapping
     public ResponseEntity<?> createDish(@Validated @RequestBody Dish dish) {
-        if (dishService.userDishExists(dish)) {
+        if (dishService.dishExists(dish)) {
             return ResponseEntity.badRequest()
                     .body(ApiResponse.BAD_REQUEST("Name already exists"));
         } else {
@@ -39,7 +39,7 @@ public class DishController {
 
     @PatchMapping("/{id}")
     private ResponseEntity<?> updateDish(@PathVariable Long id, @RequestBody Dish dish) {
-        if (dishService.userDishExists(dish)) {
+        if (dishService.dishExists(dish)) {
             return ResponseEntity.badRequest()
                     .body(ApiResponse.BAD_REQUEST("Name already exists"));
         } else {

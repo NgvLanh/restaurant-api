@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -61,8 +63,10 @@ public class UserController {
     }
 
     @GetMapping
-    private ResponseEntity<?> getUsers(Pageable pageable) {
-        Page<User> response = userService.getUsers(pageable);
+    private ResponseEntity<?> getUsers(
+            @RequestParam(value = "branch", required = false) String branchId, Pageable pageable) {
+        Page<User> response = userService.getUsersByBranch(branchId, pageable);
+//        Page<User> response = userService.getUsers(pageable);
         response.forEach(res -> {
             res.setPassword(null);
         });

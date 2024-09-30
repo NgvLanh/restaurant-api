@@ -26,7 +26,7 @@ public class BranchStatusService {
     }
 
     public BranchStatus createBranchStatus(BranchStatus branchStatus) {
-        Optional<BranchStatus> existingMethod = branchStatusRepository.findByName(branchStatus.getName());
+        Optional<BranchStatus> existingMethod = branchStatusRepository.findByNameAndIsDeleteFalse(branchStatus.getName());
         if (existingMethod.isPresent()) {
             return null;
         }
@@ -49,10 +49,10 @@ public class BranchStatusService {
     }
 
     public Optional<BranchStatus> findByName(String name) {
-        return branchStatusRepository.findByName(name);
+        return branchStatusRepository.findByNameAndIsDeleteFalse(name);
     }
 
     public Boolean branchStatusNameExist(BranchStatus branchStatus) {
-        return branchStatusRepository.findByName(branchStatus.getName()).isPresent();
+        return branchStatusRepository.findByNameAndIsDeleteFalse(branchStatus.getName()).isPresent();
     }
 }
