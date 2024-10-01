@@ -5,7 +5,9 @@ import org.edu.restaurantapi.model.User;
 import org.edu.restaurantapi.repository.TableStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +30,9 @@ public class TableStatusService {
     }
 
     public Page<TableStatus> getTableStatuses(Pageable pageable) {
-        return tableStatusRepository.findTableStatusByIsDeleteFalse(pageable);
+        Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
+                pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "Id"));
+        return tableStatusRepository.findTableStatusByIsDeleteFalse(pageableSorted);
     }
 
     public TableStatus getTableStatus(Long id) {

@@ -36,8 +36,8 @@ public class TableController {
         try {
             // Check if a table with the same number already exists
             if (tableService.existsByNumber(table.getNumber())) {
-                return ResponseEntity.status(HttpStatus.CONFLICT)
-                        .body(ApiResponse.NOT_FOUND("Number already exists"));
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(ApiResponse.BAD_REQUEST("Number already exists"));
             }
 
             Table response = tableService.createTable(table);
@@ -55,7 +55,7 @@ public class TableController {
     private ResponseEntity<?> updateTable(@PathVariable Long id, @Valid @RequestBody Table table) {
         try {
             // Check if the number exists in another table
-            if (tableService.numberExists(table.getNumber(), id)) {
+            if (tableService.numberExists(table.getNumber())) {
                 return ResponseEntity.badRequest()
                         .body(ApiResponse.SERVER_ERROR("Number already exists."));
             }

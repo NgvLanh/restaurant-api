@@ -39,16 +39,17 @@ public class DishController {
 
     @PatchMapping("/{id}")
     private ResponseEntity<?> updateDish(@PathVariable Long id, @RequestBody Dish dish) {
-        if (dishService.dishExists(dish)) {
+        Dish existingDish = dishService.getDish(id);
+        if (existingDish == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.NOT_FOUND("Not found the dish with id: " + id));
+        }
+        if (dishService.dishExists(dish) && existingDish.getId() != id) {
             return ResponseEntity.badRequest()
                     .body(ApiResponse.BAD_REQUEST("Name already exists"));
         } else {
             try {
                 Dish response = dishService.updateDish(id, dish);
-                if (response == null) {
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                            .body(ApiResponse.NOT_FOUND("Not found the dish with id: " + id));
-                }
                 return ResponseEntity.ok()
                         .body(ApiResponse.SUCCESS(response));
             } catch (Exception e) {

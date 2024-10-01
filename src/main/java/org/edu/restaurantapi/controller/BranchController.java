@@ -1,5 +1,6 @@
 package org.edu.restaurantapi.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.edu.restaurantapi.model.Branch;
 import org.edu.restaurantapi.response.ApiResponse;
 import org.edu.restaurantapi.service.BranchService;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/branches")
 public class BranchController {
@@ -20,8 +22,10 @@ public class BranchController {
     // Create a new branch
     @PostMapping
     public ResponseEntity<?> createBranch(@RequestBody Branch branch) {
-        if (branchService.branchPhoneNumberExists(branch)) {
+        if (branchService.branchNameExists(branch)) {
             return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Branch already exists"));
+        } else if (branchService.branchPhoneNumberExists(branch)) {
+            return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Phone number already exists"));
         } else {
             try {
                 Branch createdBranch = branchService.createBranch(branch);

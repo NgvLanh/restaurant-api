@@ -19,7 +19,6 @@ public class Table {
     Long id;
 
     @NotNull(message = "Number cannot be null")
-    @Column(unique = true)
     Integer number;
 
     @Min(value = 1, message = "Seats must be at least 1")

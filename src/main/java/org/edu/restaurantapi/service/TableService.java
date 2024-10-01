@@ -4,7 +4,9 @@ import org.edu.restaurantapi.model.Table;
 import org.edu.restaurantapi.repository.TableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +35,9 @@ public class TableService {
     }
 
     public Page<Table> getTables(Pageable pageable) {
-        return tableRepository.findTableByIsDeleteFalse(pageable);
+        Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
+                pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "Id"));
+        return tableRepository.findTableByIsDeleteFalse(pageableSorted);
     }
 
     public Table getTable(Long id) {
@@ -48,11 +52,10 @@ public class TableService {
         }).orElse(false);
     }
 
-    public boolean numberExists(Integer number, Long excludeId) {
-        return tableRepository.existsByNumberAndIsDeleteFalseAndIdNot(number, excludeId);
+    public Boolean numberExists(Integer number) {
+        return tableRepository.existsByNumberAndIsDeleteFalse(number);
     }
-    public boolean existsByNumber(Integer number) {
-        return tableRepository.existsByNumber(number);
+    public Boolean existsByNumber(Integer number) {
+        return tableRepository.existsByNumberAndIsDeleteFalse(number);
     }
-
 }

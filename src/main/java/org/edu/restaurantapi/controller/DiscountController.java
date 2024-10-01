@@ -65,7 +65,8 @@ public class DiscountController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<?> updateDiscount(@PathVariable Long id, @RequestBody Discount discount) {
-        if (discountService.discountCodeExists(discount)){
+        if (discountService.discountCodeExists(discount) &&
+                discountService.getDiscount(discount.getId()).getId() != discount.getId()){
             return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Code already exists"));
         }else {
             try {

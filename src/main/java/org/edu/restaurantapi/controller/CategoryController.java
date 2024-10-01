@@ -1,6 +1,7 @@
 package org.edu.restaurantapi.controller;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.edu.restaurantapi.model.Category;
 import org.edu.restaurantapi.response.ApiResponse;
 import org.edu.restaurantapi.service.CategoryService;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/categories")
 public class CategoryController {
@@ -38,22 +40,26 @@ public class CategoryController {
 
     @PatchMapping("/{id}")
     private ResponseEntity<?> updateCategory(@PathVariable Long id, @RequestBody Category category) {
-        if (categoryService.categoryExists(category)) {
+        Category existingCategory = categoryService.getCategory(id);
+
+        if (existingCategory == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.NOT_FOUND("Not found the category with id: " + id));
+        }
+
+        if (categoryService.categoryExists(category) &&
+                !existingCategory.getName().equals(category.getName())) {
             return ResponseEntity.badRequest()
                     .body(ApiResponse.BAD_REQUEST("Name already exists"));
-        } else {
-            try {
-                Category response = categoryService.updateCategory(id, category);
-                if (response == null) {
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                            .body(ApiResponse.NOT_FOUND("Not found the category with id: " + id));
-                }
-                return ResponseEntity.ok()
-                        .body(ApiResponse.SUCCESS(response));
-            } catch (Exception e) {
-                return ResponseEntity.internalServerError()
-                        .body(ApiResponse.SERVER_ERROR("Updated category failed: " + e.getMessage()));
-            }
+        }
+
+        try {
+            Category response = categoryService.updateCategory(id, category);
+            return ResponseEntity.ok()
+                    .body(ApiResponse.SUCCESS(response));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body(ApiResponse.SERVER_ERROR("Updated category failed: " + e.getMessage()));
         }
     }
 

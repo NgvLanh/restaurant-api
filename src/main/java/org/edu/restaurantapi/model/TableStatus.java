@@ -20,7 +20,6 @@ public class TableStatus {
 
     @NotBlank(message = "Table status name cannot be empty")
     @Size(max = 50, message = "Table status name cannot exceed 50 characters")
-    @Column(unique = true)
     String name;
 
     Boolean isDelete = false;

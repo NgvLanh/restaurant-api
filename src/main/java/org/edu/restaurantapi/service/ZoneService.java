@@ -4,7 +4,9 @@ import org.edu.restaurantapi.model.Zone;
 import org.edu.restaurantapi.repository.ZoneRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +31,9 @@ public class ZoneService {
     }
 
     public Page<Zone> getZones(Pageable pageable) {
-        return zoneRepository.findZoneByIsDeleteFalse(pageable);
+        Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
+                pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "Id"));
+        return zoneRepository.findZoneByIsDeleteFalse(pageableSorted);
     }
 
     public Zone getZone(Long id) {
