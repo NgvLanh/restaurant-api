@@ -5,7 +5,9 @@ import org.edu.restaurantapi.model.Dish;
 import org.edu.restaurantapi.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +29,9 @@ public class CategoryService {
         }).orElse(null);
     }
     public Page<Category> geCategories(Pageable pageable) {
-        return categoryRepository.findCategoryByIsDeleteFalse(pageable);
+        Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
+                pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "Id"));
+        return categoryRepository.findCategoryByIsDeleteFalse(pageableSorted);
     }
     public Category getCategory(Long id) {
         return categoryRepository.findById(id).orElse(null);

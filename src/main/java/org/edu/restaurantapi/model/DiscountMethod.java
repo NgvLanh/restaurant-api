@@ -21,7 +21,6 @@ public class DiscountMethod {
 
     @NotBlank(message = "Discount method cannot be empty")
     @Size(max = 50, message = "Discount method cannot exceed 50 characters")
-    @Column(unique = true)
     String name;
 
     Boolean isDelete = false;

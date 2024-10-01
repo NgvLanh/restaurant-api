@@ -44,6 +44,7 @@ public class BranchStatusController {
     // Create new BranchStatus
     @PostMapping
     public ResponseEntity<?> createBranchStatus(@Valid @RequestBody BranchStatus branchStatus) {
+        System.out.println(branchStatusService.findByName(branchStatus.getName()).isPresent());
         if (branchStatusService.findByName(branchStatus.getName()).isPresent()) {
             return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Branch status with this name already exists"));
         } else {

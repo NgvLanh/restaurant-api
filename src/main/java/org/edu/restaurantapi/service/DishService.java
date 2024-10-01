@@ -5,7 +5,9 @@ import org.edu.restaurantapi.model.User;
 import org.edu.restaurantapi.repository.DishRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,12 @@ public class DishService {
                     != null ? updatedDish.getName() : existingDish.getName());
             existingDish.setImage(updatedDish.getImage()
                     != null ? updatedDish.getImage() : existingDish.getImage());
+            existingDish.setPrice(updatedDish.getPrice()
+                    != null ? updatedDish.getPrice() : existingDish.getPrice());
+            existingDish.setCategory(updatedDish.getCategory()
+                    != null ? updatedDish.getCategory() : existingDish.getCategory());
+            existingDish.setBranch(updatedDish.getBranch()
+                    != null ? updatedDish.getBranch() : existingDish.getBranch());
             existingDish.setDescription(updatedDish.getDescription()
                     != null ? updatedDish.getDescription() : existingDish.getDescription());
             return dishRepository.save(existingDish);
@@ -32,7 +40,9 @@ public class DishService {
     }
 
     public Page<Dish> getDishes(Pageable pageable) {
-        return dishRepository.findDishByIsDeleteFalse(pageable);
+        Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
+                pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "Id"));
+        return dishRepository.findDishByIsDeleteFalse(pageableSorted);
     }
     public Dish getDish(Long id) {
         return dishRepository.findById(id).orElse(null);

@@ -10,5 +10,7 @@ import java.util.Optional;
 public interface BranchRepository extends JpaRepository<Branch, Long> {
     Optional<Branch> findByPhoneNumberAndIsDeleteFalse(String phoneNumber);
 
+    Optional<Branch> findByNameAndIsDeleteFalse(String name);
+
     Page<Branch> findBranchByIsDeleteFalse(Pageable pageable);
 }

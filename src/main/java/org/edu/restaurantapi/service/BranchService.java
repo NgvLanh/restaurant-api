@@ -4,10 +4,13 @@ import org.edu.restaurantapi.model.Branch;
 import org.edu.restaurantapi.repository.BranchRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.Optional;
 
 @Service
@@ -25,7 +28,9 @@ public class BranchService {
     }
 
     public Page<Branch> getAllBranches(Pageable pageable) {
-        return branchRepository.findBranchByIsDeleteFalse(pageable);
+        Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
+                pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "Id"));
+        return branchRepository.findBranchByIsDeleteFalse(pageableSorted);
     }
 
     public Branch getBranchById(Long id) {
@@ -54,5 +59,9 @@ public class BranchService {
 
     public boolean branchPhoneNumberExists(Branch branch) {
         return branchRepository.findByPhoneNumberAndIsDeleteFalse(branch.getPhoneNumber()).isPresent();
+    }
+
+    public boolean branchNameExists(Branch branch) {
+        return branchRepository.findByNameAndIsDeleteFalse(branch.getPhoneNumber()).isPresent();
     }
 }

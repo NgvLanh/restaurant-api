@@ -22,7 +22,6 @@ public class Discount {
 
     @NotBlank(message = "Discount code cannot be empty")
     @Size(max = 10, message = "Discount code cannot exceed 10 characters")
-    @Column(unique = true)
     String code;
 
     @NotNull(message = "Quantity must not be null")

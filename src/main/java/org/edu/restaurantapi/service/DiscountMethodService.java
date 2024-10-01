@@ -5,7 +5,9 @@ import org.edu.restaurantapi.model.User;
 import org.edu.restaurantapi.repository.DiscountMethodRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +22,9 @@ public class DiscountMethodService {
 
     // Lấy tất cả các discount method
     public Page<DiscountMethod> getAllDiscountMethods(Pageable pageable) {
-        return discountMethodRepository.findDiscountMethodByIsDeleteFalse(pageable);
+        Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
+                pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
+        return discountMethodRepository.findDiscountMethodByIsDeleteFalse(pageableSorted);
     }
 
     // Lấy discount method theo ID
@@ -46,7 +50,7 @@ public class DiscountMethodService {
     }
 
     // Xóa discount method theo ID
-    public Boolean deleteDiscountMethod(long id) {
+    public Boolean deleteDiscountMethod(Long id) {
         return discountMethodRepository.findById(id).map(discountMethod -> {
             discountMethod.setIsDelete(true);
             discountMethodRepository.save(discountMethod);

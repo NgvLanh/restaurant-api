@@ -17,7 +17,6 @@ public class Category {
     Long id;
 
     @NotBlank(message = "Category name cannot be empty")
-    @Column(unique = true)
     String name;
 
     @NotBlank(message = "Category description cannot be empty.")
