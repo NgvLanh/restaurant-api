@@ -1,6 +1,7 @@
 package org.edu.restaurantapi.controller;
 
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.edu.restaurantapi.model.User;
 import org.edu.restaurantapi.response.ApiResponse;
 import org.edu.restaurantapi.service.UserService;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -64,12 +66,14 @@ public class UserController {
 
     @GetMapping
     private ResponseEntity<?> getUsers(
-            @RequestParam(value = "branch", required = false) String branchId, Pageable pageable) {
-        Page<User> response = userService.getUsersByBranch(branchId, pageable);
-//        Page<User> response = userService.getUsers(pageable);
-        response.forEach(res -> {
-            res.setPassword(null);
-        });
+            @RequestParam(value = "phoneNumber", required = false) String phoneNumber,
+            Pageable pageable) {
+        Page<User> response;
+        if (!phoneNumber.isEmpty()) {
+            response = userService.getUserByPhoneNumber(phoneNumber, pageable);
+        } else {
+            response = userService.getUsers(pageable);
+        }
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
 

@@ -11,6 +11,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmailOrPhoneNumber(String email, String phoneNumber);
 
+    Page<User> findByPhoneNumberContaining(String phoneNumber, Pageable pageable);
+
     Optional<User> findByPhoneNumber(String phoneNumber);
 
     Page<User> findUserByIsDeleteFalse(Pageable pageable);

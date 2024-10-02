@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -53,11 +54,17 @@ public class UserService {
     }
 
     public Page<User> getUsers(Pageable pageable) {
-        return userRepository.findUserByIsDeleteFalse(pageable);
+        Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
+                pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "Id"));
+        return userRepository.findUserByIsDeleteFalse(pageableSorted);
     }
 
     public User getUser(Long id) {
         return userRepository.findById(id).orElse(null);
+    }
+
+    public Page<User> getUserByPhoneNumber(String phoneNumber, Pageable pageable) {
+        return userRepository.findByPhoneNumberContaining(phoneNumber, pageable);
     }
 
     public Boolean deleteUser(Long id) {
