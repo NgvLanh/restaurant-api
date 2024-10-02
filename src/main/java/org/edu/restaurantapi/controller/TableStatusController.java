@@ -34,6 +34,10 @@ public class TableStatusController {
     // Tạo mới một trạng thái bàn
     @PostMapping
     private ResponseEntity<?> createTableStatus(@Valid @RequestBody TableStatus tableStatus) {
+        if (tableStatusService.tableStatusNameExists(tableStatus.getName())) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.BAD_REQUEST("Zone name already exists"));
+        } else {
         try {
             TableStatus response = tableStatusService.createTableStatus(tableStatus);
             return ResponseEntity.status(HttpStatus.CREATED)
@@ -41,19 +45,23 @@ public class TableStatusController {
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
                     .body(ApiResponse.SERVER_ERROR("Created table status failed: " + e.getMessage()));
-        }
+        }}
     }
 
     // Cập nhật thông tin trạng thái bàn
     @PatchMapping("/{id}")
     private ResponseEntity<?> updateTableStatus(@PathVariable Long id, @RequestBody TableStatus tableStatus) {
+        if (tableStatusService.tableStatusNameExists(tableStatus.getName())) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.BAD_REQUEST("Zone name already exists"));
+        } else {
         try {
             TableStatus response = tableStatusService.updateTableStatus(id, tableStatus);
             return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
                     .body(ApiResponse.SERVER_ERROR("Updated table status failed: " + e.getMessage()));
-        }
+        }}
     }
 
     // Xóa một trạng thái bàn (đánh dấu đã xóa)
