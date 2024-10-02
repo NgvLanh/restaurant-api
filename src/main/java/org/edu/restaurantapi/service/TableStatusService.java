@@ -48,7 +48,7 @@ public class TableStatusService {
     }
 
     // check table name status
-    public Boolean tableStatusNameExists(User user) {
-        return tableStatusRepository.findTableStatusByNameAndIsDeleteFalse(user.getEmail()).isPresent();
+    public Boolean tableStatusNameExists(String tableStatus) {
+        return tableStatusRepository.findTableStatusByNameAndIsDeleteFalse(tableStatus).isPresent();
     }
 }

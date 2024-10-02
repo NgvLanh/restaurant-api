@@ -51,13 +51,18 @@ public class ZoneController {
     // Cập nhật Zone
     @PatchMapping("/{id}")
     private ResponseEntity<?> updateZone(@PathVariable Long id, @RequestBody Zone zone) {
-        try {
-            Zone response = zoneService.updateZone(id, zone);
-            return ResponseEntity.ok()
-                    .body(ApiResponse.SUCCESS(response));
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError()
-                    .body(ApiResponse.SERVER_ERROR("Updated zone failed: " + e.getMessage()));
+        if (zoneService.zoneNameExists(zone.getAddress())) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.BAD_REQUEST("Zone name already exists"));
+        } else {
+            try {
+                Zone response = zoneService.updateZone(id, zone);
+                return ResponseEntity.ok()
+                        .body(ApiResponse.SUCCESS(response));
+            } catch (Exception e) {
+                return ResponseEntity.internalServerError()
+                        .body(ApiResponse.SERVER_ERROR("Updated zone failed: " + e.getMessage()));
+            }
         }
     }
 
