@@ -69,6 +69,10 @@ public class BranchController {
                     .body(ApiResponse.NOT_FOUND("Not found the branch with id: " + id));
         }
 
+        if (!existingBranch.getName().equals(branchDetails.getName()) &&
+                branchService.branchNameExists(branchDetails)) {
+            return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Branch name already exists for another branch."));
+        }
         // Chỉ kiểm tra trùng số điện thoại nếu số điện thoại đã thay đổi
         if (!existingBranch.getPhoneNumber().equals(branchDetails.getPhoneNumber()) &&
                 branchService.branchPhoneNumberExists(branchDetails)) {

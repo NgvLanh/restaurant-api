@@ -62,6 +62,6 @@ public class BranchService {
     }
 
     public boolean branchNameExists(Branch branch) {
-        return branchRepository.findByNameAndIsDeleteFalse(branch.getPhoneNumber()).isPresent();
+        return branchRepository.findByNameAndIsDeleteFalse(branch.getName()).isPresent();
     }
 }
