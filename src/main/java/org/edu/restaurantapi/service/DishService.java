@@ -31,8 +31,6 @@ public class DishService {
                     != null ? updatedDish.getPrice() : existingDish.getPrice());
             existingDish.setCategory(updatedDish.getCategory()
                     != null ? updatedDish.getCategory() : existingDish.getCategory());
-            existingDish.setBranch(updatedDish.getBranch()
-                    != null ? updatedDish.getBranch() : existingDish.getBranch());
             existingDish.setDescription(updatedDish.getDescription()
                     != null ? updatedDish.getDescription() : existingDish.getDescription());
             return dishRepository.save(existingDish);

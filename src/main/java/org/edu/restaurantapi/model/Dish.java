@@ -39,10 +39,6 @@ public class Dish {
     @JoinColumn(name = "category_id")
     Category category;
 
-    @ManyToOne
-    @JoinColumn(name = "branch_id")
-    Branch branch;
-
     @JsonIgnore
     Boolean isDelete = false;
 }
