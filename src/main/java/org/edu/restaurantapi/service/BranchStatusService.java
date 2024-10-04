@@ -52,6 +52,10 @@ public class BranchStatusService {
         }).orElse(false);
     }
 
+    public Page<BranchStatus> getBranchStatusesByName(String name, Pageable pageable) {
+        return branchStatusRepository.findByNameContainingAndIsDeleteFalse(name, pageable);
+    }
+
     public Optional<BranchStatus> findByName(String name) {
         return branchStatusRepository.findByNameAndIsDeleteFalse(name);
     }

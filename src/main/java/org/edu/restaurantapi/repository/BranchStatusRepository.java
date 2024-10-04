@@ -11,5 +11,7 @@ import java.util.Optional;
 public interface BranchStatusRepository extends JpaRepository<BranchStatus, Long> {
     Optional<BranchStatus> findByNameAndIsDeleteFalse(String name);
 
+    Page<BranchStatus> findByNameContainingAndIsDeleteFalse(String name, Pageable pageable);
+
     Page<BranchStatus> findBranchStatusByIsDeleteFalse(Pageable pageable);
 }
