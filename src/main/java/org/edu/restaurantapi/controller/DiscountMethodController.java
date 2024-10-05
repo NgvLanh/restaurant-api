@@ -6,6 +6,7 @@ import org.edu.restaurantapi.model.DiscountMethod;
 import org.edu.restaurantapi.response.ApiResponse;
 import org.edu.restaurantapi.service.DiscountMethodService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,10 +23,15 @@ public class DiscountMethodController {
 
     // Lấy tất cả discount methods
     @GetMapping
-    public ResponseEntity<?> getAllDiscountMethods(Pageable pageable) {
-        return ResponseEntity.ok().body(ApiResponse.SUCCESS(discountMethodService.getAllDiscountMethods(pageable)));
+    public ResponseEntity<?> getDiscountMethods(@RequestParam(value = "name", required = false) String name,Pageable pageable) {
+        Page<DiscountMethod> response;
+        if(name!= null && !name.isEmpty()){
+            response = discountMethodService.getDiscountMethodByName(name,pageable);
+        }else{
+            response = discountMethodService.getAllDiscountMethods(pageable);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.SUCCESS(response));
     }
-
     // Lấy discount method theo ID
     @GetMapping("/{id}")
     public ResponseEntity<?> getDiscountMethodById(@PathVariable Long id ) {

@@ -64,4 +64,8 @@ public class DiscountMethodService {
         return discountMethodRepository.findByNameAndIsDeleteFalse(discountMethod.getName()).isPresent();
     }
 
+    public Page<DiscountMethod> getDiscountMethodByName(String name, Pageable pageable){
+        return discountMethodRepository.findByNameContainingAndIsDeleteFalse(name,pageable);
+    }
+
 }
