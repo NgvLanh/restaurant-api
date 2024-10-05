@@ -1,6 +1,7 @@
 package org.edu.restaurantapi.controller;
 
 import jakarta.validation.Valid;
+import org.edu.restaurantapi.model.TableStatus;
 import org.edu.restaurantapi.model.Zone;
 import org.edu.restaurantapi.response.ApiResponse;
 import org.edu.restaurantapi.service.ZoneService;
@@ -33,7 +34,7 @@ public class ZoneController {
     // Tạo Zone mới
     @PostMapping
     private ResponseEntity<?> createZone(@Valid @RequestBody Zone zone) {
-        if (zoneService.zoneNameExists(zone.getAddress())) {
+        if (zoneService.zoneNameExists(zone)) {
             return ResponseEntity.badRequest()
                     .body(ApiResponse.BAD_REQUEST("Zone name already exists"));
         } else {
@@ -51,7 +52,7 @@ public class ZoneController {
     // Cập nhật Zone
     @PatchMapping("/{id}")
     private ResponseEntity<?> updateZone(@PathVariable Long id, @RequestBody Zone zone) {
-        if (zoneService.zoneNameExists(zone.getAddress())) {
+        if (zoneService.zoneNameExists(zone)) {
             return ResponseEntity.badRequest()
                     .body(ApiResponse.BAD_REQUEST("Zone name already exists"));
         } else {
@@ -86,8 +87,19 @@ public class ZoneController {
 
     // Lấy danh sách các Zone
     @GetMapping
-    private ResponseEntity<?> getZones(Pageable pageable) {
-        Page<Zone> response = zoneService.getZones(pageable);
+    public ResponseEntity<ApiResponse<Page<Zone>>> getZones(
+            @RequestParam(value = "address", required = false) String address,
+            Pageable pageable) {
+        Page<Zone> response;
+
+        // Kiểm tra nếu address là null hoặc rỗng
+        if (address != null && !address.isEmpty()) {
+            response = zoneService.getZoneByAddress(address, pageable);
+        } else {
+            response = zoneService.getZones(pageable);
+        }
+
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
+
 }

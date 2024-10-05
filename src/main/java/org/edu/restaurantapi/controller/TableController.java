@@ -2,6 +2,8 @@ package org.edu.restaurantapi.controller;
 
 import jakarta.validation.Valid;
 import org.edu.restaurantapi.model.Table;
+import org.edu.restaurantapi.model.User;
+import org.edu.restaurantapi.model.Zone;
 import org.edu.restaurantapi.response.ApiResponse;
 import org.edu.restaurantapi.service.TableService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +37,7 @@ public class TableController {
     private ResponseEntity<?> createTable(@Valid @RequestBody Table table) {
         try {
             // Check if a table with the same number already exists
-            if (tableService.existsByNumber(table.getNumber())) {
+            if (tableService.numberExists(table)) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(ApiResponse.BAD_REQUEST("Number already exists"));
             }
@@ -55,7 +57,7 @@ public class TableController {
     private ResponseEntity<?> updateTable(@PathVariable Long id, @Valid @RequestBody Table table) {
         try {
             // Check if the number exists in another table
-            if (tableService.numberExists(table.getNumber())) {
+            if (tableService.numberExists(table)) {
                 return ResponseEntity.badRequest()
                         .body(ApiResponse.SERVER_ERROR("Number already exists."));
             }
@@ -87,10 +89,24 @@ public class TableController {
         }
     }
 
-    // Lấy danh sách các bàn với phân trang
+    //    // Lấy danh sách các bàn với phân trang
+//    @GetMapping
+//    private ResponseEntity<?> getTableStatuses(Pageable pageable) {
+//        Page<Table> response = tableService.getTables(pageable);
+//        return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
+//    }
     @GetMapping
-    private ResponseEntity<?> getTableStatuses(Pageable pageable) {
-        Page<Table> response = tableService.getTables(pageable);
+    public ResponseEntity<ApiResponse<Page<Table>>> getTables(
+            @RequestParam(value = "number", required = false) Integer number,
+            Pageable pageable) {
+        Page<Table> response;
+        if (number != null ) {
+            response = tableService.getTableByNumber(number, pageable);
+        } else {
+            response = tableService.getTables(pageable);
+        }
+
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
+
 }

@@ -3,6 +3,7 @@ package org.edu.restaurantapi.controller;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.edu.restaurantapi.model.TableStatus;
+import org.edu.restaurantapi.model.User;
 import org.edu.restaurantapi.response.ApiResponse;
 import org.edu.restaurantapi.service.TableStatusService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/table-statuses")
 public class TableStatusController {
@@ -34,9 +36,9 @@ public class TableStatusController {
     // Tạo mới một trạng thái bàn
     @PostMapping
     private ResponseEntity<?> createTableStatus(@Valid @RequestBody TableStatus tableStatus) {
-        if (tableStatusService.tableStatusNameExists(tableStatus.getName())) {
+        if (tableStatusService.tableStatusNameExists(tableStatus)) {
             return ResponseEntity.badRequest()
-                    .body(ApiResponse.BAD_REQUEST("Zone name already exists"));
+                    .body(ApiResponse.BAD_REQUEST("Table status name already exists"));
         } else {
         try {
             TableStatus response = tableStatusService.createTableStatus(tableStatus);
@@ -51,9 +53,9 @@ public class TableStatusController {
     // Cập nhật thông tin trạng thái bàn
     @PatchMapping("/{id}")
     private ResponseEntity<?> updateTableStatus(@PathVariable Long id, @RequestBody TableStatus tableStatus) {
-        if (tableStatusService.tableStatusNameExists(tableStatus.getName())) {
+        if (tableStatusService.tableStatusNameExists(tableStatus)) {
             return ResponseEntity.badRequest()
-                    .body(ApiResponse.BAD_REQUEST("Zone name already exists"));
+                    .body(ApiResponse.BAD_REQUEST("Table status name already exists"));
         } else {
         try {
             TableStatus response = tableStatusService.updateTableStatus(id, tableStatus);
@@ -81,11 +83,20 @@ public class TableStatusController {
                     .body(ApiResponse.SERVER_ERROR("Error deleting table status: " + e.getMessage()));
         }
     }
-
-    // Lấy danh sách các trạng thái bàn với phân trang
     @GetMapping
-    private ResponseEntity<?> getTableStatuses(Pageable pageable) {
-        Page<TableStatus> response = tableStatusService.getTableStatuses(pageable);
+    public ResponseEntity<ApiResponse<Page<TableStatus>>> getTableStatuses(
+            @RequestParam(value = "name", required = false) String name,
+            Pageable pageable) {
+        Page<TableStatus> response;
+
+        // Kiểm tra nếu address là null hoặc rỗng
+        if (name != null && !name.isEmpty()) {
+            response = tableStatusService.getTableStatusByName(name, pageable);
+        } else {
+            response = tableStatusService.getTableStatuses(pageable);
+        }
+
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
+
 }
