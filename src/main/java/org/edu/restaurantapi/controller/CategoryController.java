@@ -3,6 +3,7 @@ package org.edu.restaurantapi.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.edu.restaurantapi.model.Category;
+import org.edu.restaurantapi.model.Dish;
 import org.edu.restaurantapi.response.ApiResponse;
 import org.edu.restaurantapi.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,10 +64,20 @@ public class CategoryController {
         }
     }
 
+    //    @GetMapping
+//    private ResponseEntity<?> getCategory(Pageable pageable) {
+//        Page<Category> response = categoryService.geCategories(pageable);
+//        return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
+//    }
     @GetMapping
-    private ResponseEntity<?> getCategory(Pageable pageable) {
-        Page<Category> response = categoryService.geCategories(pageable);
-        return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
+    public ResponseEntity<?> getCategories(@RequestParam(value = "name", required = false) String name, Pageable pageable) {
+        Page<Category> response;
+        if (name != null && !name.isEmpty()) {
+            response = categoryService.getCategoriesByName(name, pageable);
+        } else {
+            response = categoryService.getAllCategory(pageable);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.SUCCESS(response));
     }
 
     @GetMapping("/{id}")

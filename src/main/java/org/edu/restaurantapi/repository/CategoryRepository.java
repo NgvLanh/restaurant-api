@@ -10,6 +10,7 @@ import java.util.Optional;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     Optional<Category> findByNameAndIsDeleteFalse(String name);
+    Page<Category> findByNameContainingAndIsDeleteFalse(String name,Pageable pageable);
 
     Page<Category> findCategoryByIsDeleteFalse(Pageable pageable);
 }
