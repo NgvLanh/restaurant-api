@@ -10,5 +10,7 @@ import java.util.Optional;
 public interface DiscountMethodRepository extends JpaRepository<DiscountMethod, Long> {
     Optional<DiscountMethod> findByNameAndIsDeleteFalse(String name);
 
+    Page<DiscountMethod> findByNameContainingAndIsDeleteFalse(String name, Pageable pageable);
+
     Page<DiscountMethod> findDiscountMethodByIsDeleteFalse(Pageable pageable);
 }

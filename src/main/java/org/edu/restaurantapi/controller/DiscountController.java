@@ -2,6 +2,7 @@ package org.edu.restaurantapi.controller;
 
 import jakarta.validation.Valid;
 import org.edu.restaurantapi.model.Discount;
+import org.edu.restaurantapi.model.DiscountMethod;
 import org.edu.restaurantapi.model.User;
 import org.edu.restaurantapi.response.ApiResponse;
 import org.edu.restaurantapi.service.DiscountService;
@@ -24,9 +25,14 @@ public class DiscountController {
     private DiscountService discountService;
 
     @GetMapping
-    public ResponseEntity<?> getAllDiscounts(Pageable pageable) {
-        Page<Discount> response = discountService.getAllDiscounts(pageable);
-        return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
+    public ResponseEntity<?> getDiscount(@RequestParam(value = "code", required = false) String code,Pageable pageable) {
+        Page<Discount> response;
+        if(code!= null && !code.isEmpty()){
+            response = discountService.getDiscountMethodByValue(code,pageable);
+        }else{
+            response = discountService.getAllDiscounts(pageable);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.SUCCESS(response));
     }
 
 

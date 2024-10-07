@@ -1,6 +1,7 @@
 package org.edu.restaurantapi.service;
 
 import org.edu.restaurantapi.model.Discount;
+import org.edu.restaurantapi.model.DiscountMethod;
 import org.edu.restaurantapi.repository.DiscountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -60,6 +61,9 @@ public class DiscountService {
     //check
     public  Boolean discountCodeExists(Discount discount){
         return discountRepository.findByCodeAndIsDeleteFalse(discount.getCode()).isPresent();
+    }
+    public Page<Discount> getDiscountMethodByValue(String code, Pageable pageable){
+        return discountRepository.findByCodeContainingAndIsDeleteIsFalse(code,pageable);
     }
 
 }
