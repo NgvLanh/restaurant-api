@@ -1,5 +1,6 @@
 package org.edu.restaurantapi.service;
 
+import org.edu.restaurantapi.model.TableStatus;
 import org.edu.restaurantapi.model.Zone;
 import org.edu.restaurantapi.repository.ZoneRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,10 @@ public class ZoneService {
         return zoneRepository.findById(id).orElse(null);
     }
 
+    public Page<Zone> getZoneByAddress(String address, Pageable pageable) {
+        return zoneRepository.findByAddressContainingAndIsDeleteFalse(address, pageable);
+    }
+
     public Boolean deleteZone(Long id) {
         return zoneRepository.findById(id).map(zone -> {
             zone.setIsDelete(true);
@@ -49,7 +54,7 @@ public class ZoneService {
     }
 
     // Check zone name existence
-    public Boolean zoneNameExists(String address) {
-        return zoneRepository.findZoneByAddressAndIsDeleteFalse(address).isPresent();
+    public Boolean zoneNameExists(Zone zone) {
+        return zoneRepository.findZoneByAddressAndIsDeleteFalse(zone.getAddress()).isPresent();
     }
 }

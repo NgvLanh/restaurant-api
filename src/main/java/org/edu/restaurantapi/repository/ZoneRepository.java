@@ -12,4 +12,6 @@ public interface ZoneRepository extends JpaRepository<Zone, Long> {
     Page<Zone> findZoneByIsDeleteFalse(Pageable pageable);
 
     Optional<Zone> findZoneByAddressAndIsDeleteFalse(String address);
+
+    Page<Zone> findByAddressContainingAndIsDeleteFalse(String address, Pageable pageable);
 }

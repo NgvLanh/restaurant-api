@@ -39,6 +39,10 @@ public class TableStatusService {
         return tableStatusRepository.findById(id).orElse(null);
     }
 
+    public Page<TableStatus> getTableStatusByName(String name, Pageable pageable) {
+        return tableStatusRepository.findByNameContainingAndIsDeleteFalse(name, pageable);
+    }
+
     public Boolean deleteTableStatus(Long id) {
         return tableStatusRepository.findById(id).map(tableStatus -> {
             tableStatus.setIsDelete(true);
@@ -48,7 +52,7 @@ public class TableStatusService {
     }
 
     // check table name status
-    public Boolean tableStatusNameExists(String tableStatus) {
-        return tableStatusRepository.findTableStatusByNameAndIsDeleteFalse(tableStatus).isPresent();
+    public Boolean tableStatusNameExists(TableStatus tableStatus) {
+        return tableStatusRepository.findTableStatusByNameAndIsDeleteFalse(tableStatus.getName()).isPresent();
     }
 }

@@ -15,4 +15,7 @@ public interface TableStatusRepository extends JpaRepository<TableStatus, Long> 
     Page<TableStatus> findTableStatusByIsDeleteFalse(Pageable pageable);
 
     Optional<TableStatus> findTableStatusByNameAndIsDeleteFalse(String tableStatusName);
+
+    Page<TableStatus> findByNameContainingAndIsDeleteFalse(String name, Pageable pageable);
+
 }

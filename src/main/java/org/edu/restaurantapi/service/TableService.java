@@ -1,6 +1,7 @@
 package org.edu.restaurantapi.service;
 
 import org.edu.restaurantapi.model.Table;
+import org.edu.restaurantapi.model.User;
 import org.edu.restaurantapi.repository.TableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,6 +16,7 @@ public class TableService {
 
     @Autowired
     private TableRepository tableRepository;
+
 
     public Table createTable(Table table) {
         return tableRepository.save(table);
@@ -34,7 +36,7 @@ public class TableService {
         }).orElse(null);
     }
 
-    public Page<Table> getTables(Pageable pageable) {
+    public Page<Table> getTables(Pageable pageable){
         Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
                 pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "Id"));
         return tableRepository.findTableByIsDeleteFalse(pageableSorted);
@@ -42,6 +44,10 @@ public class TableService {
 
     public Table getTable(Long id) {
         return tableRepository.findById(id).orElse(null);
+    }
+
+    public Page<Table> getTableByNumber(Integer number, Pageable pageable) {
+        return tableRepository.findByNumberAndIsDeleteFalse(number, pageable);
     }
 
     public Boolean deleteTable(Long id) {
@@ -52,10 +58,8 @@ public class TableService {
         }).orElse(false);
     }
 
-    public Boolean numberExists(Integer number) {
-        return tableRepository.existsByNumberAndIsDeleteFalse(number);
+    public Boolean numberExists(Table table) {
+        return tableRepository.findTableByNumberAndIsDeleteFalse(table.getNumber()).isPresent();
     }
-    public Boolean existsByNumber(Integer number) {
-        return tableRepository.existsByNumberAndIsDeleteFalse(number);
-    }
+
 }
