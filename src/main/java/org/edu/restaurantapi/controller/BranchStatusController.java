@@ -5,6 +5,7 @@ import org.edu.restaurantapi.model.BranchStatus;
 import org.edu.restaurantapi.response.ApiResponse;
 import org.edu.restaurantapi.service.BranchStatusService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +19,21 @@ public class BranchStatusController {
     private BranchStatusService branchStatusService;
 
     // Get all BranchStatuses
+//    @GetMapping
+//    public ResponseEntity<?> getAllBranchStatuses(Pageable pageable) {
+//        return ResponseEntity.ok().body(ApiResponse.SUCCESS(branchStatusService.getAllBranchStatuses(pageable)));
+//    }
+
     @GetMapping
-    public ResponseEntity<?> getAllBranchStatuses(Pageable pageable) {
-        return ResponseEntity.ok().body(ApiResponse.SUCCESS(branchStatusService.getAllBranchStatuses(pageable)));
+    public ResponseEntity<?> getBranchStatus(@RequestParam(value = "name", required = false)String name, Pageable pageable) {
+        Page<BranchStatus> reponse;
+        if (name != null && !name.isEmpty()) {
+            reponse = branchStatusService.getBranchStatusesByName(name, pageable);
+        } else {
+            reponse = branchStatusService.getAllBranchStatuses(pageable);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.SUCCESS(reponse));
     }
 
     // Get BranchStatus by ID

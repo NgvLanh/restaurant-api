@@ -57,6 +57,14 @@ public class BranchService {
         }).orElse(false);
     }
 
+    public Page<Branch> getBranchesByName(Pageable pageable, String name) {
+        return branchRepository.findByNameContainingAndIsDeleteFalse(name, pageable);
+    }
+
+    public Page<Branch> getBranchesByPhoneNumber(Pageable pageable, String phoneNumber) {
+        return branchRepository.findByPhoneNumberContainingAndIsDeleteFalse(phoneNumber, pageable);
+    }
+
     public boolean branchPhoneNumberExists(Branch branch) {
         return branchRepository.findByPhoneNumberAndIsDeleteFalse(branch.getPhoneNumber()).isPresent();
     }

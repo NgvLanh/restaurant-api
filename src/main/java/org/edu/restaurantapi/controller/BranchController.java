@@ -2,6 +2,7 @@ package org.edu.restaurantapi.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.edu.restaurantapi.model.Branch;
+import org.edu.restaurantapi.model.BranchStatus;
 import org.edu.restaurantapi.response.ApiResponse;
 import org.edu.restaurantapi.service.BranchService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,12 +38,27 @@ public class BranchController {
         }
     }
 
-    // Get all branches
     @GetMapping
-    public ResponseEntity<?> getAllBranches(Pageable pageable) {
-        Page<Branch> response = branchService.getAllBranches(pageable);
-        return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
+    public ResponseEntity<?> getBranch(@RequestParam(value = "name", required = false)String name, @RequestParam(value = "phoneNumber", required = false) String phoneNumber, Pageable pageable) {
+        Page<Branch> reponse;
+        if (name != null && !name.isEmpty()) {
+            reponse = branchService.getBranchesByName(pageable, name);
+        } else if (phoneNumber != null && !phoneNumber.isEmpty()) {
+            reponse = branchService.getBranchesByPhoneNumber(pageable, phoneNumber);
+        } else {
+            reponse = branchService.getAllBranches(pageable);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.SUCCESS(reponse));
     }
+
+    // Get all branches
+//    @GetMapping
+//    public ResponseEntity<?> getAllBranches(Pageable pageable) {
+//        Page<Branch> response = branchService.getAllBranches(pageable);
+//        return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
+//    }
+
 
     // Get a single branch by ID
     @GetMapping("/{id}")
