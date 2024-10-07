@@ -59,10 +59,20 @@ public class DishController {
         }
     }
 
+//    @GetMapping
+//    private ResponseEntity<?> getDishes(Pageable pageable) {
+//        Page<Dish> response = dishService.getDishes(pageable);
+//        return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
+//    }
     @GetMapping
-    private ResponseEntity<?> getDishes(Pageable pageable) {
-        Page<Dish> response = dishService.getDishes(pageable);
-        return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
+    public ResponseEntity<?> getDishes(@RequestParam(value = "name", required = false) String name,Pageable pageable) {
+        Page<Dish> response;
+        if(name!= null && !name.isEmpty()){
+            response = dishService.getDishByName(name,pageable);
+        }else{
+            response = dishService.getAllDish(pageable);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.SUCCESS(response));
     }
 
     @GetMapping("/{id}")

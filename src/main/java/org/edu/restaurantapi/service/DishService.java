@@ -42,9 +42,11 @@ public class DishService {
                 pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "Id"));
         return dishRepository.findDishByIsDeleteFalse(pageableSorted);
     }
+
     public Dish getDish(Long id) {
         return dishRepository.findById(id).orElse(null);
     }
+
     public Boolean deleteDish(Long id) {
         return dishRepository.findById(id).map(dish -> {
             dish.setIsDelete(true);
@@ -52,9 +54,18 @@ public class DishService {
             return true;
         }).orElse(false);
     }
+
+    public Page<Dish> getAllDish(Pageable pageable) {
+        return dishRepository.findDishByIsDeleteFalse(pageable);
+    }
+
     // check name
     public Boolean dishExists(Dish dish) {
         return dishRepository.findByNameAndIsDeleteFalse(dish.getName()).isPresent();
+    }
+
+    public Page<Dish> getDishByName(String name, Pageable pageable) {
+        return dishRepository.findByNameContainingAndIsDeleteFalse(name, pageable);
     }
 
 }
