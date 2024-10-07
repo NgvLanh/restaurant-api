@@ -29,6 +29,7 @@ public class ApplicationInitConfig {
                 role = roleRepository.save(Role.builder()
                         .name(roleName)
                         .permissions("ALL")
+                        .isDelete(false)
                         .build());
             } else {
                 role = roleRepository.findByNameAndIsDeleteFalse(roleName).get();
