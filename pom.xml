@@ -37,11 +37,6 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-
         <!-- Spring Boot Starter Data JPA for ORM and database interaction -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
