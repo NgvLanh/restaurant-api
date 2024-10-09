@@ -11,6 +11,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class TableService {
 
@@ -19,6 +21,7 @@ public class TableService {
 
 
     public Table createTable(Table table) {
+
         return tableRepository.save(table);
     }
 
@@ -46,9 +49,26 @@ public class TableService {
         return tableRepository.findById(id).orElse(null);
     }
 
-    public Page<Table> getTableByNumber(Integer number, Pageable pageable) {
-        return tableRepository.findByNumberAndIsDeleteFalse(number, pageable);
+//    public Page<Table> getTableByNumber(Integer number, Pageable pageable) {
+//        return tableRepository.findByNumberAndIsDeleteFalse(number, pageable);
+//    }
+//
+//    public Page<Table> getTablesByBranch(Long branchId, Pageable pageable) {
+//        return tableRepository.findByBranch_IdAndIsDeleteFalse(branchId, pageable);
+//    }
+
+    public Page<Table> searchTables(Integer number, Long branchId, Pageable pageable) {
+        if (number != null && branchId != null) {
+            return tableRepository.findByNumberAndBranch_IdAndIsDeleteFalse(number, branchId, pageable);
+        } else if (number != null) {
+            return tableRepository.findByNumberAndIsDeleteFalse(number, pageable);
+        } else if (branchId != null) {
+            return tableRepository.findByBranch_IdAndIsDeleteFalse(branchId, pageable);
+        }
+        return tableRepository.findTableByIsDeleteFalse(pageable);
     }
+
+
 
     public Boolean deleteTable(Long id) {
         return tableRepository.findById(id).map(table -> {
@@ -59,7 +79,7 @@ public class TableService {
     }
 
     public Boolean numberExists(Table table) {
-        return tableRepository.findTableByNumberAndIsDeleteFalse(table.getNumber()).isPresent();
+        return tableRepository.findByNumberAndBranch_IdAndIsDeleteFalse(table.getNumber(),table.getBranch().getId()).isPresent();
     }
 
 }
