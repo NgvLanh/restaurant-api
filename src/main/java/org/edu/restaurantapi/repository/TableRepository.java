@@ -13,4 +13,10 @@ public interface TableRepository extends JpaRepository<Table, Long> {
     Optional<Table> findTableByNumberAndIsDeleteFalse(Integer number);
 
     Page<Table> findByNumberAndIsDeleteFalse(Integer number, Pageable pageable);
+
+    Page<Table> findByBranch_IdAndIsDeleteFalse(Long branchId, Pageable pageable);
+
+    Page<Table> findByNumberAndBranch_IdAndIsDeleteFalse(Integer number, Long branchId, Pageable pageable);
+
+    Optional<Table> findByNumberAndBranch_IdAndIsDeleteFalse(Integer number, Long branchId);
 }

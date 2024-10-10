@@ -61,7 +61,6 @@ public class TableController {
                 return ResponseEntity.badRequest()
                         .body(ApiResponse.SERVER_ERROR("Number already exists."));
             }
-
             Table response = tableService.updateTable(id, table);
             return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
         } catch (Exception e) {
@@ -81,7 +80,7 @@ public class TableController {
                         .body(ApiResponse.DELETE("Table deleted successfully"));
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(ApiResponse.NOT_FOUND("Table with id " + id + " not found"));
+                        .body(ApiResponse.NOT_FOUND("Table with id " + id + " not fxound"));
             }
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
@@ -89,24 +88,20 @@ public class TableController {
         }
     }
 
-    //    // Lấy danh sách các bàn với phân trang
-//    @GetMapping
-//    private ResponseEntity<?> getTableStatuses(Pageable pageable) {
-//        Page<Table> response = tableService.getTables(pageable);
-//        return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
-//    }
     @GetMapping
     public ResponseEntity<ApiResponse<Page<Table>>> getTables(
             @RequestParam(value = "number", required = false) Integer number,
+            @RequestParam(value = "branchId", required = false) Long branchId,
             Pageable pageable) {
         Page<Table> response;
-        if (number != null ) {
-            response = tableService.getTableByNumber(number, pageable);
-        } else {
-            response = tableService.getTables(pageable);
+        if(branchId != null) {
+           response  = tableService.searchTables(number, branchId, pageable);
+        }else{
+            response  = tableService.getTables(pageable);
         }
-
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
+
+
 
 }
