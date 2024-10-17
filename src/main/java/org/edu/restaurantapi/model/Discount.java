@@ -46,5 +46,9 @@ public class Discount {
     @Positive(message = "Value must be greater than 0")
     Double value;
 
+    @ManyToOne
+    @JoinColumn(name = "branch_id")
+    Branch branch;
+
     Boolean isDelete = false;
 }

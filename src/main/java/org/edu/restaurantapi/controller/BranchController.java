@@ -40,16 +40,16 @@ public class BranchController {
 
     @GetMapping
     public ResponseEntity<?> getBranch(@RequestParam(value = "name", required = false)String name, @RequestParam(value = "phoneNumber", required = false) String phoneNumber, Pageable pageable) {
-        Page<Branch> reponse;
+        Page<Branch> response;
         if (name != null && !name.isEmpty()) {
-            reponse = branchService.getBranchesByName(pageable, name);
+            response = branchService.getBranchesByName(pageable, name);
         } else if (phoneNumber != null && !phoneNumber.isEmpty()) {
-            reponse = branchService.getBranchesByPhoneNumber(pageable, phoneNumber);
+            response = branchService.getBranchesByPhoneNumber(pageable, phoneNumber);
         } else {
-            reponse = branchService.getAllBranches(pageable);
+            response = branchService.getAllBranches(pageable);
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.SUCCESS(reponse));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.SUCCESS(response));
     }
 
     // Get all branches

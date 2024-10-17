@@ -55,13 +55,15 @@ public class DishService {
         }).orElse(false);
     }
 
-    public Page<Dish> getAllDish(Pageable pageable) {
-        return dishRepository.findDishByIsDeleteFalse(pageable);
+    public Page<Dish> getAllDish(Long branch, Pageable pageable) {
+        Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
+                pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "Id"));
+        return dishRepository.findDishByBranchIdAndIsDeleteFalse(branch, pageableSorted);
     }
 
     // check name
-    public Boolean dishExists(Dish dish) {
-        return dishRepository.findByNameAndIsDeleteFalse(dish.getName()).isPresent();
+    public Boolean dishExists(Dish dish, Long branchId) {
+        return dishRepository.findByNameAndBranchIdAndIsDeleteFalse(dish.getName(), branchId).isPresent();
     }
 
     public Page<Dish> getDishByName(String name, Pageable pageable) {

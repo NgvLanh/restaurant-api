@@ -34,5 +34,9 @@ public class Invoice {
     @JoinColumn(name = "order_id")
     Order order;
 
+    @ManyToOne
+    @JoinColumn(name = "branch_id")
+    Branch branch;
+
     Boolean isDelete = false;
 }

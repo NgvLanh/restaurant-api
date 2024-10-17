@@ -36,6 +36,10 @@ public class Dish {
     Boolean status = true;
 
     @ManyToOne
+    @JoinColumn(name = "branch_id")
+    Branch branch;
+
+    @ManyToOne
     @JoinColumn(name = "category_id")
     Category category;
 

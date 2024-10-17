@@ -21,10 +21,11 @@ public class DishController {
     private DishService dishService;
 
     @PostMapping
-    public ResponseEntity<?> createDish(@Validated @RequestBody Dish dish) {
-        if (dishService.dishExists(dish)) {
+    public ResponseEntity<?> createDish(@Validated @RequestBody Dish dish,
+                                        @RequestParam(value = "branch", required = false) Long branchId) {
+        if (dishService.dishExists(dish, branchId)) {
             return ResponseEntity.badRequest()
-                    .body(ApiResponse.BAD_REQUEST("Name already exists"));
+                    .body(ApiResponse.BAD_REQUEST("Tên món ăn đã tồn tại"));
         } else {
             try {
                 Dish response = dishService.createDish(dish);
@@ -32,19 +33,20 @@ public class DishController {
                         .body(ApiResponse.CREATED(response));
             } catch (Exception e) {
                 return ResponseEntity.internalServerError()
-                        .body(ApiResponse.SERVER_ERROR("Created dish failed: " + e.getMessage()));
+                        .body(ApiResponse.SERVER_ERROR("Lỗi khi thêm món ăn: " + e.getMessage()));
             }
         }
     }
 
     @PatchMapping("/{id}")
-    private ResponseEntity<?> updateDish(@PathVariable Long id, @RequestBody Dish dish) {
+    private ResponseEntity<?> updateDish(@PathVariable Long id, @RequestBody Dish dish,
+                                         @RequestParam(value = "branch", required = false) Long branchId) {
         Dish existingDish = dishService.getDish(id);
         if (existingDish == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(ApiResponse.NOT_FOUND("Not found the dish with id: " + id));
         }
-        if (dishService.dishExists(dish) && existingDish.getId() != id) {
+        if (dishService.dishExists(dish, branchId) && existingDish.getId() != id) {
             return ResponseEntity.badRequest()
                     .body(ApiResponse.BAD_REQUEST("Name already exists"));
         } else {
@@ -64,13 +66,16 @@ public class DishController {
 //        Page<Dish> response = dishService.getDishes(pageable);
 //        return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
 //    }
+
     @GetMapping
-    public ResponseEntity<?> getDishes(@RequestParam(value = "name", required = false) String name,Pageable pageable) {
+    public ResponseEntity<?> getDishes(@RequestParam(value = "name", required = false) String name,
+                                       @RequestParam(value = "branch", required = false) String branch,
+                                       Pageable pageable) {
         Page<Dish> response;
         if(name!= null && !name.isEmpty()){
             response = dishService.getDishByName(name,pageable);
         }else{
-            response = dishService.getAllDish(pageable);
+            response = dishService.getAllDish(Long.valueOf(branch),pageable);
         }
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.SUCCESS(response));
     }

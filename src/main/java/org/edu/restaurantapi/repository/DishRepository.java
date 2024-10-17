@@ -10,7 +10,11 @@ import java.util.Optional;
 public interface DishRepository extends JpaRepository<Dish, Long> {
     Optional<Dish> findByNameAndIsDeleteFalse(String name);
 
+    Optional<Dish> findByNameAndBranchIdAndIsDeleteFalse(String name, Long brandId);
+
     Page<Dish> findByNameContainingAndIsDeleteFalse(String name, Pageable pageable);
 
     Page<Dish> findDishByIsDeleteFalse(Pageable pageable);
+
+    Page<Dish> findDishByBranchIdAndIsDeleteFalse(Long brandId, Pageable pageable);
 }

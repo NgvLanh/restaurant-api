@@ -18,5 +18,9 @@ public class Zone {
     @NotBlank(message = "Zone address details cannot be empty")
     String addressDetails;
 
+    @ManyToOne
+    @JoinColumn(name = "branch_id")
+    Branch branch;
+
     Boolean isDelete = false;
 }
