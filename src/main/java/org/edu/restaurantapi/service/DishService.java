@@ -12,6 +12,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class DishService {
     @Autowired
@@ -55,19 +57,22 @@ public class DishService {
         }).orElse(false);
     }
 
-    public Page<Dish> getAllDish(Long branch, Pageable pageable) {
+    public Page<Dish> getAllDish(Pageable pageable) {
         Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
                 pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "Id"));
-        return dishRepository.findDishByBranchIdAndIsDeleteFalse(branch, pageableSorted);
+        return dishRepository.findDishByIsDeleteFalse(pageableSorted);
     }
 
     // check name
-    public Boolean dishExists(Dish dish, Long branchId) {
-        return dishRepository.findByNameAndBranchIdAndIsDeleteFalse(dish.getName(), branchId).isPresent();
+    public Boolean dishExists(Dish dish) {
+        return dishRepository.findByNameAndIsDeleteFalse(dish.getName()).isPresent();
     }
 
     public Page<Dish> getDishByName(String name, Pageable pageable) {
         return dishRepository.findByNameContainingAndIsDeleteFalse(name, pageable);
     }
 
+    public Optional<Dish> findByNameAndIdNot(String name, Long id) {
+        return dishRepository.findByNameAndIdNot(name, id);
+    }
 }

@@ -47,7 +47,7 @@ public class ApplicationInitConfig {
             if (userRepository.findByEmail(email).isEmpty()) {
                 User user = User.builder()
                         .fullName("ADMIN")
-                        .phoneNumber("0123456789")
+                        .phoneNumber("0000000000")
                         .email(email)
                         .password(PasswordUtil.hashPassword(password))
                         .activated(true)

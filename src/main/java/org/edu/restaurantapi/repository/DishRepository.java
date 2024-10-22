@@ -17,4 +17,6 @@ public interface DishRepository extends JpaRepository<Dish, Long> {
     Page<Dish> findDishByIsDeleteFalse(Pageable pageable);
 
     Page<Dish> findDishByBranchIdAndIsDeleteFalse(Long brandId, Pageable pageable);
+
+    Optional<Dish> findByNameAndIdNot(String name, Long id);
 }
