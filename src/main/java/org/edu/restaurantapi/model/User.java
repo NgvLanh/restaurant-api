@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.edu.restaurantapi._enum.AdminRole;
 
 @Data
 @Builder
@@ -51,6 +52,8 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "branch_id")
     Branch branch;
+
+    AdminRole adminRole;
 
     @JsonIgnore
     Boolean isDelete = false;

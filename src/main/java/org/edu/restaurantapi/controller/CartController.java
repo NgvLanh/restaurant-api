@@ -1,6 +1,7 @@
 package org.edu.restaurantapi.controller;
 
 import org.edu.restaurantapi.model.Cart;
+import org.edu.restaurantapi.model.CartItem;
 import org.edu.restaurantapi.response.ApiResponse;
 import org.edu.restaurantapi.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,16 @@ public class CartController {
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ApiResponse.SERVER_ERROR("Failed to delete cart"));
+    }
+
+    @GetMapping("/{cartId}")
+    private ResponseEntity<?> getCarts(@PathVariable Long cartId) {
+        var response = cartService.getCarts(cartId);
+        if (response != null) {
+            return ResponseEntity.ok(ApiResponse.SUCCESS(response));
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ApiResponse.SERVER_ERROR("Lỗi lấy danh sách sản phầm trong giỏ hàng."));
     }
 
 }

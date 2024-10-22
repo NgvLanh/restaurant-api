@@ -42,5 +42,9 @@ public class Order {
     @JoinColumn(name = "discount_id")
     Discount discount;
 
+    @ManyToOne
+    @JoinColumn(name = "branch_id")
+    Branch branch;
+
     Boolean isDelete = false;
 }
