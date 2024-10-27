@@ -1,12 +1,11 @@
 package org.edu.restaurantapi.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
 @Data
-@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,12 +15,9 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @NotBlank(message = "Category name cannot be empty")
+    @NotBlank(message = "Tên danh mục không được để trống")
     String name;
 
-    @NotBlank(message = "Category description cannot be empty.")
+    @NotBlank(message = "Mô tả danh mục không được để trống")
     String description;
-
-    @JsonIgnore
-    Boolean isDelete = false;
 }

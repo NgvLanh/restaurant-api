@@ -1,75 +1,50 @@
 package org.edu.restaurantapi.service;
 
 import org.edu.restaurantapi.model.DiscountMethod;
-import org.edu.restaurantapi.model.User;
 import org.edu.restaurantapi.repository.DiscountMethodRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class DiscountMethodService {
 
     @Autowired
-    private DiscountMethodRepository discountMethodRepository;
+    private DiscountMethodRepository repository;
 
-    // Lấy tất cả các discount method
-    public Page<DiscountMethod> getAllDiscountMethods(Pageable pageable) {
+    public Page<DiscountMethod> gets(String name, Pageable pageable) {
         Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
                 pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
-        return discountMethodRepository.findDiscountMethodByIsDeleteFalse(pageableSorted);
+        return repository.findDiscountMethodByNameContaining(name, pageableSorted);
     }
 
-    // Lấy discount method theo ID
-    public DiscountMethod getDiscountMethod(long id) {
-        return discountMethodRepository.findById(id).orElse(null);
+    public DiscountMethod create(DiscountMethod request) {
+        return repository.save(request);
     }
 
-    // Tạo mới discount method
-    public DiscountMethod createDiscountMethod(DiscountMethod discountMethod) {
-        Optional<DiscountMethod> existingMethod = discountMethodRepository.findByNameAndIsDeleteFalse(discountMethod.getName());
-        if (existingMethod.isPresent()) {
-            return null;  // Trả về null nếu phương thức đã tồn tại
-        }
-        return discountMethodRepository.save(discountMethod);
-    }
-
-    // Cập nhật discount method theo ID
-    public DiscountMethod updateDiscountMethod(Long id, DiscountMethod updatedMethod) {
-        return discountMethodRepository.findById(id).map(existingMethod -> {
-            existingMethod.setName(updatedMethod.getName() != null ? updatedMethod.getName() : existingMethod.getName());
-            return discountMethodRepository.save(existingMethod);
+    public DiscountMethod update(Long id, DiscountMethod request) {
+        return repository.findById(id).map(c -> {
+            c.setName(request.getName() != null ? request.getName() : c.getName());
+            return repository.save(c);
         }).orElse(null);
     }
 
-    // Xóa discount method theo ID
-    public Boolean deleteDiscountMethod(Long id) {
-        return discountMethodRepository.findById(id).map(discountMethod -> {
-            discountMethod.setIsDelete(true);
-            discountMethodRepository.save(discountMethod);
-            return true;
-        }).orElse(false);
+    public Boolean delete(Long id) {
+        if (repository.existsById(id)) {
+            repository.deleteById(id);
+        }
+        return !repository.existsById(id);
     }
 
-    // Tìm discount method theo tên
-    public Optional<DiscountMethod> findByName(String name) {
-        return discountMethodRepository.findByNameAndIsDeleteFalse(name);
+    public Boolean findByName(String name) {
+        return repository.findByName(name) != null;
     }
 
-    //check
-    public Boolean discountMethodExists(DiscountMethod discountMethod) {
-        return discountMethodRepository.findByNameAndIsDeleteFalse(discountMethod.getName()).isPresent();
+    public Boolean findByNameAndIdNot(String name, Long id) {
+        return repository.findByNameAndIdNot(name, id) != null;
     }
-
-    public Page<DiscountMethod> getDiscountMethodByName(String name, Pageable pageable){
-        return discountMethodRepository.findByNameContainingAndIsDeleteFalse(name,pageable);
-    }
-
 }

@@ -1,7 +1,10 @@
 package org.edu.restaurantapi.service;
 
+import org.edu.restaurantapi.model.Branch;
 import org.edu.restaurantapi.model.Table;
 import org.edu.restaurantapi.model.User;
+import org.edu.restaurantapi.model.Table;
+import org.edu.restaurantapi.repository.TableRepository;
 import org.edu.restaurantapi.repository.TableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,69 +20,43 @@ import java.util.Optional;
 public class TableService {
 
     @Autowired
-    private TableRepository tableRepository;
+    private TableRepository repository;
 
-
-    public Table createTable(Table table) {
-
-        return tableRepository.save(table);
+    public Page<Table> gets(String branch, String number, Pageable pageable) {
+        Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
+                pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
+        return repository.findByIsDeleteFalseAndBranchIdAndNumber(Long.parseLong(branch), Integer.parseInt(number), pageableSorted);
     }
 
-    public Table updateTable(Long id, Table table) {
-        return tableRepository.findById(id).map(existingTable -> {
-            existingTable.setZone(table.getZone() != null
-                    ? table.getZone() : existingTable.getZone());
-            existingTable.setTableStatus(table.getTableStatus() != null
-                    ? table.getTableStatus() : existingTable.getTableStatus());
-            existingTable.setSeats(table.getSeats() != null
-                    ? table.getSeats() : existingTable.getSeats());
-            existingTable.setBranch(table.getBranch() != null
-                    ? table.getBranch() : existingTable.getBranch());
-            return tableRepository.save(existingTable);
+    public Table create(Table request) {
+        return repository.save(request);
+    }
+
+    public Table update(Long id, Table request) {
+        return repository.findById(id).map(t -> {
+            t.setNumber(request.getNumber() != null ? request.getNumber() : t.getNumber());
+            t.setSeats(request.getSeats() != null ? request.getSeats() : t.getSeats());
+            t.setTableStatus(request.getTableStatus() != null ? request.getTableStatus() : t.getTableStatus());
+            t.setZone(request.getZone() != null ? request.getZone() : t.getZone());
+            return repository.save(t);
         }).orElse(null);
     }
 
-    public Page<Table> getTables(Pageable pageable){
-        Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
-                pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "Id"));
-        return tableRepository.findTableByIsDeleteFalse(pageableSorted);
-    }
 
-    public Table getTable(Long id) {
-        return tableRepository.findById(id).orElse(null);
-    }
-
-//    public Page<Table> getTableByNumber(Integer number, Pageable pageable) {
-//        return tableRepository.findByNumberAndIsDeleteFalse(number, pageable);
-//    }
-//
-//    public Page<Table> getTablesByBranch(Long branchId, Pageable pageable) {
-//        return tableRepository.findByBranch_IdAndIsDeleteFalse(branchId, pageable);
-//    }
-
-    public Page<Table> searchTables(Integer number, Long branchId, Pageable pageable) {
-        if (number != null && branchId != null) {
-            return tableRepository.findByNumberAndBranch_IdAndIsDeleteFalse(number, branchId, pageable);
-        } else if (number != null) {
-            return tableRepository.findByNumberAndIsDeleteFalse(number, pageable);
-        } else if (branchId != null) {
-            return tableRepository.findByBranch_IdAndIsDeleteFalse(branchId, pageable);
-        }
-        return tableRepository.findTableByIsDeleteFalse(pageable);
-    }
-
-
-
-    public Boolean deleteTable(Long id) {
-        return tableRepository.findById(id).map(table -> {
-            table.setIsDelete(true);
-            tableRepository.save(table);
+    public Boolean delete(Long id) {
+        return repository.findById(id).map(t -> {
+            t.setIsDelete(true);
+            repository.save(t);
             return true;
         }).orElse(false);
     }
 
-    public Boolean numberExists(Table table) {
-        return tableRepository.findByNumberAndBranch_IdAndIsDeleteFalse(table.getNumber(),table.getBranch().getId()).isPresent();
+    public Boolean findByIsDeleteFalseAndNumberAndBranchIs(Integer number, Branch branch) {
+        return repository.findByIsDeleteFalseAndNumberAndBranchIs(number, branch) != null;
     }
+
+//    public Boolean findByNameAndIdNot(String name, Long id) {
+//        return repository.findByNameAndIdNot(name, id) != null;
+//    }
 
 }

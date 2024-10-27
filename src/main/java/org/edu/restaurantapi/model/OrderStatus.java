@@ -21,10 +21,11 @@ public class OrderStatus {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @NotBlank(message = "Order status name cannot be empty")
-    @Size(max = 50, message = "Order status name cannot exceed 50 characters")
+    @NotBlank(message = "Tên trạng thái đơn hàng không được để trống")
+    @Size(max = 50, message = "Tên trạng thái đơn hàng không được vượt quá 50 ký tự")
     @Column(unique = true)
     String name;
 
-    Boolean isDelete = false;
+    String colorCode; // Lưu  màu cho đẹp
+
 }

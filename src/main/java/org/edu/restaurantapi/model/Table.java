@@ -18,11 +18,11 @@ public class Table {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @NotNull(message = "Number cannot be null")
+    @NotNull(message = "Số bàn không được để trống")
     Integer number;
 
-    @Min(value = 1, message = "Seats must be at least 1")
-    @Max(value = 20, message = "Seats cannot exceed 20")
+    @Min(value = 1, message = "Số ghế tối thiểu phải là 1")
+    @Max(value = 20, message = "Số ghế không được vượt quá 20")
     Integer seats;
 
     @ManyToOne

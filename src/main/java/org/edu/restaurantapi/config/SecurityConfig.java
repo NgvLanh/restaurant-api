@@ -32,14 +32,19 @@ public class SecurityConfig {
             "/api/vnpay",
             "/api/email/send",
             "/api/email/send-html",
-            "/api/files/upload"
+            "/api/files/upload",
+            "/api/reservations",
+            "/api/table-reservations",
     };
 
     private final String[] GET_API = {
             "/api/files/*",
+            "/api/files/image/*",
             "/api/vnpay/*",
+            "/api/branches",
             "/api/dishes",
             "/api/categories",
+            "/api/tables",
     };
 
     @Autowired

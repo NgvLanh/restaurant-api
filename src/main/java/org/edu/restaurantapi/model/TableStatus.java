@@ -18,9 +18,10 @@ public class TableStatus {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @NotBlank(message = "Table status name cannot be empty")
-    @Size(max = 50, message = "Table status name cannot exceed 50 characters")
+    @NotBlank(message = "Tên trạng thái bàn không được để trống")
+    @Size(max = 50, message = "Tên trạng thái bàn không được vượt quá 50 ký tự")
     String name;
 
-    Boolean isDelete = false;
+    String colorCode; // Lưu  màu cho đẹp
+
 }

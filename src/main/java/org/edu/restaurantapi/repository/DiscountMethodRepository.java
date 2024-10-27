@@ -5,12 +5,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
-
 public interface DiscountMethodRepository extends JpaRepository<DiscountMethod, Long> {
-    Optional<DiscountMethod> findByNameAndIsDeleteFalse(String name);
 
-    Page<DiscountMethod> findByNameContainingAndIsDeleteFalse(String name, Pageable pageable);
+    Page<DiscountMethod> findDiscountMethodByNameContaining(String name, Pageable pageable);
 
-    Page<DiscountMethod> findDiscountMethodByIsDeleteFalse(Pageable pageable);
+    DiscountMethod findByName(String name);
+
+    DiscountMethod findByNameAndIdNot(String name, Long id);
 }

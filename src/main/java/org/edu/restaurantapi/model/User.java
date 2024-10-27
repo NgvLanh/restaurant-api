@@ -23,24 +23,24 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @NotBlank(message = "Full name cannot be empty")
-    @Size(max = 100, message = "Full name cannot exceed 100 characters")
+    @NotBlank(message = "Họ và tên không được để trống")
+    @Size(max = 100, message = "Họ và tên không được vượt quá 100 ký tự")
     String fullName;
 
     String image;
 
-    @NotBlank(message = "Phone number cannot be empty")
-    @Pattern(regexp = "^\\d{10,11}$", message = "Phone number must be 10 or 11 digits")
+    @NotBlank(message = "Số điện thoại không được để trống")
+    @Pattern(regexp = "^\\d{10,11}$", message = "Số điện thoại phải là 10 hoặc 11 chữ số")
     @Column(unique = true)
     String phoneNumber;
 
-    @NotBlank(message = "Email cannot be empty")
-    @Email(message = "Invalid email format")
+    @NotBlank(message = "Email không được để trống")
+    @Email(message = "Định dạng email không hợp lệ")
     @Column(unique = true)
     String email;
 
-    @NotBlank(message = "Password cannot be empty")
-    @Size(min = 8, message = "Password must be at least 8 characters long")
+    @NotBlank(message = "Mật khẩu không được để trống")
+    @Size(min = 8, message = "Mật khẩu phải có ít nhất 8 ký tự")
     String password;
 
     Boolean activated = true;

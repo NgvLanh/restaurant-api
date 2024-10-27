@@ -91,4 +91,8 @@ public class UserService {
         }
         return userRepository.findByBranchId(branch, pageable);
     }
+
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElse(null);
+    }
 }

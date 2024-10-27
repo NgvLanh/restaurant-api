@@ -1,22 +1,21 @@
 package org.edu.restaurantapi.repository;
 
+import org.edu.restaurantapi.model.Branch;
 import org.edu.restaurantapi.model.Table;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.Optional;
+import org.springframework.data.jpa.repository.Query;
 
 public interface TableRepository extends JpaRepository<Table, Long> {
-    Page<Table> findTableByIsDeleteFalse(Pageable pageable);
 
-    Optional<Table> findTableByNumberAndIsDeleteFalse(Integer number);
+    @Query("SELECT t" +
+            " FROM tables t" +
+            " WHERE t.isDelete = false" +
+            " AND t.branch.id = :branch" +
+            " AND (:number = 0 OR t.number = :number)")
+    Page<Table> findByIsDeleteFalseAndBranchIdAndNumber(Long branch, Integer number, Pageable pageable);
 
-    Page<Table> findByNumberAndIsDeleteFalse(Integer number, Pageable pageable);
 
-    Page<Table> findByBranch_IdAndIsDeleteFalse(Long branchId, Pageable pageable);
-
-    Page<Table> findByNumberAndBranch_IdAndIsDeleteFalse(Integer number, Long branchId, Pageable pageable);
-
-    Optional<Table> findByNumberAndBranch_IdAndIsDeleteFalse(Integer number, Long branchId);
+    Table findByIsDeleteFalseAndNumberAndBranchIs(Integer number, Branch branch);
 }

@@ -7,69 +7,58 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.Optional;
 
 @Service
 public class BranchService {
 
     @Autowired
-    private BranchRepository branchRepository;
+    private BranchRepository repository;
 
-    public Branch createBranch(Branch branch) {
-        Optional<Branch> existingBranch = branchRepository.findByPhoneNumberAndIsDeleteFalse(branch.getPhoneNumber());
-        if (existingBranch.isPresent()) {
-            return null;  // Trả về null nếu chi nhánh đã tồn tại
-        }
-        return branchRepository.save(branch);
-    }
-
-    public Page<Branch> getAllBranches(Pageable pageable) {
+    public Page<Branch> gets(String name, String phoneNumber, Pageable pageable) {
         Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
                 pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "Id"));
-        return branchRepository.findBranchByIsDeleteFalse(pageableSorted);
+        return repository.findByIsDeleteFalseAndNameContainingOrIsDeleteFalseAndPhoneNumberContaining(name, phoneNumber, pageableSorted);
     }
 
-    public Branch getBranchById(Long id) {
-        return branchRepository.findById(id).orElse(null);
+    public Branch create(Branch request) {
+        return repository.save(request);
     }
 
-    public Branch updateBranch(Long id, Branch branchDetails) {
-        return branchRepository.findById(id).map(existingBranch -> {
-            existingBranch.setName(branchDetails.getName() != null ? branchDetails.getName() : existingBranch.getName());
-            existingBranch.setPhoneNumber(branchDetails.getPhoneNumber() != null ? branchDetails.getPhoneNumber() : existingBranch.getPhoneNumber());
-            existingBranch.setAddress(branchDetails.getAddress() != null ? branchDetails.getAddress() : existingBranch.getAddress());
-            existingBranch.setDistrict(branchDetails.getDistrict() != null ? branchDetails.getDistrict() : existingBranch.getDistrict());
-            existingBranch.setCity(branchDetails.getCity() != null ? branchDetails.getCity() : existingBranch.getCity());
-            existingBranch.setBranchStatus(branchDetails.getBranchStatus() != null ? branchDetails.getBranchStatus() : existingBranch.getBranchStatus());
-            return branchRepository.save(existingBranch);
-        }).orElseThrow(() -> new RuntimeException("Không tìm thấy id này " + id));
+    public Branch update(Long id, Branch request) {
+        return repository.findById(id).map(b -> {
+            b.setName(request.getName() != null ? request.getName() : b.getName());
+            b.setPhoneNumber(request.getPhoneNumber() != null ? request.getPhoneNumber() : b.getPhoneNumber());
+            b.setAddress(request.getAddress() != null ? request.getAddress() : b.getAddress());
+            b.setDistrict(request.getDistrict() != null ? request.getDistrict() : b.getDistrict());
+            b.setCity(request.getCity() != null ? request.getCity() : b.getCity());
+            b.setBranchStatus(request.getBranchStatus() != null ? request.getBranchStatus() : b.getBranchStatus());
+            return repository.save(b);
+        }).orElse(null);
     }
 
-    public boolean deleteBranch(Long id) {
-        return branchRepository.findById(id).map(branch -> {
-            branch.setIsDelete(true);
-            branchRepository.save(branch);
+    public Boolean delete(Long id) {
+        return repository.findById(id).map(b -> {
+            b.setIsDelete(true);
+            repository.save(b);
             return true;
         }).orElse(false);
     }
 
-    public Page<Branch> getBranchesByName(Pageable pageable, String name) {
-        return branchRepository.findByNameContainingAndIsDeleteFalse(name, pageable);
+    public Boolean findByName(String name) {
+        return repository.findByNameAndIsDeleteFalse(name) != null;
     }
 
-    public Page<Branch> getBranchesByPhoneNumber(Pageable pageable, String phoneNumber) {
-        return branchRepository.findByPhoneNumberContainingAndIsDeleteFalse(phoneNumber, pageable);
+    public Boolean findByPhoneNumber(String phoneNumber) {
+        return repository.findByPhoneNumberAndIsDeleteFalse(phoneNumber) != null;
     }
 
-    public boolean branchPhoneNumberExists(Branch branch) {
-        return branchRepository.findByPhoneNumberAndIsDeleteFalse(branch.getPhoneNumber()).isPresent();
+    public Boolean findByNameAndIdNot(String name, Long id) {
+        return repository.findByNameAndIdNotAndIsDeleteFalse(name, id) != null;
     }
 
-    public boolean branchNameExists(Branch branch) {
-        return branchRepository.findByNameAndIsDeleteFalse(branch.getName()).isPresent();
+    public Boolean findByPhoneNumberAndIdNot(String phoneNumber, Long id) {
+        return repository.findByPhoneNumberAndIdNotAndIsDeleteFalse(phoneNumber, id) != null;
     }
 }

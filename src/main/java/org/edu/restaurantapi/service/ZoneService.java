@@ -1,7 +1,9 @@
 package org.edu.restaurantapi.service;
 
+import org.edu.restaurantapi.model.Zone;
 import org.edu.restaurantapi.model.TableStatus;
 import org.edu.restaurantapi.model.Zone;
+import org.edu.restaurantapi.repository.ZoneRepository;
 import org.edu.restaurantapi.repository.ZoneRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,46 +17,39 @@ import org.springframework.stereotype.Service;
 public class ZoneService {
 
     @Autowired
-    private ZoneRepository zoneRepository;
+    private ZoneRepository repository;
 
-    public Zone createZone(Zone zone) {
-        return zoneRepository.save(zone);
+    public Page<Zone> gets(String name, String branch, Pageable pageable) {
+        Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
+                pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
+        return repository.findByNameContainingAndBranchId(name, Long.parseLong(branch), pageableSorted);
     }
 
-    public Zone updateZone(Long id, Zone zone) {
-        return zoneRepository.findById(id).map(existingZone -> {
-            existingZone.setAddress(zone.getAddress()
-                    != null ? zone.getAddress() : existingZone.getAddress());
-            existingZone.setAddressDetails(zone.getAddressDetails()
-                    != null ? zone.getAddressDetails() : existingZone.getAddressDetails());
-            return zoneRepository.save(existingZone);
+    public Zone create(Zone request) {
+        return repository.save(request);
+    }
+
+    public Zone update(Long id, Zone request) {
+        return repository.findById(id).map(b -> {
+            b.setAddress(request.getAddress() != null ? request.getAddress() : b.getAddress());
+            b.setName(request.getName() != null ? request.getName() : b.getName());
+            b.setColorCode(request.getColorCode() != null ? request.getColorCode() : b.getColorCode());
+            return repository.save(b);
         }).orElse(null);
     }
 
-    public Page<Zone> getZones(Pageable pageable) {
-        Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
-                pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "Id"));
-        return zoneRepository.findZoneByIsDeleteFalse(pageableSorted);
+    public Boolean delete(Long id) {
+        if (repository.existsById(id)) {
+            repository.deleteById(id);
+        }
+        return !repository.existsById(id);
     }
 
-    public Zone getZone(Long id) {
-        return zoneRepository.findById(id).orElse(null);
+    public Boolean findByName(String name) {
+        return repository.findByName(name) != null;
     }
 
-    public Page<Zone> getZoneByAddress(String address, Pageable pageable) {
-        return zoneRepository.findByAddressContainingAndIsDeleteFalse(address, pageable);
-    }
-
-    public Boolean deleteZone(Long id) {
-        return zoneRepository.findById(id).map(zone -> {
-            zone.setIsDelete(true);
-            zoneRepository.save(zone);
-            return true;
-        }).orElse(false);
-    }
-
-    // Check zone name existence
-    public Boolean zoneNameExists(Zone zone) {
-        return zoneRepository.findZoneByAddressAndIsDeleteFalse(zone.getAddress()).isPresent();
+    public Boolean findByNameAndIdNot(String name, Long id) {
+        return repository.findByNameAndIdNot(name, id) != null;
     }
 }

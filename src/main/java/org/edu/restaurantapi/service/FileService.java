@@ -21,17 +21,17 @@ public class FileService {
 
     private final static String uploadedFolder = "uploads/images/";
 
-    public static String saveFile(MultipartFile[] file) throws IOException {
-       if (file.length == 1) {
+    public static String saveFile(MultipartFile file) throws IOException {
+       if (file != null && !file.isEmpty()) {
            File directory = new File(uploadedFolder);
            if (!directory.exists()) {
                directory.mkdirs();
            }
-           String fileName = file[0].getOriginalFilename();
+           String fileName = file.getOriginalFilename();
            Path path = Paths.get(uploadedFolder + fileName);
-           Files.write(path, file[0].getBytes());
+           Files.write(path, file.getBytes());
            System.out.println("File saved to: " + path.toAbsolutePath());
-           return path.toString();
+           return fileName;
        }
         return null;
     }

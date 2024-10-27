@@ -8,13 +8,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface BranchRepository extends JpaRepository<Branch, Long> {
-    Optional<Branch> findByPhoneNumberAndIsDeleteFalse(String phoneNumber);
 
-    Optional<Branch> findByNameAndIsDeleteFalse(String name);
+   Page<Branch> findByIsDeleteFalseAndNameContainingOrIsDeleteFalseAndPhoneNumberContaining(String name, String phoneNumber, Pageable pageable);
 
-    Page<Branch> findBranchByIsDeleteFalse(Pageable pageable);
+   Branch findByPhoneNumberAndIdNotAndIsDeleteFalse(String phoneNumber, Long id);
 
-    Page<Branch> findByNameContainingAndIsDeleteFalse(String name, Pageable pageable);
+   Branch findByNameAndIdNotAndIsDeleteFalse(String name, Long id);
 
-    Page<Branch> findByPhoneNumberContainingAndIsDeleteFalse(String phoneNumber, Pageable pageable);
+   Branch findByPhoneNumberAndIsDeleteFalse(String phoneNumber);
+
+   Branch findByNameAndIsDeleteFalse(String name);
 }

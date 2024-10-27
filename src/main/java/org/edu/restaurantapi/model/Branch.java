@@ -21,24 +21,24 @@ public class Branch {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @NotBlank(message = "Branch name cannot be empty")
-    @Size(max = 100, message = "Branch name cannot exceed 100 characters")
+    @NotBlank(message = "Tên chi nhánh không được để trống")
+    @Size(max = 100, message = "Tên chi nhánh không được vượt quá 100 ký tự")
     String name;
 
-    @NotBlank(message = "Phone number cannot be empty")
-    @Pattern(regexp = "^\\d{10,11}$", message = "Phone number must be 10 or 11 digits")
+    @NotBlank(message = "Số điện thoại không được để trống")
+    @Pattern(regexp = "^\\d{10,11}$", message = "Số điện thoại phải có 10 hoặc 11 chữ số")
     String phoneNumber;
 
-    @NotBlank(message = "Address cannot be empty")
-    @Size(max = 255, message = "Address cannot exceed 255 characters")
+    @NotBlank(message = "Địa chỉ không được để trống")
+    @Size(max = 255, message = "Địa chỉ không được vượt quá 255 ký tự")
     String address;
 
-    @NotBlank(message = "District cannot be empty")
-    @Size(max = 100, message = "District cannot exceed 100 characters")
+    @NotBlank(message = "Quận/Huyện không được để trống")
+    @Size(max = 100, message = "Quận/Huyện không được vượt quá 100 ký tự")
     String district;
 
-    @NotBlank(message = "City cannot be empty")
-    @Size(max = 100, message = "City cannot exceed 100 characters")
+    @NotBlank(message = "Thành phố không được để trống")
+    @Size(max = 100, message = "Thành phố không được vượt quá 100 ký tự")
     String city;
 
     @ManyToOne
