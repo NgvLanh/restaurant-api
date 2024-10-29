@@ -19,9 +19,7 @@ public class DiscountMethod {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @NotBlank(message = "Discount method cannot be empty")
-    @Size(max = 50, message = "Discount method cannot exceed 50 characters")
+    @NotBlank(message = "Phương thức giảm giá không được để trống")
+    @Size(max = 50, message = "Phương thức giảm giá không được vượt quá 50 ký tự")
     String name;
-
-    Boolean isDelete = false;
 }

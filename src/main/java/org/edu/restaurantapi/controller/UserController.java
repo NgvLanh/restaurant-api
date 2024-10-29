@@ -26,6 +26,7 @@ public class UserController {
     @PostMapping("/info")
     private ResponseEntity<?> getUserInfo() {
         User response = userService.getUserInfo();
+        response.setPassword(null);
         return ResponseEntity.ok()
                 .body(ApiResponse.SUCCESS(response));
     }
@@ -33,11 +34,11 @@ public class UserController {
     @PostMapping
     private ResponseEntity<?> createUser(@Valid @RequestBody User user) {
         if (userService.userPhoneNumberExists(user)) {
-            return ResponseEntity.ok()
-                    .body(ApiResponse.BAD_REQUEST("Phone number already exists"));
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.BAD_REQUEST("Số điện thoại này đã tồn tại"));
         } else if (userService.userEmailExists(user)) {
-            return ResponseEntity.ok()
-                    .body(ApiResponse.BAD_REQUEST("Email already exists"));
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.BAD_REQUEST("Email này đã tồn tại"));
         } else {
             try {
                 User response = userService.createUser(user);
@@ -46,7 +47,7 @@ public class UserController {
                         .body(ApiResponse.CREATED(response));
             } catch (Exception e) {
                 return ResponseEntity.internalServerError()
-                        .body(ApiResponse.SERVER_ERROR("Created user failed: " + e.getMessage()));
+                        .body(ApiResponse.SERVER_ERROR(e.getMessage()));
             }
         }
     }
@@ -60,7 +61,7 @@ public class UserController {
                     .body(ApiResponse.SUCCESS(response));
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
-                    .body(ApiResponse.SERVER_ERROR("Updated user failed: " + e.getMessage()));
+                    .body(ApiResponse.SERVER_ERROR(e.getMessage()));
         }
     }
 
@@ -86,11 +87,11 @@ public class UserController {
                 return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(ApiResponse.NOT_FOUND("Not found the user with id: " + id));
+                        .body(ApiResponse.NOT_FOUND("Không tìm thấy người dùng #: " + id));
             }
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
-                    .body(ApiResponse.SERVER_ERROR("Get user: " + e.getMessage()));
+                    .body(ApiResponse.SERVER_ERROR(e.getMessage()));
         }
     }
 

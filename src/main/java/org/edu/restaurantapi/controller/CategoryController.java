@@ -1,114 +1,51 @@
 package org.edu.restaurantapi.controller;
 
 
-import lombok.extern.slf4j.Slf4j;
+import jakarta.validation.Valid;
 import org.edu.restaurantapi.model.Category;
-import org.edu.restaurantapi.model.Dish;
 import org.edu.restaurantapi.response.ApiResponse;
 import org.edu.restaurantapi.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-@Slf4j
 @RestController
 @RequestMapping("/api/categories")
 public class CategoryController {
 
     @Autowired
-    private CategoryService categoryService;
+    private CategoryService service;
+
+    @GetMapping
+    public ResponseEntity<?> gets(@RequestParam(value = "name", required = false) String name, Pageable pageable) {
+        var response = service.gets(name, pageable);
+        return ResponseEntity.ok(ApiResponse.SUCCESS(response));
+    }
 
     @PostMapping
-    public ResponseEntity<?> createCategory(@Validated @RequestBody Category category) {
-        if (categoryService.categoryExists(category)) {
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.BAD_REQUEST("Name already exists"));
-        } else {
-            try {
-                Category response = categoryService.createCategory(category);
-                return ResponseEntity.status(HttpStatus.CREATED)
-                        .body(ApiResponse.CREATED(response));
-            } catch (Exception e) {
-                return ResponseEntity.internalServerError()
-                        .body(ApiResponse.SERVER_ERROR("Created category failed: " + e.getMessage()));
-            }
+    public ResponseEntity<?> create(@Valid @RequestBody Category request) {
+        var cae = service.findByName(request.getName());
+        if (cae) {
+            return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Tên loại món ăn đã tồn tại"));
         }
+        var response = service.create(request);
+        return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
 
     @PatchMapping("/{id}")
-    private ResponseEntity<?> updateCategory(@PathVariable Long id, @RequestBody Category category) {
-        Category existingCategory = categoryService.getCategory(id);
-
-        if (existingCategory == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.NOT_FOUND("Not found the category with id: " + id));
+    public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody Category request) {
+        var cae = service.findByNameAndIdNot(request.getName(), id);
+        if (cae) {
+            return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Tên loại món ăn đã tồn tại"));
         }
-
-        if (categoryService.categoryExists(category) &&
-                !existingCategory.getName().equals(category.getName())) {
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.BAD_REQUEST("Name already exists"));
-        }
-
-        try {
-            Category response = categoryService.updateCategory(id, category);
-            return ResponseEntity.ok()
-                    .body(ApiResponse.SUCCESS(response));
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError()
-                    .body(ApiResponse.SERVER_ERROR("Updated category failed: " + e.getMessage()));
-        }
-    }
-
-    //    @GetMapping
-//    private ResponseEntity<?> getCategory(Pageable pageable) {
-//        Page<Category> response = categoryService.geCategories(pageable);
-//        return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
-//    }
-    @GetMapping
-    public ResponseEntity<?> getCategories(@RequestParam(value = "name", required = false) String name, Pageable pageable) {
-        Page<Category> response;
-        if (name != null && !name.isEmpty()) {
-            response = categoryService.getCategoriesByName(name, pageable);
-        } else {
-            response = categoryService.getAllCategory(pageable);
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.SUCCESS(response));
-    }
-
-    @GetMapping("/{id}")
-    private ResponseEntity<?> getCategory(@PathVariable Long id) {
-        try {
-            Category response = categoryService.getCategory(id);
-            if (response == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(ApiResponse.NOT_FOUND("Not found the category with id: " + id));
-            }
-            return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.NOT_FOUND("Not found the category with id: " + id));
-        }
+        var response = service.update(id, request);
+        return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
 
     @DeleteMapping("/{id}")
-    private ResponseEntity<?> deleteCategory(@PathVariable Long id) {
-        try {
-            Boolean response = categoryService.deleteCategory(id);
-            if (response) {
-                return ResponseEntity.ok()
-                        .body(ApiResponse.DELETE("Category deleted successfully"));
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(ApiResponse.NOT_FOUND("Category with id " + id + " not found"));
-            }
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError()
-                    .body(ApiResponse.SERVER_ERROR("Error deleting category: " + e.getMessage()));
-        }
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        var response = service.delete(id);
+        return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
 }

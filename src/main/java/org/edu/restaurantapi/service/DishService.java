@@ -1,7 +1,10 @@
 package org.edu.restaurantapi.service;
 
+import org.edu.restaurantapi.dto.DishDto;
+import org.edu.restaurantapi.model.Dish;
 import org.edu.restaurantapi.model.Dish;
 import org.edu.restaurantapi.model.User;
+import org.edu.restaurantapi.repository.DishRepository;
 import org.edu.restaurantapi.repository.DishRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,63 +19,44 @@ import java.util.Optional;
 
 @Service
 public class DishService {
-    @Autowired
-    private DishRepository dishRepository;
 
-    public Dish createDish(Dish dish) {
-        return dishRepository.save(dish);
+    @Autowired
+    private DishRepository repository;
+
+    public Page<Dish> gets(String name, Pageable pageable) {
+        Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
+                pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
+        return repository.findByNameContainingAndIsDeleteFalse(name, pageableSorted);
     }
 
-    public Dish updateDish(Long id, Dish updatedDish) {
-        return dishRepository.findById(id).map(existingDish -> {
-            existingDish.setName(updatedDish.getName()
-                    != null ? updatedDish.getName() : existingDish.getName());
-            existingDish.setImage(updatedDish.getImage()
-                    != null ? updatedDish.getImage() : existingDish.getImage());
-            existingDish.setPrice(updatedDish.getPrice()
-                    != null ? updatedDish.getPrice() : existingDish.getPrice());
-            existingDish.setCategory(updatedDish.getCategory()
-                    != null ? updatedDish.getCategory() : existingDish.getCategory());
-            existingDish.setDescription(updatedDish.getDescription()
-                    != null ? updatedDish.getDescription() : existingDish.getDescription());
-            return dishRepository.save(existingDish);
+    public Dish create(Dish request) {
+        return repository.save(request);
+    }
+
+    public Dish update(Long id, Dish request) {
+        return repository.findById(id).map(d -> {
+            d.setName(request.getName() != null ? request.getName() : d.getName());
+            d.setPrice(request.getPrice() != null ? request.getPrice() : d.getPrice());
+            d.setImage(request.getImage() != null ? request.getImage() : d.getImage());
+            d.setDescription(request.getDescription() != null ? request.getDescription() : d.getDescription());
+            d.setCategory(request.getCategory() != null ? request.getCategory() : d.getCategory());
+            return repository.save(d);
         }).orElse(null);
     }
 
-    public Page<Dish> getDishes(Pageable pageable) {
-        Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
-                pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "Id"));
-        return dishRepository.findDishByIsDeleteFalse(pageableSorted);
-    }
-
-    public Dish getDish(Long id) {
-        return dishRepository.findById(id).orElse(null);
-    }
-
-    public Boolean deleteDish(Long id) {
-        return dishRepository.findById(id).map(dish -> {
-            dish.setIsDelete(true);
-            dishRepository.save(dish);
+    public Boolean delete(Long id) {
+        return repository.findById(id).map(b -> {
+            b.setIsDelete(true);
+            repository.save(b);
             return true;
         }).orElse(false);
     }
 
-    public Page<Dish> getAllDish(Pageable pageable) {
-        Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
-                pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "Id"));
-        return dishRepository.findDishByIsDeleteFalse(pageableSorted);
+    public Boolean findByName(String name) {
+        return repository.findByNameAndIsDeleteFalse(name) != null;
     }
 
-    // check name
-    public Boolean dishExists(Dish dish) {
-        return dishRepository.findByNameAndIsDeleteFalse(dish.getName()).isPresent();
-    }
-
-    public Page<Dish> getDishByName(String name, Pageable pageable) {
-        return dishRepository.findByNameContainingAndIsDeleteFalse(name, pageable);
-    }
-
-    public Optional<Dish> findByNameAndIdNot(String name, Long id) {
-        return dishRepository.findByNameAndIdNot(name, id);
+    public Boolean findByNameAndIdNot(String name, Long id) {
+        return repository.findByNameAndIdNotAndIsDeleteFalse(name, id) != null;
     }
 }

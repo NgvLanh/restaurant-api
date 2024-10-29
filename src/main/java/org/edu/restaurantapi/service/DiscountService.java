@@ -1,69 +1,59 @@
 package org.edu.restaurantapi.service;
 
 import org.edu.restaurantapi.model.Discount;
-import org.edu.restaurantapi.model.DiscountMethod;
 import org.edu.restaurantapi.repository.DiscountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class DiscountService {
 
     @Autowired
-    private DiscountRepository discountRepository;
+    private DiscountRepository repository;
 
-    public Page<Discount> getAllDiscounts(Pageable pageable) {
-        return discountRepository.findDiscountByIsDeleteFalse(pageable);
+    public Page<Discount> gets(String name, Pageable pageable) {
+        Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
+                pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
+        return repository.findByCodeContainingAndIsDeleteFalse(name, pageableSorted);
     }
 
-
-    public Discount getDiscount(long discountId) {
-        return discountRepository.findById(discountId).orElse(null);
+    public Discount create(Discount request) {
+        return repository.save(request);
     }
 
-    public Discount createDiscount(Discount discount) {
-
-        Optional<Discount> existingDiscount = discountRepository.findByCodeAndIsDeleteFalse(discount.getCode());
-        if (existingDiscount.isPresent()) {
-            return null;
-        }
-        return discountRepository.save(discount);
-    }
-
-    // Cập nhật discount theo ID
-    public Discount updateDiscount(Long discountId, Discount updatedDiscount) {
-
-        return discountRepository.findById(discountId).map(existingDiscount -> {
-            existingDiscount.setCode(updatedDiscount.getCode() != null ? updatedDiscount.getCode() : existingDiscount.getCode());
-            existingDiscount.setQuantity(updatedDiscount.getQuantity() != null ? updatedDiscount.getQuantity() : existingDiscount.getQuantity());
-            existingDiscount.setExpirationDate(updatedDiscount.getExpirationDate() != null ? updatedDiscount.getExpirationDate() : existingDiscount.getExpirationDate());
-            existingDiscount.setMethod(updatedDiscount.getMethod() != null ? updatedDiscount.getMethod() : existingDiscount.getMethod());
-            existingDiscount.setQuota(updatedDiscount.getQuota() != null ? updatedDiscount.getQuota() : existingDiscount.getQuota());
-            existingDiscount.setValue(updatedDiscount.getValue() != null ? updatedDiscount.getValue() : existingDiscount.getValue());
-            return discountRepository.save(existingDiscount);
+    public Discount update(Long id, Discount request) {
+        return repository.findById(id).map(discount -> {
+            discount.setQuantity(request.getQuantity() != null ? request.getQuantity() : discount.getQuantity());
+            discount.setEndDate(request.getEndDate() != null ? request.getEndDate() : discount.getEndDate());
+            discount.setStartDate(request.getStartDate() != null ? request.getStartDate() : discount.getStartDate());
+            discount.setDiscountMethod(request.getDiscountMethod() != null ? request.getDiscountMethod() : discount.getDiscountMethod());
+            discount.setQuota(request.getQuota() != null ? request.getQuota() : discount.getQuota());
+            discount.setValue(request.getValue() != null ? request.getValue() : discount.getValue());
+            discount.setIsDelete(request.getIsDelete() != null ? request.getIsDelete() : discount.getIsDelete());
+            return repository.save(discount);
         }).orElse(null);
     }
 
-    public Boolean deleteDiscount(Long id) {
-        return discountRepository.findById(id).map(discount -> {
-            discount.setIsDelete(true);
-            discountRepository.save(discount);
+
+    public Boolean delete(Long id) {
+        return repository.findById(id).map(b -> {
+            b.setIsDelete(true);
+            repository.save(b);
             return true;
         }).orElse(false);
     }
 
-    //check
-    public  Boolean discountCodeExists(Discount discount){
-        return discountRepository.findByCodeAndIsDeleteFalse(discount.getCode()).isPresent();
+    public Boolean findByCode(String code) {
+        return repository.findByCodeAndIsDeleteFalse(code) != null;
     }
-    public Page<Discount> getDiscountMethodByValue(String code, Pageable pageable){
-        return discountRepository.findByCodeContainingAndIsDeleteIsFalse(code,pageable);
+
+    public Boolean findByCodeAndIdNot(String code, Long id) {
+        return repository.findByCodeAndIdNotAndIsDeleteFalse(code, id) != null;
     }
 
 }

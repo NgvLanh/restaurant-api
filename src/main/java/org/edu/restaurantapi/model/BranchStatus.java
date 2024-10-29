@@ -18,12 +18,11 @@ import lombok.experimental.FieldDefaults;
 public class BranchStatus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Integer id;
+    Long id;
 
-    @NotBlank(message = "Branch status name cannot be empty")
-    @Size(max = 50, message = "Branch status name cannot exceed 50 characters")
+    @NotBlank(message = "Tình trạng của chi nhán ko dược bỏ trống")
+    @Size(max = 50, message = "Tên tình trạng chi nhánh chỉ được dưới 50 ký tự")
     String name;
 
-    @JsonIgnore
-    Boolean isDelete = false;
+    String colorCode; // Lưu  màu cho đẹp
 }

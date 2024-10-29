@@ -13,14 +13,17 @@ public class Zone {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    @NotBlank(message = "Zone address cannot be empty")
+
+    @NotBlank(message = "Địa chỉ khu vực không được để trống")
+    String name;
+
+    @NotBlank(message = "Chi tiết địa chỉ khu vực không được để trống")
     String address;
-    @NotBlank(message = "Zone address details cannot be empty")
-    String addressDetails;
 
     @ManyToOne
     @JoinColumn(name = "branch_id")
     Branch branch;
 
-    Boolean isDelete = false;
+    String colorCode;
 }
+

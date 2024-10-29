@@ -4,11 +4,15 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Date;
 
+@Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,17 +22,31 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @NotNull(message = "Start time cannot be empty")
-    LocalDate startTime;
+    @NotNull(message = "Thời gian bắt đầu không được để trống")
+    LocalTime startTime;
 
-    @NotNull(message = "End time cannot be empty")
-    LocalDate endTime;
+    @NotNull(message = "Thời gian kết thúc không được để trống")
+    LocalTime endTime;
 
-    Boolean status = false;
+    @NotNull(message = "Ngày đặt không được để trống")
+    LocalDate bookingDate;
+
+    Date createDate = new Date();
+
+    String fullName;
+    String email;
+    String phoneNumber;
+    String notes;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    User user;
+    @JoinColumn(name = "table_id")
+    Table table;
+
+    @ManyToOne
+    @JoinColumn(name = "branch_id")
+    Branch branch;
+
+    Boolean isConflict = false;
 
     Boolean isDelete = false;
 }

@@ -17,50 +17,38 @@ import java.util.Optional;
 public class BranchStatusService {
 
     @Autowired
-    private BranchStatusRepository branchStatusRepository;
+    private BranchStatusRepository repository;
 
-    public Page<BranchStatus> getAllBranchStatuses(Pageable pageable) {
+    public Page<BranchStatus> gets(String name, Pageable pageable) {
         Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
                 pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
-        return branchStatusRepository.findBranchStatusByIsDeleteFalse(pageableSorted);
+        return repository.findByNameContaining(name, pageableSorted);
     }
 
-    public BranchStatus getBranchStatusById(Long id) {
-        return branchStatusRepository.findById(id).orElse(null);
+    public BranchStatus create(BranchStatus request) {
+        return repository.save(request);
     }
 
-    public BranchStatus createBranchStatus(BranchStatus branchStatus) {
-        Optional<BranchStatus> existingMethod = branchStatusRepository.findByNameAndIsDeleteFalse(branchStatus.getName());
-        if (existingMethod.isPresent()) {
-            return null;
-        }
-        return branchStatusRepository.save(branchStatus);
-    }
-
-    public BranchStatus updateBranchStatus(Long id, BranchStatus branchStatusUpdate) {
-        return branchStatusRepository.findById(id).map(branchStatus -> {
-            branchStatus.setName(branchStatusUpdate.getName() != null ? branchStatusUpdate.getName() : branchStatus.getName());
-            return branchStatusRepository.save(branchStatus);
+    public BranchStatus update(Long id, BranchStatus request) {
+        return repository.findById(id).map(b -> {
+            b.setName(request.getName() != null ? request.getName() : b.getName());
+            b.setColorCode(request.getColorCode() != null ? request.getColorCode() : b.getColorCode());
+            return repository.save(b);
         }).orElse(null);
     }
 
-    public Boolean deleteBranchStatus(Long id) {
-        return branchStatusRepository.findById(id).map(branchStatus -> {
-            branchStatus.setIsDelete(true);
-            branchStatusRepository.save(branchStatus);
-            return true;
-        }).orElse(false);
+    public Boolean delete(Long id) {
+        if (repository.existsById(id)) {
+            repository.deleteById(id);
+        }
+        return !repository.existsById(id);
     }
 
-    public Page<BranchStatus> getBranchStatusesByName(String name, Pageable pageable) {
-        return branchStatusRepository.findByNameContainingAndIsDeleteFalse(name, pageable);
+    public Boolean findByName(String name) {
+        return repository.findByName(name) != null;
     }
 
-    public Optional<BranchStatus> findByName(String name) {
-        return branchStatusRepository.findByNameAndIsDeleteFalse(name);
-    }
-
-    public Boolean branchStatusNameExist(BranchStatus branchStatus) {
-        return branchStatusRepository.findByNameAndIsDeleteFalse(branchStatus.getName()).isPresent();
+    public Boolean findByNameAndIdNot(String name, Long id) {
+        return repository.findByNameAndIdNot(name, id) != null;
     }
 }
