@@ -1,6 +1,7 @@
 package org.edu.restaurantapi.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.edu.restaurantapi._enum.AdminRole;
 import org.edu.restaurantapi.model.Role;
 import org.edu.restaurantapi.model.User;
 import org.edu.restaurantapi.repository.RoleRepository;
@@ -16,7 +17,8 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 @Configuration
 public class ApplicationInitConfig {
-    private final String roleName = "ADMIN";
+    private final String roleAdminName = "ADMIN";
+    private final String roleUserName = "USER";
     private final String email = "admin@gmail.com";
     private final String password = "admin";
 
@@ -25,23 +27,33 @@ public class ApplicationInitConfig {
                                         RoleRepository roleRepository) {
         return args -> {
             Role role;
-            if (roleRepository.findByNameAndIsDeleteFalse(roleName).isEmpty()) {
+            if (roleRepository.findByNameAndIsDeleteFalse(roleUserName).isEmpty()) {
+                roleRepository.save(Role.builder()
+                        .name(roleUserName)
+                        .permissions("CLIENT")
+                        .isDelete(false)
+                        .build());
+            }
+            if (roleRepository.findByNameAndIsDeleteFalse(roleAdminName).isEmpty()) {
                 role = roleRepository.save(Role.builder()
-                        .name(roleName)
+                        .name(roleAdminName)
                         .permissions("ALL")
                         .isDelete(false)
                         .build());
+
             } else {
-                role = roleRepository.findByNameAndIsDeleteFalse(roleName).get();
+                role = roleRepository.findByNameAndIsDeleteFalse(roleAdminName).get();
             }
             if (userRepository.findByEmail(email).isEmpty()) {
                 User user = User.builder()
                         .fullName("ADMIN")
-                        .phoneNumber("0123456789")
+                        .phoneNumber("0000000000")
                         .email(email)
                         .password(PasswordUtil.hashPassword(password))
                         .activated(true)
                         .role(role)
+                        .isDelete(true)
+                        .adminRole(AdminRole.ADMIN)
                         .build();
                 userRepository.save(user);
                 log.info("ADMIN ACCOUNT ==> EMAIL: admin@gmail.com - PASSWORD: admin");

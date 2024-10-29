@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/dishes")
@@ -24,7 +26,7 @@ public class DishController {
     public ResponseEntity<?> createDish(@Validated @RequestBody Dish dish) {
         if (dishService.dishExists(dish)) {
             return ResponseEntity.badRequest()
-                    .body(ApiResponse.BAD_REQUEST("Name already exists"));
+                    .body(ApiResponse.BAD_REQUEST("Tên món ăn đã tồn tại"));
         } else {
             try {
                 Dish response = dishService.createDish(dish);
@@ -32,7 +34,7 @@ public class DishController {
                         .body(ApiResponse.CREATED(response));
             } catch (Exception e) {
                 return ResponseEntity.internalServerError()
-                        .body(ApiResponse.SERVER_ERROR("Created dish failed: " + e.getMessage()));
+                        .body(ApiResponse.SERVER_ERROR("Lỗi khi thêm món ăn: " + e.getMessage()));
             }
         }
     }
@@ -42,34 +44,33 @@ public class DishController {
         Dish existingDish = dishService.getDish(id);
         if (existingDish == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.NOT_FOUND("Not found the dish with id: " + id));
+                    .body(ApiResponse.NOT_FOUND("Không có món ăn có mã #:" + id));
         }
-        if (dishService.dishExists(dish) && existingDish.getId() != id) {
+
+        Optional<Dish> duplicateDish = dishService.findByNameAndIdNot(dish.getName(), id);
+        if (duplicateDish.isPresent()) {
             return ResponseEntity.badRequest()
-                    .body(ApiResponse.BAD_REQUEST("Name already exists"));
-        } else {
-            try {
-                Dish response = dishService.updateDish(id, dish);
-                return ResponseEntity.ok()
-                        .body(ApiResponse.SUCCESS(response));
-            } catch (Exception e) {
-                return ResponseEntity.internalServerError()
-                        .body(ApiResponse.SERVER_ERROR("Updated dish failed: " + e.getMessage()));
-            }
+                    .body(ApiResponse.BAD_REQUEST("Tên món ăn đã tồn tại"));
+        }
+
+        try {
+            Dish response = dishService.updateDish(id, dish);
+            return ResponseEntity.ok()
+                    .body(ApiResponse.SUCCESS(response));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body(ApiResponse.SERVER_ERROR("Lỗi khi cập nhật món ăn: " + e.getMessage()));
         }
     }
 
-//    @GetMapping
-//    private ResponseEntity<?> getDishes(Pageable pageable) {
-//        Page<Dish> response = dishService.getDishes(pageable);
-//        return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
-//    }
+
     @GetMapping
-    public ResponseEntity<?> getDishes(@RequestParam(value = "name", required = false) String name,Pageable pageable) {
+    public ResponseEntity<?> getDishes(@RequestParam(value = "name", required = false) String name,
+                                       Pageable pageable) {
         Page<Dish> response;
-        if(name!= null && !name.isEmpty()){
-            response = dishService.getDishByName(name,pageable);
-        }else{
+        if (name != null && !name.isEmpty()) {
+            response = dishService.getDishByName(name, pageable);
+        } else {
             response = dishService.getAllDish(pageable);
         }
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.SUCCESS(response));
