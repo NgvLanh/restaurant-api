@@ -32,6 +32,10 @@ public class SecurityConfig {
             "/api/vnpay",
             "/api/email/send",
             "/api/email/send-html",
+            "/api/email/send-otp",
+            "/api/email/validate",
+            "/api/email/reset-password",
+
     };
 
     private final String[] GET_API = {

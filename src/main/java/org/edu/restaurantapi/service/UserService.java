@@ -4,6 +4,7 @@ import org.edu.restaurantapi.model.Role;
 import org.edu.restaurantapi.model.User;
 import org.edu.restaurantapi.repository.RoleRepository;
 import org.edu.restaurantapi.repository.UserRepository;
+import org.edu.restaurantapi.request.ResetPasswordRequest;
 import org.edu.restaurantapi.util.PasswordUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,6 +14,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 
 @Service
@@ -91,4 +94,11 @@ public class UserService {
         }
         return userRepository.findByBranchId(branch, pageable);
     }
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElse(null);
+    }
+    public Optional<User> userEmailExistsOTP(String email) {
+        return userRepository.findByEmail(email);
+    }
+
 }
