@@ -35,6 +35,11 @@ public class SecurityConfig {
             "/api/files/upload",
             "/api/reservations",
             "/api/table-reservations",
+            "/api/email/send-otp",
+            "/api/email/validate",
+            "/api/email/reset-password",
+
+
     };
 
     private final String[] GET_API = {
