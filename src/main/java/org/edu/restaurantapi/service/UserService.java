@@ -6,6 +6,8 @@ import org.edu.restaurantapi.repository.RoleRepository;
 import org.edu.restaurantapi.repository.UserRepository;
 import org.edu.restaurantapi.request.ResetPasswordRequest;
 import org.edu.restaurantapi.util.PasswordUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,6 +23,7 @@ import java.util.Optional;
 @Service
 public class UserService {
 
+    private static final Logger log = LoggerFactory.getLogger(UserService.class);
     @Autowired
     private UserRepository userRepository;
 
@@ -98,11 +101,11 @@ public class UserService {
     public User findUserByEmail(String email) {
         return userRepository.findByEmail(email).orElse(null);
     }
-  
+
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email).orElse(null);
     }
-  
+
     public Optional<User> userEmailExistsOTP(String email) {
         return userRepository.findByEmail(email);
     }

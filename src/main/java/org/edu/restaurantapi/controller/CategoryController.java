@@ -20,7 +20,11 @@ public class CategoryController {
     @GetMapping
     public ResponseEntity<?> gets(@RequestParam(value = "name", required = false) String name, Pageable pageable) {
         var response = service.gets(name, pageable);
-        return ResponseEntity.ok(ApiResponse.SUCCESS(response));
+        var updateResponse = response.map((res) -> {
+            res.setImage("http://localhost:8080/api/files/" + res.getImage());
+            return res;
+        });
+        return ResponseEntity.ok(ApiResponse.SUCCESS(updateResponse));
     }
 
     @PostMapping

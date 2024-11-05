@@ -59,4 +59,8 @@ public class DishService {
     public Boolean findByNameAndIdNot(String name, Long id) {
         return repository.findByNameAndIdNotAndIsDeleteFalse(name, id) != null;
     }
+
+    public Page<Dish> getDishesByCategoryId(Long categoryId, Pageable pageable) {
+        return repository.findByCategoryId(categoryId, pageable);
+    }
 }

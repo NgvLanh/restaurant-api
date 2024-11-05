@@ -4,12 +4,19 @@ import jakarta.validation.Valid;
 import org.edu.restaurantapi.model.BranchStatus;
 import org.edu.restaurantapi.response.ApiResponse;
 import org.edu.restaurantapi.service.BranchStatusService;
+import org.edu.restaurantapi.util.ExcelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/branch-status")
@@ -48,5 +55,14 @@ public class BranchStatusController {
     public ResponseEntity<?> delete(@PathVariable Long id) {
         var response = service.delete(id);
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
+    }
+
+    @PostMapping("/import-file")
+    public ResponseEntity<?> importFile(@RequestBody BranchStatus[] request) throws IOException  {
+        return ResponseEntity.ok().body(ApiResponse.BAD_REQUEST("Chưa hoàn thành"));
+    }
+
+    private boolean isValid(BranchStatus status) {
+        return true; // Logic kiểm tra tính hợp lệ
     }
 }

@@ -18,6 +18,8 @@ public class Category {
     @NotBlank(message = "Tên danh mục không được để trống")
     String name;
 
+    String image;
+
     @NotBlank(message = "Mô tả danh mục không được để trống")
     String description;
 }

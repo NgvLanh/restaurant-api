@@ -29,8 +29,6 @@ public class User {
 
     String image;
 
-    @NotBlank(message = "Số điện thoại không được để trống")
-    @Pattern(regexp = "^\\d{10,11}$", message = "Số điện thoại phải là 10 hoặc 11 chữ số")
     @Column(unique = true)
     String phoneNumber;
 
@@ -40,7 +38,7 @@ public class User {
     String email;
 
     @NotBlank(message = "Mật khẩu không được để trống")
-    @Size(min = 8, message = "Mật khẩu phải có ít nhất 8 ký tự")
+    @Size(min = 6, message = "Mật khẩu phải có ít nhất 6 ký tự")
     String password;
 
     Boolean activated = true;

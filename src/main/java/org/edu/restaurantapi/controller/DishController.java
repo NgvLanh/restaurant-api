@@ -81,4 +81,14 @@ public class DishController {
         var response = service.delete(id);
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
+
+    @GetMapping("/{categoryId}")
+    public ResponseEntity<?> getDishesByCategoryId(@PathVariable Long categoryId, Pageable pageable) {
+        var response = service.getDishesByCategoryId(categoryId, pageable);
+        var updateResponse = response.map((res) -> {
+            res.setImage("http://localhost:8080/api/files/" + res.getImage());
+            return res;
+        });
+        return ResponseEntity.ok().body(ApiResponse.SUCCESS(updateResponse));
+    }
 }

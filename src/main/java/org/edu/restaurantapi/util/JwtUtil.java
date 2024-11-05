@@ -32,7 +32,7 @@ public class JwtUtil {
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
         JWSObject jwsObject = new JWSObject(header, payload);
         try {
-            String signerKey = "JdoKtrqqppLTGeG5F6W3qGKOs5UH8Z5dAvS7zpn0XVcyAQEWAKdGD2SP8KWkH3Ze";
+            String signerKey = "NHpqb2tvaTVxYjh3Y3doYTQzMHNkOHUweDg5OWtmcmZ1OXB5cThhZ2huZnhpOHFlYnVwYndpaXkzams3azhydHl4a256dW1iNnhhbWRzdGQxd2RyeWplbXJiaHAzeTJ3a2JrejhlNjJ4YTc3OXp6Z3Nwa2UyMGpnZ3l3cHJ2bGI=";
             jwsObject.sign(new MACSigner(signerKey.getBytes()));
             return jwsObject.serialize();
         } catch (JOSEException e) {

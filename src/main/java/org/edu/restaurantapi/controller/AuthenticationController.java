@@ -26,7 +26,7 @@ public class AuthenticationController {
                     .body(ApiResponse.SUCCESS(authenticated));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(ApiResponse.UNAUTHORIZED("Invalid username or password"));
+                .body(ApiResponse.UNAUTHORIZED("Email hoặc mật khẩu không chính xác"));
     }
 
     @PostMapping("/introspect")
@@ -38,7 +38,7 @@ public class AuthenticationController {
                     .body(ApiResponse.SUCCESS(introspected));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(ApiResponse.UNAUTHORIZED("Invalid token"));
+                .body(ApiResponse.UNAUTHORIZED("Token không có giá trị"));
     }
 
 }
