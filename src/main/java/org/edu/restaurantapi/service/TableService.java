@@ -36,7 +36,6 @@ public class TableService {
         return repository.findById(id).map(t -> {
             t.setNumber(request.getNumber() != null ? request.getNumber() : t.getNumber());
             t.setSeats(request.getSeats() != null ? request.getSeats() : t.getSeats());
-            t.setTableStatus(request.getTableStatus() != null ? request.getTableStatus() : t.getTableStatus());
             t.setZone(request.getZone() != null ? request.getZone() : t.getZone());
             return repository.save(t);
         }).orElse(null);

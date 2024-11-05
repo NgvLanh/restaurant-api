@@ -12,6 +12,7 @@ public class CorsConfig {
 
     private final String[] origins = {
             "http://localhost:3000",
+            "http://localhost:5000",
     };
 
     private final String[] methods = {

@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.edu.restaurantapi._interface.ExcelExportable;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
@@ -24,5 +25,5 @@ public class BranchStatus {
     @Size(max = 50, message = "Tên tình trạng chi nhánh chỉ được dưới 50 ký tự")
     String name;
 
-    String colorCode; // Lưu  màu cho đẹp
+    String colorCode = "#FFFFFF"; // Lưu  màu cho đẹp
 }

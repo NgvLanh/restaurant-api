@@ -1,5 +1,6 @@
 package org.edu.restaurantapi.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.edu.restaurantapi.model.Category;
 import org.edu.restaurantapi.model.Category;
 import org.edu.restaurantapi.model.Dish;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class CategoryService {
     
@@ -30,11 +32,18 @@ public class CategoryService {
     }
 
     public Category update(Long id, Category request) {
+        request.setImage(request.getImage().substring(request.getImage().lastIndexOf("/") + 1));
         return repository.findById(id).map(c -> {
             c.setName(request.getName() != null ? request.getName() : c.getName());
+            // Kiểm tra nếu ảnh không null và không phải là chuỗi rỗng
+            if (request.getImage() != null && !request.getImage().isEmpty()) {
+                c.setImage(request.getImage());
+            }
+            c.setDescription(request.getDescription() != null ? request.getDescription() : c.getDescription());
             return repository.save(c);
         }).orElse(null);
     }
+
 
     public Boolean delete(Long id) {
         if (repository.existsById(id)) {

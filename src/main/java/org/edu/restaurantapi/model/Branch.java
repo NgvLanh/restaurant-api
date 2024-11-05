@@ -29,17 +29,23 @@ public class Branch {
     @Pattern(regexp = "^\\d{10,11}$", message = "Số điện thoại phải có 10 hoặc 11 chữ số")
     String phoneNumber;
 
-    @NotBlank(message = "Địa chỉ không được để trống")
     @Size(max = 255, message = "Địa chỉ không được vượt quá 255 ký tự")
     String address;
+
+    @NotBlank(message = "Phường/Xã không được để trống")
+    @Size(max = 100, message = "Phường/Xã không được vượt quá 100 ký tự")
+    String ward;
+    String wardId;
 
     @NotBlank(message = "Quận/Huyện không được để trống")
     @Size(max = 100, message = "Quận/Huyện không được vượt quá 100 ký tự")
     String district;
+    String districtId;
 
     @NotBlank(message = "Thành phố không được để trống")
     @Size(max = 100, message = "Thành phố không được vượt quá 100 ký tự")
     String city;
+    String cityId;
 
     @ManyToOne
     @JoinColumn(name = "branch_status_id")

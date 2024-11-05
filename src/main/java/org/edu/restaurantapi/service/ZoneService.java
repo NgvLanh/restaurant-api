@@ -1,16 +1,12 @@
 package org.edu.restaurantapi.service;
 
 import org.edu.restaurantapi.model.Zone;
-import org.edu.restaurantapi.model.TableStatus;
-import org.edu.restaurantapi.model.Zone;
-import org.edu.restaurantapi.repository.ZoneRepository;
 import org.edu.restaurantapi.repository.ZoneRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 @Service
