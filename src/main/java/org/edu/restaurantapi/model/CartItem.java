@@ -3,13 +3,11 @@ package org.edu.restaurantapi.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Data
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,10 +22,6 @@ public class CartItem {
     @NotNull(message = "Quantity cannot be empty")
     @Positive(message = "Quantity must be greater than 0")
     Integer quantity;
-
-    @NotNull(message = "Price cannot be empty")
-    @Positive(message = "Price must be greater than 0")
-    Double price;
 
     @ManyToOne
     @JoinColumn(name = "cart_id")

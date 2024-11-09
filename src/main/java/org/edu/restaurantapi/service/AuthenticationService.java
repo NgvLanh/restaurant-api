@@ -28,17 +28,23 @@ public class AuthenticationService {
     private UserRepository userRepository;
 
     public AuthenticationResponse authenticated(AuthenticationRequest request) {
-        var user = userRepository.findByEmailOrPhoneNumber(request.getUsername(), request.getUsername())
+        var user = userRepository.findByEmail(request.getEmail())
                 .orElse(null);
         if (user != null) {
             var result = PasswordUtil.checkPassword(request.getPassword(), user.getPassword());
+            user.setPassword(null);
             if (result) {
                 JwtUtil jwtUtil = new JwtUtil();
                 var token = jwtUtil.generateToken(user);
-                return AuthenticationResponse.builder().authenticated(true).token(token).build();
+                return AuthenticationResponse
+                        .builder()
+                        .authenticated(true)
+                        .accessToken(token)
+                        .info(user)
+                        .build();
             }
         }
-        return AuthenticationResponse.builder().authenticated(false).token("").build();
+        return AuthenticationResponse.builder().authenticated(false).build();
     }
 
     public IntrospectResponse introspect(String authHeader) throws JOSEException, ParseException {

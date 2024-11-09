@@ -14,6 +14,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 public class CategoryService {
@@ -21,10 +23,14 @@ public class CategoryService {
     @Autowired
     private CategoryRepository repository;
 
-    public Page<Category> gets(String name, Pageable pageable) {
+    public Page<Category> getAllCategories(Optional<String> name, Pageable pageable) {
         Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
                 pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
-        return repository.findCategoriesByNameContaining(name, pageableSorted);
+        if (name.isPresent()) {
+            return repository.findCategoriesByNameContaining(name.toString(), pageableSorted);
+        }
+        return repository.findAll(pageableSorted);
+
     }
 
     public Category create(Category request) {

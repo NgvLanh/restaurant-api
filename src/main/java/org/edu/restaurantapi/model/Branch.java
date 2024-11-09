@@ -5,12 +5,10 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
@@ -34,18 +32,18 @@ public class Branch {
 
     @NotBlank(message = "Phường/Xã không được để trống")
     @Size(max = 100, message = "Phường/Xã không được vượt quá 100 ký tự")
-    String ward;
+    String wardName;
     String wardId;
 
     @NotBlank(message = "Quận/Huyện không được để trống")
     @Size(max = 100, message = "Quận/Huyện không được vượt quá 100 ký tự")
-    String district;
+    String districtName;
     String districtId;
 
     @NotBlank(message = "Thành phố không được để trống")
     @Size(max = 100, message = "Thành phố không được vượt quá 100 ký tự")
-    String city;
-    String cityId;
+    String provinceName;
+    String provinceId;
 
     @ManyToOne
     @JoinColumn(name = "branch_status_id")

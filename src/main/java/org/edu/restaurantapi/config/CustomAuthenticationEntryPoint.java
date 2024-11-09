@@ -19,7 +19,7 @@ public class CustomAuthenticationEntryPoint  implements AuthenticationEntryPoint
                          HttpServletResponse response,
                          AuthenticationException authException)
             throws IOException {
-        String errorMessage = "-- NHẬP TOKEN ĐĂNG NHẬP ĐỂ TIẾP TỤC --";
+        String errorMessage = "-- Đăng nhập để tiếp tục --";
 
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);

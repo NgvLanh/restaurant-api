@@ -20,6 +20,5 @@ public class Category {
 
     String image;
 
-    @NotBlank(message = "Mô tả danh mục không được để trống")
     String description;
 }

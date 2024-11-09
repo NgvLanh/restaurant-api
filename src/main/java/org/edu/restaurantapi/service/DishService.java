@@ -23,10 +23,13 @@ public class DishService {
     @Autowired
     private DishRepository repository;
 
-    public Page<Dish> gets(String name, Pageable pageable) {
+    public Page<Dish> getAllDishes(Optional<String> name, Pageable pageable) {
         Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
                 pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
-        return repository.findByNameContainingAndIsDeleteFalse(name, pageableSorted);
+        if (name.isPresent()) {
+            return repository.findByNameContainingAndIsDeleteFalse(name.toString(), pageableSorted);
+        }
+        return repository.findByIsDeleteFalse(pageableSorted);
     }
 
     public Dish create(Dish request) {

@@ -18,4 +18,6 @@ public interface DishRepository extends JpaRepository<Dish, Long> {
     Dish findByNameAndIdNotAndIsDeleteFalse(String name, Long id);
 
     Page<Dish> findByCategoryId(Long categoryId, Pageable pageable);
+
+    Page<Dish> findByIsDeleteFalse(Pageable pageableSorted);
 }

@@ -27,8 +27,7 @@ public class UserController {
     private ResponseEntity<?> getUserInfo() {
         User response = userService.getUserInfo();
         response.setPassword(null);
-        return ResponseEntity.ok()
-                .body(ApiResponse.SUCCESS(response));
+        return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
 
     @PostMapping
@@ -101,14 +100,14 @@ public class UserController {
             Boolean response = userService.deleteUser(id);
             if (response) {
                 return ResponseEntity.ok()
-                        .body(ApiResponse.DELETE("User deleted successfully"));
+                        .body(ApiResponse.DELETE("Xoá người dùng thành công"));
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(ApiResponse.NOT_FOUND("User with id " + id + " not found"));
+                        .body(ApiResponse.NOT_FOUND("Không tìm thấy người dung #:" + id));
             }
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
-                    .body(ApiResponse.SERVER_ERROR("Error deleting user: " + e.getMessage()));
+                    .body(ApiResponse.SERVER_ERROR(e.getMessage()));
         }
     }
 }

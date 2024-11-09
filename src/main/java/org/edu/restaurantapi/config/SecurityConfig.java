@@ -29,11 +29,13 @@ public class SecurityConfig {
     private final String[] POST_API = {
             "/api/auth/login",
             "/api/users",
+            "/api/email/send-otp",
+            "/api/carts/async/*",
     };
 
     private final String[] GET_API = {
-            "/api/*",
             "/api/files/*",
+            "/api/*",
             "/api/dishes/*",
     };
 

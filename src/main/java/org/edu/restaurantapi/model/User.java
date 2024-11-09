@@ -10,6 +10,9 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.edu.restaurantapi._enum.AdminRole;
+import org.edu.restaurantapi._enum.Role;
+
+import java.util.Set;
 
 @Data
 @Builder
@@ -29,6 +32,7 @@ public class User {
 
     String image;
 
+    @JsonIgnore
     @Column(unique = true)
     String phoneNumber;
 
@@ -41,17 +45,11 @@ public class User {
     @Size(min = 6, message = "Mật khẩu phải có ít nhất 6 ký tự")
     String password;
 
-    Boolean activated = true;
-
-    @ManyToOne
-    @JoinColumn(name = "role_id")
-    Role role;
+    Set<Role> role;
 
     @ManyToOne
     @JoinColumn(name = "branch_id")
     Branch branch;
-
-    AdminRole adminRole;
 
     @JsonIgnore
     Boolean isDelete = false;

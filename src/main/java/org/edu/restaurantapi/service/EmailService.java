@@ -18,6 +18,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Random;
@@ -78,6 +79,7 @@ public class EmailService {
         helper.setFrom(emailOwner);
         mailSender.send(mimeMessage);
     }
+
     public boolean resetPassword(ResetPasswordRequest request) {
         // Tìm kiếm người dùng dựa trên email
         User user = userRepository.findByEmail(request.getEmail())
@@ -92,7 +94,7 @@ public class EmailService {
     }
 
     public String generateOtp() {
-        Random random = new Random();
-        return String.format("%06d", random.nextInt(1000000));
+        SecureRandom secureRandom = new SecureRandom();
+        return String.format("%06d", secureRandom.nextInt(1000000));
     }
 }

@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "otp")
-@Table(name = "otp", uniqueConstraints = @UniqueConstraint(columnNames = "otp_code"))
 public class OTP {
 
     @Id
@@ -28,19 +27,13 @@ public class OTP {
     String otpCode;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     User user;
 
-    @Column(name = "created_at", nullable = false)
-    LocalDateTime createdAt;
+    @Column(name = "created_at")
+    LocalDateTime createdAt = LocalDateTime.now();
 
-    @Column(name = "expires_at", nullable = false)
-    LocalDateTime expiresAt;
+    @Column(name = "expires_at")
+    LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(5);
 
-    public OTP(String otpCode, User user) {
-        this.otpCode = otpCode;
-        this.user = user;
-        this.createdAt = LocalDateTime.now();
-        this.expiresAt = LocalDateTime.now().plusMinutes(5);
-    }
 }

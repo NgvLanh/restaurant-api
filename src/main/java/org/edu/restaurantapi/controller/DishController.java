@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Optional;
 
 
 @RestController
@@ -22,9 +23,9 @@ public class DishController {
     private DishService service;
 
     @GetMapping
-    public ResponseEntity<?> gets(@RequestParam(value = "name", required = false) String name,
+    public ResponseEntity<?> getAllDishes(@RequestParam(value = "name", required = false) Optional<String> name,
                                   Pageable pageable) {
-        var response = service.gets(name, pageable);
+        var response = service.getAllDishes(name, pageable);
         var updateResponse = response.map((res) -> {
             res.setImage("http://localhost:8080/api/files/" + res.getImage());
             return res;

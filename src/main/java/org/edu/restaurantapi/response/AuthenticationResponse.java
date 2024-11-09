@@ -2,6 +2,7 @@ package org.edu.restaurantapi.response;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.edu.restaurantapi.model.User;
 
 @Data
 @Builder
@@ -9,6 +10,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AuthenticationResponse {
-    Boolean authenticated; // true is ok
-    String token;
+    Boolean authenticated;
+    String accessToken;
+    User info;
 }

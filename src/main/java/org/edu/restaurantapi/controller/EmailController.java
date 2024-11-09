@@ -1,28 +1,26 @@
 package org.edu.restaurantapi.controller;
 
-import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.edu.restaurantapi.model.OTP;
 import org.edu.restaurantapi.model.User;
 import org.edu.restaurantapi.repository.OtpRepository;
-import org.edu.restaurantapi.repository.UserRepository;
 import org.edu.restaurantapi.request.EmailRequest;
 import org.edu.restaurantapi.request.OtpRequest;
 import org.edu.restaurantapi.request.ResetPasswordRequest;
 import org.edu.restaurantapi.response.ApiResponse;
 import org.edu.restaurantapi.service.EmailService;
 import org.edu.restaurantapi.service.UserService;
-import org.edu.restaurantapi.util.PasswordUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
+
+@Slf4j
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping("/api/email")
 public class EmailController {
 
@@ -35,56 +33,38 @@ public class EmailController {
     @Autowired
     private OtpRepository otpRepository;
 
-//    @PostMapping("/send-html")
-//    public ResponseEntity<?> sendHtmlEmail(@Valid @RequestBody EmailRequest emailRequest) {
-//        try {
-//            String htmlContent = buildOtpEmailContent(emailRequest.getText());
-//            emailService.sendHtmlEmail(emailRequest, htmlContent);
-//            return ResponseEntity.ok().body(new ApiResponse<>(200, true, "Email đã được gửi thành công!", null));
-//        } catch (MessagingException e) {
-//            return ResponseEntity.internalServerError().body(new ApiResponse<>(500, false, "Lỗi khi gửi email: " + e.getMessage(), null));
-//        }
-//    }
 
     @PostMapping("/send-otp")
-    public ResponseEntity<?> sendOtpEmail(@Valid @RequestBody EmailRequest emailRequest) {
+    public ResponseEntity<?> sendOtpEmail(@Valid @RequestBody EmailRequest request) {
         try {
-            // Kiểm tra xem email có tồn tại không
-            Optional<User> userOptional = userService.userEmailExistsOTP(emailRequest.getTo());
-            if (userOptional.isEmpty()) {
-                return ResponseEntity.badRequest().body(new ApiResponse<>(400, false, "Email không tồn tại.", null));
+            Optional<User> userExists = userService.findUserByEmail(request.getTo());
+            log.info(userExists.toString());
+            if (userExists.isEmpty()) {
+                return ResponseEntity.badRequest()
+                        .body(ApiResponse.BAD_REQUEST("Email này chưa đăng ký"));
             }
-
-            User user = userOptional.get(); // Lấy thông tin người dùng nếu có
-
-            // Tạo mã OTP
+            User user = userExists.get();
             String otp = emailService.generateOtp();
-
-            // Xây dựng nội dung email với mã OTP
             String htmlContent = buildOtpEmailContent(otp);
+            EmailRequest emailRequest = EmailRequest
+                    .builder()
+                    .to(user.getEmail())
+                    .subject("Khôi phục mật khẩu")
+                    .text(htmlContent)
+                    .build();
 
-            // Gửi email với mã OTP
-            // Gọi phương thức với cả hai tham số
-            emailService.sendHtmlEmail(new EmailRequest(emailRequest.getTo(), "Mã OTP", htmlContent), htmlContent); // Gọi với 2 tham số
+            emailService.sendHtmlEmail(emailRequest, htmlContent);
 
-            // Lưu OTP vào CSDL
-            OTP otpEntity = new OTP();
-            otpEntity.setOtpCode(otp);
-            otpEntity.setUser(user); // Gán người dùng vào OTP
-            otpEntity.setCreatedAt(LocalDateTime.now());
-            otpEntity.setExpiresAt(LocalDateTime.now().plusMinutes(5)); // Hết hạn sau 5 phút
+            OTP otpUser = new OTP();
+            otpUser.setOtpCode(otp);
+            otpUser.setUser(user);
 
-            // Lưu OTP vào repository
-            otpRepository.save(otpEntity);
-
-            return ResponseEntity.ok().body(new ApiResponse<>(200, true, "OTP đã được gửi thành công!", null));
+            otpRepository.save(otpUser);
+            return ResponseEntity.ok().body(ApiResponse.SUCCESS("Đã gửi mã OTP thành công vui lòng kiểm tra Email của bạn"));
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi gửi OTP.");
+            return ResponseEntity.internalServerError().body(ApiResponse.SERVER_ERROR("Lỗi gửi OTP"));
         }
     }
-
-
 
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
@@ -121,7 +101,7 @@ public class EmailController {
         return "<html>" +
                 "<body style='background-color: #121212; color: #e4c590; font-family: Arial, sans-serif; text-align: center; padding: 30px;'>" +
                 "<div style='max-width: 600px; margin: auto; background-color: #1e1e1e; border-radius: 10px; padding: 30px; box-shadow: 0 4px 20px rgba(255,255,255,0.2);'>" +
-                "<h1 style='color: #e4c590; margin-bottom: 20px;'>DELICI RESTAURANT</h1>" +
+                "<h1 style='color: #e4c590; margin-bottom: 20px;'>Cook Book</h1>" +
                 "<p style='color: #e4c590;'>Mã OTP của bạn là:</p>" +
                 "<h2 style='color: #e4c590; font-weight: bold;'>" + otp + "</h2>" +
                 "<p style='color: #e4c590;'>Nhập mã trên trang xác thực.</p>" +
