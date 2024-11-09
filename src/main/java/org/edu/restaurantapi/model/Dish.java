@@ -20,8 +20,6 @@ public class Dish {
 
     String image;
 
-
-
     Double price;
 
     String description;

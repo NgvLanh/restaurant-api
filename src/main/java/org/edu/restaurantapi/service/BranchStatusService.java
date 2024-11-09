@@ -19,10 +19,14 @@ public class BranchStatusService {
     @Autowired
     private BranchStatusRepository repository;
 
-    public Page<BranchStatus> gets(String name, Pageable pageable) {
+    public Page<BranchStatus> getAllBranchStatus(Optional<String> name, Pageable pageable) {
         Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
                 pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
-        return repository.findByNameContaining(name, pageableSorted);
+        if (name.isPresent()) {
+            return repository.findByNameContaining(name.get(), pageableSorted);
+        } else {
+            return repository.findAll(pageable);
+        }
     }
 
     public BranchStatus create(BranchStatus request) {

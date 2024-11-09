@@ -42,8 +42,8 @@ public class JwtUtil {
 
     private String buildScope(User user) {
         StringJoiner stringJoiner = new StringJoiner(" ");
-        if (user != null && user.getRole() != null && !user.getRole().getName().isEmpty()) {
-            stringJoiner.add(user.getRole().getName());
+        if (user != null && user.getRole() != null && !user.getRole().isEmpty()) {
+            stringJoiner.add(user.getRole().toString());
         }
         return stringJoiner.toString();
     }

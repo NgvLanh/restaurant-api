@@ -1,10 +1,8 @@
 package org.edu.restaurantapi.service;
 
-import org.edu.restaurantapi.model.Role;
+import org.edu.restaurantapi._enum.Role;
 import org.edu.restaurantapi.model.User;
-import org.edu.restaurantapi.repository.RoleRepository;
 import org.edu.restaurantapi.repository.UserRepository;
-import org.edu.restaurantapi.request.ResetPasswordRequest;
 import org.edu.restaurantapi.util.PasswordUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,11 +11,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 
 @Service
@@ -27,8 +26,6 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private RoleRepository roleRepository;
 
     public User getUserInfo() {
         var context = SecurityContextHolder.getContext();
@@ -40,7 +37,7 @@ public class UserService {
 
     public User createUser(User user) {
         user.setPassword(PasswordUtil.hashPassword(user.getPassword()));
-        user.setRole(roleRepository.findByNameAndIsDeleteFalse("USER").get());
+        user.setRole(Set.of(Role.CLIENT));
         return userRepository.save(user);
     }
 
@@ -53,8 +50,6 @@ public class UserService {
                     != null ? updatedUser.getFullName() : existingUser.getFullName());
             existingUser.setPassword(updatedUser.getPassword()
                     != null ? updatedUser.getPassword() : existingUser.getPassword());
-            existingUser.setActivated(updatedUser.getActivated()
-                    != null ? updatedUser.getActivated() : existingUser.getActivated());
             return userRepository.save(existingUser);
         }).orElse(null);
     }
@@ -98,16 +93,11 @@ public class UserService {
         return userRepository.findByBranchId(branch, pageable);
     }
 
-    public User findUserByEmail(String email) {
-        return userRepository.findByEmail(email).orElse(null);
-    }
-
-    public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email).orElse(null);
-    }
-
-    public Optional<User> userEmailExistsOTP(String email) {
+    public Optional<User> findUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
+    public Optional<User> findUserById(Long userId) {
+        return userRepository.findById(userId);
+    }
 }

@@ -18,4 +18,6 @@ public interface BranchRepository extends JpaRepository<Branch, Long> {
    Branch findByPhoneNumberAndIsDeleteFalse(String phoneNumber);
 
    Branch findByNameAndIsDeleteFalse(String name);
+
+   Page<Branch> findByIsDeleteFalse(Pageable pageableSorted);
 }

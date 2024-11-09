@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/branch-status")
@@ -26,8 +27,8 @@ public class BranchStatusController {
     private BranchStatusService service;
 
     @GetMapping
-    public ResponseEntity<?> gets(@RequestParam(value = "name", required = false) String name, Pageable pageable) {
-        var response = service.gets(name, pageable);
+    public ResponseEntity<?> getAllBranchStatus(@RequestParam(value = "name", required = false) Optional<String> name, Pageable pageable) {
+        var response = service.getAllBranchStatus(name, pageable);
         return ResponseEntity.ok(ApiResponse.SUCCESS(response));
     }
 

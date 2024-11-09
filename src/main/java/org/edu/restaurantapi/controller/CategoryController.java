@@ -10,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/api/categories")
 public class CategoryController {
@@ -18,8 +20,8 @@ public class CategoryController {
     private CategoryService service;
 
     @GetMapping
-    public ResponseEntity<?> gets(@RequestParam(value = "name", required = false) String name, Pageable pageable) {
-        var response = service.gets(name, pageable);
+    public ResponseEntity<?> getAllCategories(@RequestParam(value = "name", required = false) Optional<String> name, Pageable pageable) {
+        var response = service.getAllCategories(name, pageable);
         var updateResponse = response.map((res) -> {
             res.setImage("http://localhost:8080/api/files/" + res.getImage());
             return res;
