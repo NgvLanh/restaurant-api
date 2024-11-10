@@ -21,48 +21,48 @@ import java.util.Optional;
 public class CategoryService {
     
     @Autowired
-    private CategoryRepository repository;
+    private CategoryRepository categoryRepository;
 
     public Page<Category> getAllCategories(Optional<String> name, Pageable pageable) {
         Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
                 pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
         if (name.isPresent()) {
-            return repository.findCategoriesByNameContaining(name.toString(), pageableSorted);
+            return categoryRepository.findByNameContaining(name.get(), pageableSorted);
         }
-        return repository.findAll(pageableSorted);
+        return categoryRepository.findAll(pageableSorted);
 
     }
 
     public Category create(Category request) {
-        return repository.save(request);
+        return categoryRepository.save(request);
     }
 
     public Category update(Long id, Category request) {
         request.setImage(request.getImage().substring(request.getImage().lastIndexOf("/") + 1));
-        return repository.findById(id).map(c -> {
+        return categoryRepository.findById(id).map(c -> {
             c.setName(request.getName() != null ? request.getName() : c.getName());
             // Kiểm tra nếu ảnh không null và không phải là chuỗi rỗng
             if (request.getImage() != null && !request.getImage().isEmpty()) {
                 c.setImage(request.getImage());
             }
             c.setDescription(request.getDescription() != null ? request.getDescription() : c.getDescription());
-            return repository.save(c);
+            return categoryRepository.save(c);
         }).orElse(null);
     }
 
 
     public Boolean delete(Long id) {
-        if (repository.existsById(id)) {
-            repository.deleteById(id);
+        if (categoryRepository.existsById(id)) {
+            categoryRepository.deleteById(id);
         }
-        return !repository.existsById(id);
+        return !categoryRepository.existsById(id);
     }
 
     public Boolean findByName(String name) {
-        return repository.findByName(name) != null;
+        return categoryRepository.findByName(name) != null;
     }
 
     public Boolean findByNameAndIdNot(String name, Long id) {
-        return repository.findByNameAndIdNot(name, id) != null;
+        return categoryRepository.findByNameAndIdNot(name, id) != null;
     }
 }

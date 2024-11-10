@@ -29,11 +29,11 @@ public class BranchStatusService {
         }
     }
 
-    public BranchStatus create(BranchStatus request) {
+    public BranchStatus createBranchStatus(BranchStatus request) {
         return repository.save(request);
     }
 
-    public BranchStatus update(Long id, BranchStatus request) {
+    public BranchStatus updateBranchStatus(Long id, BranchStatus request) {
         return repository.findById(id).map(b -> {
             b.setName(request.getName() != null ? request.getName() : b.getName());
             b.setColorCode(request.getColorCode() != null ? request.getColorCode() : b.getColorCode());
@@ -41,7 +41,7 @@ public class BranchStatusService {
         }).orElse(null);
     }
 
-    public Boolean delete(Long id) {
+    public Boolean deleteBranchStatus(Long id) {
         if (repository.existsById(id)) {
             repository.deleteById(id);
         }

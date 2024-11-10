@@ -37,7 +37,7 @@ public class UserService {
 
     public User createUser(User user) {
         user.setPassword(PasswordUtil.hashPassword(user.getPassword()));
-        user.setRole(Set.of(Role.CLIENT));
+        user.setRoles(Set.of("CLIENT"));
         return userRepository.save(user);
     }
 
@@ -85,13 +85,13 @@ public class UserService {
         return userRepository.findByPhoneNumber(user.getPhoneNumber()).isPresent();
     }
 
-    public Page<User> getUsersByBranch(String branchId, Pageable pageable) {
-        Long branch = Long.valueOf(branchId);
-        if (branchId.isEmpty()) {
-            return userRepository.findUserByIsDeleteFalse(pageable);
-        }
-        return userRepository.findByBranchId(branch, pageable);
-    }
+//    public Page<User> getUsersByBranch(String branchId, Pageable pageable) {
+//        Long branch = Long.valueOf(branchId);
+//        if (branchId.isEmpty()) {
+//            return userRepository.findUserByIsDeleteFalse(pageable);
+//        }
+//        return userRepository.findByBranchId(branch, pageable);
+//    }
 
     public Optional<User> findUserByEmail(String email) {
         return userRepository.findByEmail(email);

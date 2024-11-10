@@ -49,6 +49,10 @@ public class Branch {
     @JoinColumn(name = "branch_status_id")
     BranchStatus branchStatus;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    User user;
+
     @JsonIgnore
     Boolean isDelete = false;
 }

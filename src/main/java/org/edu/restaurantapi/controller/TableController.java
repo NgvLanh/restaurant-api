@@ -1,6 +1,7 @@
 package org.edu.restaurantapi.controller;
 
 import jakarta.validation.Valid;
+import org.edu.restaurantapi._enum.TableStatus;
 import org.edu.restaurantapi.model.Table;
 import org.edu.restaurantapi.model.Table;
 import org.edu.restaurantapi.model.User;
@@ -15,28 +16,29 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/api/tables")
 public class TableController {
 
     @Autowired
-    private TableService service;
+    private TableService tableService;
 
     @GetMapping
-    public ResponseEntity<?> gets(@RequestParam(value = "branch", required = false) String branch,
-                                  @RequestParam(value = "number", required = false) String number,
+    public ResponseEntity<?> getAllTables(@RequestParam(value = "branch", required = false) Optional<String> branch,
                                   Pageable pageable) {
-        var response = service.gets(branch, number, pageable);
+        var response = tableService.getAllTables(branch, pageable);
         return ResponseEntity.ok(ApiResponse.SUCCESS(response));
     }
 
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody Table request) {
-        var bse = service.findByIsDeleteFalseAndNumberAndBranchIs(request.getNumber(), request.getBranch());
+        var bse = tableService.findByIsDeleteFalseAndNumberAndBranchIs(request.getNumber(), request.getBranch());
         if (bse) {
             return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Số bàn đã tồn tại ở chi nhánh này"));
         }
-        var response = service.create(request);
+        var response = tableService.create(request);
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
 
@@ -46,13 +48,13 @@ public class TableController {
 //        if (bse) {
 //            return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Tên trạng thái đã tồn tại"));
 //        }
-        var response = service.update(id, request);
+        var response = tableService.update(id, request);
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
-        var response = service.delete(id);
+        var response = tableService.delete(id);
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
 

@@ -16,6 +16,10 @@ public interface TableRepository extends JpaRepository<Table, Long> {
             " AND (:number = 0 OR t.number = :number)")
     Page<Table> findByIsDeleteFalseAndBranchIdAndNumber(Long branch, Integer number, Pageable pageable);
 
+    @Query("SELECT MAX(t.number) FROM tables t WHERE t.isDelete = false AND t.branch.id = :branch")
+    Integer findMaxNumberByBranchId(Long branch);
 
     Table findByIsDeleteFalseAndNumberAndBranchIs(Integer number, Branch branch);
+
+    Page<Table> findByIsDeleteFalseAndBranchId(Long l, Pageable pageableSorted);
 }

@@ -22,13 +22,20 @@ public class TableService {
     @Autowired
     private TableRepository repository;
 
-    public Page<Table> gets(String branch, String number, Pageable pageable) {
+    public Page<Table> getAllTables(Optional<String> branch, Pageable pageable) {
         Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
                 pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
-        return repository.findByIsDeleteFalseAndBranchIdAndNumber(Long.parseLong(branch), Integer.parseInt(number), pageableSorted);
+        return repository.findByIsDeleteFalseAndBranchId(Long.parseLong(branch.get()), pageableSorted);
     }
 
     public Table create(Table request) {
+        Integer number;
+        if (request.getNumber() == null) {
+            number = repository.findMaxNumberByBranchId(request.getBranch().getId()) + 1;
+        } else {
+            number = request.getNumber();
+        }
+        request.setNumber(number);
         return repository.save(request);
     }
 

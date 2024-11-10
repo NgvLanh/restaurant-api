@@ -1,5 +1,6 @@
 package org.edu.restaurantapi.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.edu.restaurantapi.dto.DishDto;
 import org.edu.restaurantapi.model.Dish;
 import org.edu.restaurantapi.model.Dish;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class DishService {
 
@@ -27,7 +29,7 @@ public class DishService {
         Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
                 pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
         if (name.isPresent()) {
-            return repository.findByNameContainingAndIsDeleteFalse(name.toString(), pageableSorted);
+            return repository.findByNameContainingAndIsDeleteFalse(name.get(), pageableSorted);
         }
         return repository.findByIsDeleteFalse(pageableSorted);
     }

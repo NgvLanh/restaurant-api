@@ -5,12 +5,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.edu.restaurantapi._enum.AdminRole;
-import org.edu.restaurantapi._enum.Role;
 
 import java.util.Set;
 
@@ -32,7 +29,6 @@ public class User {
 
     String image;
 
-    @JsonIgnore
     @Column(unique = true)
     String phoneNumber;
 
@@ -45,11 +41,8 @@ public class User {
     @Size(min = 6, message = "Mật khẩu phải có ít nhất 6 ký tự")
     String password;
 
-    Set<Role> role;
-
-    @ManyToOne
-    @JoinColumn(name = "branch_id")
-    Branch branch;
+    @ElementCollection(fetch = FetchType.EAGER)
+    Set<String> roles;
 
     @JsonIgnore
     Boolean isDelete = false;

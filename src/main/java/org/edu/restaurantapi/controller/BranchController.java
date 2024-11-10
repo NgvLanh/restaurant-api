@@ -12,46 +12,49 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
+
 @RestController
 @RequestMapping("/api/branches")
 public class BranchController {
-
     @Autowired
-    private BranchService branchService;
+    private BranchService BranchService;
 
     @GetMapping
-    public ResponseEntity<?> getAllBranches(@RequestParam(value = "name", required = false) Optional<String> name,
-                                  @RequestParam(value = "phoneNumber", required = false) String phoneNumber,
-                                  Pageable pageable) {
-        var response = branchService.getAllBranches(name, phoneNumber, pageable);
-        return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
+    public ResponseEntity<?> getAllBranch(@RequestParam(value = "name", required = false) Optional<String> name, Pageable pageable) {
+        var response = BranchService.getAllBranches(name, pageable);
+        return ResponseEntity.ok(ApiResponse.SUCCESS(response));
     }
 
     @PostMapping
     public ResponseEntity<?> createBranch(@Valid @RequestBody BranchRequest request) {
-        if (branchService.findByName(request.getName())) {
+        var branchNameExists = BranchService.findByName(request.getName());
+        var branchPhoneNumberExists = BranchService.findByPhoneNumber(request.getPhoneNumber());
+        if (branchNameExists) {
             return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Tên chi nhánh đã tồn tại"));
-        } else if (branchService.findByPhoneNumber(request.getPhoneNumber())) {
+        } else if (branchPhoneNumberExists) {
             return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Số điện thoại chi nhánh đã tồn tại"));
         }
-        var response = branchService.createBranch(request);
+        var response = BranchService.createBranch(request);
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> updateBranch(@PathVariable Long id, @RequestBody BranchRequest request) {
-        if (branchService.findByNameAndIdNot(request.getName(), id)) {
+    public ResponseEntity<?> updateBranch(@PathVariable Long id, @Valid @RequestBody BranchRequest request) {
+        var branchNameExists = BranchService.findByNameAndIdNot(request.getName(), id);
+        var branchPhoneNumberExists = BranchService.findByPhoneNumberAndIdNot(request.getPhoneNumber(), id);
+        if (branchNameExists) {
             return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Tên chi nhánh đã tồn tại"));
-        } else if (branchService.findByPhoneNumberAndIdNot(request.getPhoneNumber(), id)) {
+        } else if (branchPhoneNumberExists) {
             return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Số điện thoại chi nhánh đã tồn tại"));
         }
-        var response = branchService.updateBranch(id, request);
+        var response = BranchService.updateBranch(id, request);
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
-        var response = branchService.delete(id);
+    public ResponseEntity<?> deleteBranch(@PathVariable Long id) {
+        var response = BranchService.deleteBranch(id);
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
+
 }

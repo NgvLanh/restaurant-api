@@ -24,46 +24,37 @@ import java.util.Optional;
 public class BranchStatusController {
 
     @Autowired
-    private BranchStatusService service;
+    private BranchStatusService branchStatusService;
 
     @GetMapping
     public ResponseEntity<?> getAllBranchStatus(@RequestParam(value = "name", required = false) Optional<String> name, Pageable pageable) {
-        var response = service.getAllBranchStatus(name, pageable);
+        var response = branchStatusService.getAllBranchStatus(name, pageable);
         return ResponseEntity.ok(ApiResponse.SUCCESS(response));
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@Valid @RequestBody BranchStatus request) {
-        var bse = service.findByName(request.getName());
+    public ResponseEntity<?> createBranchStatus(@Valid @RequestBody BranchStatus request) {
+        var bse = branchStatusService.findByName(request.getName());
         if (bse) {
             return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Tên trạng thái đã tồn tại"));
         }
-        var response = service.create(request);
+        var response = branchStatusService.createBranchStatus(request);
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody BranchStatus request) {
-        var bse = service.findByNameAndIdNot(request.getName(), id);
+    public ResponseEntity<?> updateBranchStatus(@PathVariable Long id, @Valid @RequestBody BranchStatus request) {
+        var bse = branchStatusService.findByNameAndIdNot(request.getName(), id);
         if (bse) {
             return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Tên trạng thái đã tồn tại"));
         }
-        var response = service.update(id, request);
+        var response = branchStatusService.updateBranchStatus(id, request);
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
-        var response = service.delete(id);
+    public ResponseEntity<?> deleteBranchStatus(@PathVariable Long id) {
+        var response = branchStatusService.deleteBranchStatus(id);
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
-    }
-
-    @PostMapping("/import-file")
-    public ResponseEntity<?> importFile(@RequestBody BranchStatus[] request) throws IOException  {
-        return ResponseEntity.ok().body(ApiResponse.BAD_REQUEST("Chưa hoàn thành"));
-    }
-
-    private boolean isValid(BranchStatus status) {
-        return true; // Logic kiểm tra tính hợp lệ
     }
 }

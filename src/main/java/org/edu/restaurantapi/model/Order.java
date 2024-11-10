@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.edu.restaurantapi._enum.OrderStatus;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -23,8 +24,6 @@ public class Order {
 
     Date time = new Date();
 
-    @ManyToOne
-    @JoinColumn(name = "order_status_id")
     OrderStatus orderStatus;
 
     @ManyToOne

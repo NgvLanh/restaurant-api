@@ -14,19 +14,19 @@ import org.edu.restaurantapi._enum.TableStatus;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "tables")
-public class Table {
+public class    Table {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @NotNull(message = "Số bàn không được để trống")
     Integer number;
 
     @Min(value = 1, message = "Số ghế tối thiểu phải là 1")
     @Max(value = 20, message = "Số ghế không được vượt quá 20")
     Integer seats;
 
-    TableStatus status = TableStatus.AVAILABLE;
+    @Enumerated(EnumType.STRING)
+    TableStatus tableStatus = TableStatus.AVAILABLE;
 
     @ManyToOne
     @JoinColumn(name = "zone_id")
