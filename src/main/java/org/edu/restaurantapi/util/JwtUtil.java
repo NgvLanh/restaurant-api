@@ -9,12 +9,14 @@ import org.edu.restaurantapi.model.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.StringJoiner;
 
+@Slf4j
 public class JwtUtil {
 
 //    @Value("${jwt.signerKey}")
@@ -42,8 +44,8 @@ public class JwtUtil {
 
     private String buildScope(User user) {
         StringJoiner stringJoiner = new StringJoiner(" ");
-        if (user != null && user.getRole() != null && !user.getRole().isEmpty()) {
-            stringJoiner.add(user.getRole().toString());
+        if (!CollectionUtils.isEmpty(user.getRoles())) {
+            user.getRoles().forEach(stringJoiner::add);
         }
         return stringJoiner.toString();
     }

@@ -1,5 +1,6 @@
 package org.edu.restaurantapi.service;
 
+import org.edu.restaurantapi._enum.OrderStatus;
 import org.edu.restaurantapi.model.Order;
 import org.edu.restaurantapi.model.Order;
 import org.edu.restaurantapi.model.User;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,10 +23,14 @@ public class OrderService {
     @Autowired
     private OrderRepository repository;
 
-    public Page<Order> gets(String user, Pageable pageable) {
+    public Page<Order> getAllOrders(Optional<Long> branchId, Optional<Date> time,
+                                    Optional<OrderStatus> orderStatus, Pageable pageable) {
         Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
                 pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
-        return repository.findByIsDeleteFalseAndUserId(Long.parseLong(user), pageableSorted);
+        if (branchId.isEmpty() || time.isEmpty() || orderStatus.isEmpty()) {
+            return repository.findByIsDeleteFalse(pageableSorted);
+        }
+        return repository.findByIsDeleteFalseAndBranchIdAndTimeAndOrderStatus(branchId.get(), time.get(), orderStatus.get(), pageableSorted);
     }
 
     public Order create(Order request) {
@@ -43,12 +49,4 @@ public class OrderService {
             return true;
         }).orElse(false);
     }
-
-//    public Boolean findByName(String name) {
-//        return repository.findByName(name) != null;
-//    }
-//
-//    public Boolean findByNameAndIdNot(String name, Long id) {
-//        return repository.findByNameAndIdNot(name, id) != null;
-//    }
 }

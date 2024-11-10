@@ -5,19 +5,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
-
 public interface BranchRepository extends JpaRepository<Branch, Long> {
+   Page<Branch> findByNameContainingAndIsDeleteFalse(String name, Pageable pageable);
 
-   Page<Branch> findByIsDeleteFalseAndNameContainingOrIsDeleteFalseAndPhoneNumberContaining(String name, String phoneNumber, Pageable pageable);
-
-   Branch findByPhoneNumberAndIdNotAndIsDeleteFalse(String phoneNumber, Long id);
-
-   Branch findByNameAndIdNotAndIsDeleteFalse(String name, Long id);
-
-   Branch findByPhoneNumberAndIsDeleteFalse(String phoneNumber);
+   Page<Branch> findByIsDeleteFalse(Pageable pageable);
 
    Branch findByNameAndIsDeleteFalse(String name);
 
-   Page<Branch> findByIsDeleteFalse(Pageable pageableSorted);
+   Branch findByPhoneNumberAndIsDeleteFalse(String name);
+
+   Branch findByNameAndIsDeleteFalseAndIdNot(String name, Long id);
+
+   Branch findByPhoneNumberAndIsDeleteFalseAndIdNot(String name, Long id);
 }

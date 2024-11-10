@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
-    Page<Category> findCategoriesByNameContaining(String name, Pageable pageable);
+    Page<Category> findByNameContaining(String name, Pageable pageable);
 
     Category findByName(String name);
 

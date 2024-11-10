@@ -1,8 +1,6 @@
 package org.edu.restaurantapi.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.edu.restaurantapi._enum.AdminRole;
-import org.edu.restaurantapi._enum.Role;
 import org.edu.restaurantapi.model.User;
 import org.edu.restaurantapi.repository.UserRepository;
 import org.edu.restaurantapi.util.PasswordUtil;
@@ -31,7 +29,7 @@ public class ApplicationInitConfig {
                         .phoneNumber("0000000000")
                         .email(email)
                         .password(PasswordUtil.hashPassword(password))
-                        .role(Set.of(Role.ADMIN))
+                        .roles(Set.of(adminName))
                         .isDelete(true)
                         .build();
                 userRepository.save(user);

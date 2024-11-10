@@ -1,6 +1,7 @@
 package org.edu.restaurantapi.controller;
 
 import jakarta.validation.Valid;
+import org.edu.restaurantapi._enum.OrderStatus;
 import org.edu.restaurantapi.model.Order;
 import org.edu.restaurantapi.model.Order;
 import org.edu.restaurantapi.model.User;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,8 +27,14 @@ public class OrderController {
     private OrderService service;
 
     @GetMapping
-    public ResponseEntity<?> gets(@RequestParam(value = "user", required = false) String user, Pageable pageable) {
-        var response = service.gets(user, pageable);
+    public ResponseEntity<?> getAllOrders(@RequestParam(value = "branchId", required = false)
+                                      Optional<Long> branchId,
+                                          @RequestParam(value = "time", required = false)
+                                          Optional<Date> time,
+                                          @RequestParam(value = "orderStatus", required = false)
+                                              Optional<OrderStatus> orderStatus,
+                                  Pageable pageable) {
+        var response = service.getAllOrders(branchId, time, orderStatus, pageable);
         return ResponseEntity.ok(ApiResponse.SUCCESS(response));
     }
 

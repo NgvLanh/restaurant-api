@@ -34,46 +34,20 @@ public class DishController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@ModelAttribute DishDto request) throws URISyntaxException, IOException {
-        String fileName = FileService.saveFile(request.getFile());
-        var dish = Dish.builder()
-                .name(request.getName())
-                .image(fileName)
-                .price(request.getPrice())
-                .description(request.getDescription())
-                .category(request.getCategory())
-                .status(true)
-                .isDelete(false)
-                .build();
+    public ResponseEntity<?> create(@RequestBody Dish request) throws URISyntaxException, IOException {
         if (service.findByName(request.getName())) {
             return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Tên món ăn đã tồn tại"));
         }
-        var response = service.create(dish);
+        var response = service.create(request);
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @ModelAttribute DishDto request) throws IOException {
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Dish request) throws IOException {
         if (service.findByNameAndIdNot(request.getName(), id)) {
             return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Tên món ăn đã tồn tại"));
         }
-        String fileName = null;
-        if (request.getFile() != null && !request.getFile().isEmpty()) {
-            fileName = FileService.saveFile(request.getFile());
-        } else {
-            fileName = request.getImageUrl();
-        }
-        var dish = Dish.builder()
-                .id(id)
-                .name(request.getName())
-                .image(fileName)
-                .price(request.getPrice())
-                .description(request.getDescription())
-                .category(request.getCategory())
-                .status(true)
-                .isDelete(false)
-                .build();
-        var response = service.update(id, dish);
+        var response = service.update(id, request);
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
 

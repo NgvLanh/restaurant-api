@@ -5,6 +5,9 @@ import org.edu.restaurantapi.repository.CartItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class CartItemService {
 
@@ -27,5 +30,13 @@ public class CartItemService {
 
     public void deleteCartItem(Long id) {
         cartItemRepository.deleteById(id);
+    }
+
+    public Optional<CartItem> findByCartIdAndDishId(Long id, Long id1) {
+        return cartItemRepository.findByCartIdAndDishId(id, id1);
+    }
+
+    public List<CartItem> findByCartItemsByCartId(Long cartId) {
+        return cartItemRepository.findCartItemByCartId(cartId);
     }
 }

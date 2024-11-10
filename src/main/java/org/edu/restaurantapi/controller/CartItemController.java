@@ -1,12 +1,16 @@
 package org.edu.restaurantapi.controller;
 
+import org.edu.restaurantapi.model.Cart;
 import org.edu.restaurantapi.model.CartItem;
 import org.edu.restaurantapi.response.ApiResponse;
 import org.edu.restaurantapi.service.CartItemService;
+import org.edu.restaurantapi.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/cart-items")
@@ -14,6 +18,9 @@ public class CartItemController {
 
     @Autowired
     private CartItemService cartItemService;
+
+    @Autowired
+    private CartService cartService;
 
     @PostMapping
     public ResponseEntity<?> createCartItem(@RequestBody CartItem cartItem) {
@@ -35,5 +42,12 @@ public class CartItemController {
     public ResponseEntity<?> deleteCartItem(@PathVariable Long id) {
         cartItemService.deleteCartItem(id);
         return ResponseEntity.ok(ApiResponse.SUCCESS("CartItem deleted successfully"));
+    }
+
+    @GetMapping("/cart/{userId}")
+    public ResponseEntity<?> getCartItemsByUserId(@PathVariable Long userId) {
+        Cart cart = cartService.findByCartUserId(userId).get();
+        List<CartItem> cartItems = cartItemService.findByCartItemsByCartId(cart.getId());
+        return ResponseEntity.ok(ApiResponse.SUCCESS(cartItems));
     }
 }

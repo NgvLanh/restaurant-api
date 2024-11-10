@@ -7,6 +7,7 @@ import org.edu.restaurantapi.model.CartItem;
 import org.edu.restaurantapi.model.Dish;
 import org.edu.restaurantapi.model.User;
 import org.edu.restaurantapi.response.ApiResponse;
+import org.edu.restaurantapi.service.CartItemService;
 import org.edu.restaurantapi.service.CartService;
 import org.edu.restaurantapi.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,12 @@ public class CartController {
 
     @Autowired
     private CartService cartService;
+
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private CartItemService cartItemService;
 
     @PostMapping
     private ResponseEntity<?> createCart(@RequestBody Cart cart) {
@@ -58,30 +63,40 @@ public class CartController {
     }
 
 
-    // Hàm chạy đồng bộ khi login (check có thêm vào giỏ hàng trc đó chưa có rồi thì login đồng bộ dữ liệu)
     @PostMapping("/async/{userId}")
     private ResponseEntity<?> asyncCart(@RequestBody AsyncDish[] request,
                                         @PathVariable Long userId) {
         Optional<Cart> cartExists = cartService.findByCartUserId(userId);
         Optional<User> userExist = userService.findUserById(userId);
-        if (!cartExists.isPresent()) {
-            Cart cart = Cart
-                    .builder()
-                    .user(userExist.get())
-                    .build();
-            cartService.createCart(cart);
-        }
-        Arrays.stream(request).forEach(e ->{
-            System.out.println(e.toString());
-            CartItem cartItem = CartItem
-                    .builder()
-                    .cart(cartExists.get())
-                    .dish(new Dish(e.getId(), e.getName(), e.getImage(), e.getPrice(), e.getDescription(), e.getStatus(), e.getCategory(), false))
-                    .quantity(e.getQuantity())
-                    .build();
-        });
 
-        return ResponseEntity.ok()
-                .body(ApiResponse.SUCCESS(request));
+        Cart cart;
+        if (!cartExists.isPresent()) {
+            cart = Cart.builder().user(userExist.get()).build();
+            cartService.createCart(cart);
+        } else {
+            cart = cartExists.get();
+        }
+
+        for (AsyncDish dishRequest : request) {
+            Optional<CartItem> existingCartItem = cartItemService.findByCartIdAndDishId(cart.getId(), dishRequest.getId());
+
+            if (existingCartItem.isPresent()) {
+                CartItem cartItem = existingCartItem.get();
+                cartItem.setQuantity(cartItem.getQuantity() + dishRequest.getQuantity());
+                cartItemService.createCartItem(cartItem);
+            } else {
+                CartItem cartItem = CartItem.builder()
+                        .cart(cart)
+                        .dish(new Dish(dishRequest.getId(), dishRequest.getName(), dishRequest.getImage(), dishRequest.getPrice(),
+                                dishRequest.getDescription(), dishRequest.getStatus(), dishRequest.getCategory(), false))
+                        .quantity(dishRequest.getQuantity())
+                        .status(dishRequest.getStatus())
+                        .build();
+                cartItemService.createCartItem(cartItem);
+            }
+        }
+
+        return ResponseEntity.ok().body(ApiResponse.SUCCESS(request));
     }
+
 }
