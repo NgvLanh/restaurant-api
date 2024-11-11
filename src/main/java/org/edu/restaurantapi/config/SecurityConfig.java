@@ -37,6 +37,7 @@ public class SecurityConfig {
             "/api/files/*",
             "/api/*",
             "/api/dishes/*",
+            "/api/tables/reservations",
     };
 
     @Autowired

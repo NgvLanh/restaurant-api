@@ -1,11 +1,16 @@
 package org.edu.restaurantapi.repository;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import org.edu.restaurantapi._enum.TableStatus;
 import org.edu.restaurantapi.model.Branch;
 import org.edu.restaurantapi.model.Table;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+
+import java.util.List;
 
 public interface TableRepository extends JpaRepository<Table, Long> {
 
@@ -22,4 +27,9 @@ public interface TableRepository extends JpaRepository<Table, Long> {
     Table findByIsDeleteFalseAndNumberAndBranchIs(Integer number, Branch branch);
 
     Page<Table> findByIsDeleteFalseAndBranchId(Long l, Pageable pageableSorted);
+
+    List<Table> findTableByIsDeleteFalseAndBranchIdAndSeatsAndTableStatusLike(
+            Long branch_id,
+            Integer seats,
+            TableStatus tableStatus);
 }
