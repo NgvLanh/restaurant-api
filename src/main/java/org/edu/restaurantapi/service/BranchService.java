@@ -5,6 +5,7 @@ import org.edu.restaurantapi.model.BranchStatus;
 import org.edu.restaurantapi.repository.BranchRepository;
 import org.edu.restaurantapi.repository.BranchRepository;
 import org.edu.restaurantapi.repository.BranchStatusRepository;
+import org.edu.restaurantapi.repository.UserRepository;
 import org.edu.restaurantapi.request.BranchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,6 +24,8 @@ public class BranchService {
     private BranchRepository branchRepository;
     @Autowired
     private BranchStatusRepository branchStatusRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     public Page<Branch> getAllBranches(Optional<String> name, Pageable pageable) {
         Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
@@ -67,7 +70,31 @@ public class BranchService {
                 .wardId(request.getWardId() != null ? request.getWardId() : existingBranch.getWardId())
                 .wardName(request.getWardName() != null ? request.getWardName() : existingBranch.getWardName())
                 .address(request.getAddress() != null ? request.getAddress() : existingBranch.getAddress())
+                .user(request.getUser() != null ? userRepository.findById(request.getUser()).orElse(existingBranch.getUser()) : existingBranch.getUser())
                 .branchStatus(request.getBranchStatus() != null ? branchStatusRepository.findById(request.getBranchStatus()).orElse(existingBranch.getBranchStatus()) : existingBranch.getBranchStatus())
+                .isDelete(existingBranch.getIsDelete())
+                .build();
+
+        return branchRepository.save(branch);
+    }
+
+    public Branch updateBranch01(Long id, Branch request) {
+        Branch existingBranch = branchRepository.findById(id).orElseThrow(() -> new RuntimeException("Branch not found"));
+
+        Branch branch = Branch
+                .builder()
+                .id(id)
+                .name(request.getName() != null ? request.getName() : existingBranch.getName())
+                .phoneNumber(request.getPhoneNumber() != null ? request.getPhoneNumber() : existingBranch.getPhoneNumber())
+                .provinceId(request.getProvinceId() != null ? request.getProvinceId() : existingBranch.getProvinceId())
+                .provinceName(request.getProvinceName() != null ? request.getProvinceName() : existingBranch.getProvinceName())
+                .districtId(request.getDistrictId() != null ? request.getDistrictId() : existingBranch.getDistrictId())
+                .districtName(request.getDistrictName() != null ? request.getDistrictName() : existingBranch.getDistrictName())
+                .wardId(request.getWardId() != null ? request.getWardId() : existingBranch.getWardId())
+                .wardName(request.getWardName() != null ? request.getWardName() : existingBranch.getWardName())
+                .address(request.getAddress() != null ? request.getAddress() : existingBranch.getAddress())
+                .user(request.getUser() != null ? request.getUser() : existingBranch.getUser())
+                .branchStatus(request.getBranchStatus() != null ? request.getBranchStatus() : existingBranch.getBranchStatus())
                 .isDelete(existingBranch.getIsDelete())
                 .build();
 

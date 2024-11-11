@@ -110,4 +110,25 @@ public class UserController {
                     .body(ApiResponse.SERVER_ERROR(e.getMessage()));
         }
     }
+
+    @PostMapping("/roles")
+    private ResponseEntity<?> createNonAdmin(@Valid @RequestBody User user) {
+        if (userService.userPhoneNumberExists(user)) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.BAD_REQUEST("Số điện thoại này đã tồn tại"));
+        } else if (userService.userEmailExists(user)) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.BAD_REQUEST("Email này đã tồn tại"));
+        } else {
+            try {
+                User response = userService.createNonAdmin(user);
+                response.setPassword(null);
+                return ResponseEntity.status(HttpStatus.CREATED)
+                        .body(ApiResponse.CREATED(response));
+            } catch (Exception e) {
+                return ResponseEntity.internalServerError()
+                        .body(ApiResponse.SERVER_ERROR(e.getMessage()));
+            }
+        }
+    }
 }

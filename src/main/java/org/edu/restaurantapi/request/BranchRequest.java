@@ -15,4 +15,5 @@ public class BranchRequest {
     private String provinceName;
     private String provinceId;
     private Long branchStatus;
+    private Long User;
 }

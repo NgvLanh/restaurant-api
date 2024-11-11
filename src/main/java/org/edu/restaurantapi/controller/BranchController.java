@@ -51,6 +51,19 @@ public class BranchController {
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
 
+    @PatchMapping("/auth/{id}")
+    public ResponseEntity<?> updateBranch01(@PathVariable Long id, @Valid @RequestBody Branch request) {
+        var branchNameExists = BranchService.findByNameAndIdNot(request.getName(), id);
+        var branchPhoneNumberExists = BranchService.findByPhoneNumberAndIdNot(request.getPhoneNumber(), id);
+        if (branchNameExists) {
+            return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Tên chi nhánh đã tồn tại"));
+        } else if (branchPhoneNumberExists) {
+            return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Số điện thoại chi nhánh đã tồn tại"));
+        }
+        var response = BranchService.updateBranch01(id, request);
+        return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteBranch(@PathVariable Long id) {
         var response = BranchService.deleteBranch(id);
