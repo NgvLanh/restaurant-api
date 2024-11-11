@@ -41,6 +41,12 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public User createNonAdmin(User user) {
+        user.setPassword(PasswordUtil.hashPassword(user.getPassword()));
+        user.setRoles(Set.of("NON_ADMIN"));
+        return userRepository.save(user);
+    }
+
     public User updateUser(Long id, User updatedUser) {
         if (updatedUser.getPassword() != null) {
             updatedUser.setPassword(PasswordUtil.hashPassword(updatedUser.getPassword()));
