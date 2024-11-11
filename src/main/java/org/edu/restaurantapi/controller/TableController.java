@@ -1,18 +1,11 @@
 package org.edu.restaurantapi.controller;
 
 import jakarta.validation.Valid;
-import org.edu.restaurantapi._enum.TableStatus;
 import org.edu.restaurantapi.model.Table;
-import org.edu.restaurantapi.model.Table;
-import org.edu.restaurantapi.model.User;
-import org.edu.restaurantapi.model.Zone;
 import org.edu.restaurantapi.response.ApiResponse;
 import org.edu.restaurantapi.service.TableService;
-import org.edu.restaurantapi.service.TableService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +20,7 @@ public class TableController {
 
     @GetMapping
     public ResponseEntity<?> getAllTables(@RequestParam(value = "branch", required = false) Optional<String> branch,
-                                  Pageable pageable) {
+                                          Pageable pageable) {
         var response = tableService.getAllTables(branch, pageable);
         return ResponseEntity.ok(ApiResponse.SUCCESS(response));
     }
@@ -56,6 +49,19 @@ public class TableController {
     public ResponseEntity<?> delete(@PathVariable Long id) {
         var response = tableService.delete(id);
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
+    }
+
+    @GetMapping("/reservations")
+    public ResponseEntity<?> getTablesByBranchIdAndSeats(
+            @RequestParam(value = "branch", required = false) Optional<Long> branch,
+            @RequestParam(value = "time", required = false) Optional<String> time,
+            @RequestParam(value = "seats", required = false) Optional<Integer> seats
+    ) {
+        var response = tableService.getTablesByBranchIdAndSeats(branch, time, seats);
+        response.forEach(res->{
+            System.out.println(res.getNumber());
+        });
+        return ResponseEntity.ok(ApiResponse.SUCCESS(response));
     }
 
 }

@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/api/zones")
 public class ZoneController {
@@ -21,9 +23,9 @@ public class ZoneController {
     private ZoneService service;
 
     @GetMapping
-    public ResponseEntity<?> gets(@RequestParam(value = "name", required = false) String name,
-                                  @RequestParam(value = "branch", required = false) String branch, Pageable pageable) {
-        var response = service.gets(name, branch, pageable);
+    public ResponseEntity<?> getAllZones(@RequestParam(value = "name", required = false) Optional<String> name,
+                                  @RequestParam(value = "branch", required = false) Long branch, Pageable pageable) {
+        var response = service.getAllZones(name, branch, pageable);
         return ResponseEntity.ok(ApiResponse.SUCCESS(response));
     }
 

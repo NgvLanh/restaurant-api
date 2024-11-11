@@ -9,16 +9,21 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class ZoneService {
 
     @Autowired
     private ZoneRepository repository;
 
-    public Page<Zone> gets(String name, String branch, Pageable pageable) {
+    public Page<Zone> getAllZones(Optional<String> name, Long branch, Pageable pageable) {
         Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
                 pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
-        return repository.findByNameContainingAndBranchId(name, Long.parseLong(branch), pageableSorted);
+       if (name.isPresent()) {
+           return repository.findByNameContainingAndBranchId(name.get(), branch, pageableSorted);
+       }
+       return repository.findAll(pageableSorted);
     }
 
     public Zone create(Zone request) {
