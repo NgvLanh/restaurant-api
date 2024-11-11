@@ -1,5 +1,7 @@
 package org.edu.restaurantapi.controller;
 
+import jakarta.validation.Valid;
+import org.edu.restaurantapi._enum.DiscountMethod;
 import org.edu.restaurantapi.model.Discount;
 import org.edu.restaurantapi.response.ApiResponse;
 import org.edu.restaurantapi.service.DiscountService;
@@ -28,8 +30,7 @@ public class DiscountController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody Discount request) throws URISyntaxException, IOException {
-
+    public ResponseEntity<?> create(@Valid @RequestBody Discount request) throws URISyntaxException, IOException {
         if (service.findByCode(request.getCode())) {
             return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Mã giảm giá đã tồn tại"));
         }

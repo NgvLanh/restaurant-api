@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.edu.restaurantapi._enum.DiscountMethod;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -23,7 +24,7 @@ public class Discount {
     Long id;
 
     @NotBlank(message = "Mã giảm giá không được để trống.")
-    @Size(min = 8, message = "Mã giảm giá phải từ 8 ký tự ký tự.")
+    @Size(min = 1, message = "Mã giảm giá phải từ 0 ký tự.")
     @Size(max = 16, message = "Mã giảm giá không được vượt quá 16 ký tự.")
     String code;
 
@@ -41,8 +42,6 @@ public class Discount {
 
     LocalDate createDate = LocalDate.now();
 
-    @ManyToOne
-    @JoinColumn(name = "discount_method_id")
     DiscountMethod discountMethod;
 
     @NotNull(message = "Hạn mức áp dụng không được để trống.")
@@ -52,6 +51,10 @@ public class Discount {
     @NotNull(message = "Giá trị giảm giá không được để trống.")
     @Positive(message = "Giá trị giảm giá phải lớn hơn 0.")
     Double value;
+
+    @ManyToOne
+    @JoinColumn(name = "branch_id")
+    Branch branch;
 
     Boolean isDelete = false;
 
