@@ -84,7 +84,7 @@ public class UserService {
 
     // check email + phone number
     public Boolean userEmailExists(User user) {
-        return userRepository.findByEmail(user.getEmail()).isPresent();
+        return userRepository.findByEmailAndIsDeleteFalse(user.getEmail()).isPresent();
     }
 
     public Boolean userPhoneNumberExists(User user) {
@@ -100,7 +100,7 @@ public class UserService {
 //    }
 
     public Optional<User> findUserByEmail(String email) {
-        return userRepository.findByEmail(email);
+        return userRepository.findByEmailAndIsDeleteFalse(email);
     }
 
     public Optional<User> findUserById(Long userId) {

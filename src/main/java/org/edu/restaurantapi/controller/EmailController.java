@@ -14,6 +14,7 @@ import org.edu.restaurantapi.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -66,36 +67,40 @@ public class EmailController {
         }
     }
 
-    @PostMapping("/reset-password")
+    @PostMapping("/password-recovery/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
         try {
-            emailService.resetPassword(request); // Gọi phương thức resetPassword
-            return ResponseEntity.ok("Mật khẩu đã được đặt lại thành công.");
+            Boolean recoveryPassword = emailService.resetPassword(request);
+            if (recoveryPassword) {
+                return ResponseEntity.ok(ApiResponse.SUCCESS("Mật khẩu đã được đặt lại thành công"));
+            }
+            return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Lỗi khi đặt lại mật khẩu"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Lỗi khi đặt lại mật khẩu: " + e.getMessage());
         }
     }
 
-    @PostMapping("/validate")
+    @PostMapping("/password-recovery/verify-code")
     public ResponseEntity<?> validateOtp(@Valid @RequestBody OtpRequest otpRequest) {
-        List<OTP> otps = otpRepository.findAllByOtpCode(otpRequest.getOtp());
-
-        if (otps.isEmpty()) {
-            // Trả về mã 200 với thông báo rằng OTP không hợp lệ
-            return ResponseEntity.ok().body(new ApiResponse<>(200, false, "Mã OTP không hợp lệ", null));
-        } else if (otps.size() > 1) {
-            // Trả về mã 200 với thông báo rằng có nhiều OTP
-            return ResponseEntity.ok().body(new ApiResponse<>(200, false, "Tìm thấy nhiều mã OTP", null));
-        } else {
-            OTP otp = otps.get(0);
-            if (otp.getExpiresAt().isBefore(LocalDateTime.now())) {
-                // Trả về mã 200 với thông báo rằng OTP đã hết hạn
-                return ResponseEntity.ok().body(new ApiResponse<>(200, false, "Mã OTP đã hết hạn", null));
-            }
-            // Nếu OTP hợp lệ
-            return ResponseEntity.ok().body(new ApiResponse<>(200, true, "Mã OTP hợp lệ", null));
+        var userOpt = userService.findUserByEmail(otpRequest.getEmail());
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Người dùng không tồn tại"));
         }
+        var user = userOpt.get();
+        OTP otp = emailService.findLatestOtpByUserId(user.getId());
+        if (otp == null) {
+            return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Không tìm thấy mã OTP cho người dùng"));
+        }
+        if (!otp.getOtpCode().equals(otpRequest.getOtp())) {
+            return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Mã OTP không hợp lệ"));
+        }
+        var now = LocalDateTime.now();
+        if (otp.getExpiresAt().isBefore(now)) {
+            return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Mã OTP của bạn đã hết hạn, vui lòng gửi lại mã mới"));
+        }
+        return ResponseEntity.ok(ApiResponse.SUCCESS("Xác thực OTP thành công"));
     }
+
 
     private String buildOtpEmailContent(String otp) {
         return "<html>" +
