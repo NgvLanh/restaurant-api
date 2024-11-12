@@ -80,21 +80,23 @@ public class EmailService {
         mailSender.send(mimeMessage);
     }
 
-    public boolean resetPassword(ResetPasswordRequest request) {
-        // Tìm kiếm người dùng dựa trên email
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        // Băm mật khẩu mới và lưu vào cơ sở dữ liệu
-        String hashedPassword = PasswordUtil.hashPassword(request.getNewPassword());
-        user.setPassword(hashedPassword);
-        userRepository.save(user);
-
-        return true;
+    public Boolean resetPassword(ResetPasswordRequest request) {
+        User user = userRepository.findByEmailAndIsDeleteFalse(request.getEmail()).orElse(null);
+        if (user != null) {
+            String hashedPassword = PasswordUtil.hashPassword(request.getNewPassword());
+            user.setPassword(hashedPassword);
+            userRepository.save(user);
+            return true;
+        }
+        return false;
     }
 
     public String generateOtp() {
         SecureRandom secureRandom = new SecureRandom();
         return String.format("%06d", secureRandom.nextInt(1000000));
+    }
+
+    public OTP findLatestOtpByUserId(Long id) {
+        return otpRepository.findLatestOtpByUserId(id);
     }
 }
