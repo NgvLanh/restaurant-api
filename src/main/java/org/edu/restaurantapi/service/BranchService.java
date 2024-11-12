@@ -123,4 +123,8 @@ public class BranchService {
     public Boolean findByPhoneNumberAndIdNot(String name, Long id) {
         return branchRepository.findByPhoneNumberAndIsDeleteFalseAndIdNot(name, id) != null;
     }
+
+    public Branch findByUserId(Long userId) {
+        return branchRepository.findByUserId(userId);
+    }
 }
