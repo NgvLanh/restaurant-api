@@ -29,8 +29,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "ORDER BY MONTH(u.createDate) ASC")
     Page<Map<String, Object>> getUserStatsByMonth(Pageable pageable);
 
-    Optional<User> findByEmail(String email);
-
     @Query("SELECT COUNT(u) FROM users u WHERE u.isDelete = false")
     Long countTotalRegisteredUsers();
 }
