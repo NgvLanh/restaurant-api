@@ -11,6 +11,25 @@ import java.util.Map;
 
 public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
     Page<Invoice> findInvoiceByIsDeleteFalse(Pageable pageable);
+
+
+
+
+
+
+
+
+
+
+
+
+    @Query("SELECT MONTH(i.date) AS month, COUNT(i) AS totalInvoices " +
+            "FROM invoices i " +
+            "WHERE YEAR(i.date) = YEAR(CURRENT_DATE) AND i.isDelete = false " +
+            "GROUP BY MONTH(i.date) " +
+            "ORDER BY MONTH(i.date) ASC")
+    Page<Map<String, Object>> getInvoiceStatsByMonth(Pageable pageable);
+
     @Query("SELECT SUM(i.total) FROM invoices i WHERE i.isDelete = false")
     Double getTotalRevenue();
 
@@ -22,4 +41,5 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
             "GROUP BY EXTRACT(YEAR FROM i.date), EXTRACT(MONTH FROM i.date) " +
             "ORDER BY EXTRACT(YEAR FROM i.date), EXTRACT(MONTH FROM i.date)")
     Page<Map<String, Object>> getMonthlyRevenue(Pageable pageable);
+
 }

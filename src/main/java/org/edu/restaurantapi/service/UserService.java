@@ -15,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -107,7 +108,21 @@ public class UserService {
         return userRepository.findById(userId);
     }
 
+
+    public Page<Map<String, Object>> getCountUsersMonth(Pageable pageable) {
+        return userRepository.getUserStatsByMonth(pageable);
+}
     public Long getTotalUsers() {
         return userRepository.countTotalRegisteredUsers();
     }
 }
+
+
+
+
+
+
+
+
+
+
