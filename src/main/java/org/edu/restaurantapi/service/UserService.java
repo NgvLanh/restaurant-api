@@ -106,4 +106,8 @@ public class UserService {
     public Optional<User> findUserById(Long userId) {
         return userRepository.findById(userId);
     }
+
+    public Long getTotalUsers() {
+        return userRepository.countTotalRegisteredUsers();
+    }
 }

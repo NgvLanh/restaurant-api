@@ -49,4 +49,8 @@ public class OrderService {
             return true;
         }).orElse(false);
     }
+
+    public Long getTotalOrder() {
+        return repository.countTotalOrders();
+    }
 }

@@ -59,4 +59,9 @@ public class OrderController {
         var response = service.delete(id);
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
+
+    @GetMapping("/total-order")
+    public Long getTotalOrder() {
+        return service.getTotalOrder();
+    }
 }

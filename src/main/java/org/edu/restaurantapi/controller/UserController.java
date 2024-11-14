@@ -131,4 +131,8 @@ public class UserController {
             }
         }
     }
+    @GetMapping("/total-users")
+    public Long getTotalUsers() {
+        return userService.getTotalUsers();
+    }
 }

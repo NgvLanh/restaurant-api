@@ -66,4 +66,9 @@ public class DishController {
         });
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(updateResponse));
     }
+
+    @GetMapping("/total-dishes")
+    public Long getTotalRevenue() {
+        return service.countTotalDishes();
+    }
 }
