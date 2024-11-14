@@ -25,8 +25,8 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(ApiResponse.SUCCESS(authenticated));
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(ApiResponse.UNAUTHORIZED("Email hoặc mật khẩu không chính xác"));
+        return ResponseEntity.badRequest()
+                .body(ApiResponse.BAD_REQUEST("Email hoặc mật khẩu không chính xác"));
     }
 
     @PostMapping("/introspect")

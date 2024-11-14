@@ -19,6 +19,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Page<User> findUserByIsDeleteFalse(Pageable pageable);
 
+    Optional<User> findByEmail(String email);
 
     @Query("SELECT MONTH(u.createDate) AS month, COUNT(u) AS totalUsers " +
             "FROM users u " +

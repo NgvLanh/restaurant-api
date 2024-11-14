@@ -64,7 +64,7 @@ public class CartController {
 
 
     @PostMapping("/async/{userId}")
-    private ResponseEntity<?> asyncCart(@RequestBody AsyncDish[] request,
+    private ResponseEntity<?> asyncCart(@RequestBody CartItem[] request,
                                         @PathVariable Long userId) {
         Optional<Cart> cartExists = cartService.findByCartUserId(userId);
         Optional<User> userExist = userService.findUserById(userId);
@@ -77,22 +77,15 @@ public class CartController {
             cart = cartExists.get();
         }
 
-        for (AsyncDish dishRequest : request) {
-            Optional<CartItem> existingCartItem = cartItemService.findByCartIdAndDishId(cart.getId(), dishRequest.getId());
-
+        for (CartItem cartItemRequest : request) {
+            Optional<CartItem> existingCartItem = cartItemService.findByCartIdAndDishId(cart.getId(), cartItemRequest.getDish().getId());
             if (existingCartItem.isPresent()) {
                 CartItem cartItem = existingCartItem.get();
-                cartItem.setQuantity(cartItem.getQuantity() + dishRequest.getQuantity());
+                cartItem.setQuantity(cartItem.getQuantity() + cartItemRequest.getQuantity());
                 cartItemService.createCartItem(cartItem);
             } else {
-                CartItem cartItem = CartItem.builder()
-                        .cart(cart)
-                        .dish(new Dish(dishRequest.getId(), dishRequest.getName(), dishRequest.getImage(), dishRequest.getPrice(),
-                                dishRequest.getDescription(), dishRequest.getStatus(), dishRequest.getCategory(), false))
-                        .quantity(dishRequest.getQuantity())
-                        .status(dishRequest.getStatus())
-                        .build();
-                cartItemService.createCartItem(cartItem);
+                cartItemRequest.setCart(cart);
+                cartItemService.createCartItem(cartItemRequest);
             }
         }
 

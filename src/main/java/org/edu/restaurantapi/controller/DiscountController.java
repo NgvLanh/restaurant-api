@@ -1,6 +1,7 @@
 package org.edu.restaurantapi.controller;
 
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.edu.restaurantapi._enum.DiscountMethod;
 import org.edu.restaurantapi.model.Discount;
 import org.edu.restaurantapi.response.ApiResponse;
@@ -13,10 +14,12 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
+import java.util.Optional;
 import java.util.List;
 import java.util.Map;
 
 
+@Slf4j
 @RestController
 @RequestMapping("/api/discounts")
 public class DiscountController {
@@ -25,9 +28,9 @@ public class DiscountController {
     private DiscountService service;
 
     @GetMapping
-    public ResponseEntity<?> gets(@RequestParam(value = "code", required = false) String code,
+    public ResponseEntity<?> getAllDiscountsByBranchId(@RequestParam(value = "branch", required = false) Optional<Long> branchId,
                                   Pageable pageable) {
-        var response = service.gets(code, pageable);
+        var response = service.getAllDiscountsByBranchId(branchId, pageable);
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
 

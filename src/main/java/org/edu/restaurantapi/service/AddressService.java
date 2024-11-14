@@ -17,20 +17,32 @@ public class AddressService {
     private AddressRepository addressRepository;
 
     public Address createAddress(Address address){
-        return addressRepository.save(address);
+        Address addressExists = addressRepository
+                .findAddressByProvinceIdAndDistrictIdAndWardId(address.getProvinceId(),
+                address.getDistrictId(), address.getWardId());
+        if (addressExists == null) {
+            return addressRepository.save(address);
+        }
+        return null;
     }
 
     public Page<Address> getAddresses(Pageable pageable) {
-        return addressRepository.findAddressByIsDeleteFalse(pageable);
+        return addressRepository.findAll(pageable);
     }
 
     public Address updateAddress(Long addressId, Address updatedAddress) {
+        var response = addressRepository.findAll();
+        response.forEach(e->{
+            e.setDefaultAddress(false);
+            addressRepository.save(e);
+        });
+
         return addressRepository.findById(addressId).map(existingAddress -> {
             existingAddress.setAddress(updatedAddress.getAddress() != null ? updatedAddress.getAddress() : existingAddress.getAddress());
-            existingAddress.setCity(updatedAddress.getCity() != null ? updatedAddress.getCity() : existingAddress.getCity());
-            existingAddress.setDistrict(updatedAddress.getDistrict() != null ? updatedAddress.getDistrict() : existingAddress.getDistrict());
-            existingAddress.setWard(updatedAddress.getWard() != null ? updatedAddress.getWard() : existingAddress.getWard());
-            existingAddress.setStatus(updatedAddress.getStatus() != null ? updatedAddress.getStatus() : existingAddress.getStatus());
+            existingAddress.setProvinceName(updatedAddress.getProvinceName() != null ? updatedAddress.getProvinceName() : existingAddress.getProvinceName());
+            existingAddress.setDistrictName(updatedAddress.getDistrictName() != null ? updatedAddress.getDistrictName() : existingAddress.getDistrictName());
+            existingAddress.setWardName(updatedAddress.getWardName() != null ? updatedAddress.getWardName() : existingAddress.getWardName());
+            existingAddress.setDefaultAddress(updatedAddress.getDefaultAddress() != null ? updatedAddress.getDefaultAddress() : existingAddress.getDefaultAddress());
 
             // Save the updated address
             addressRepository.save(existingAddress);
@@ -39,11 +51,11 @@ public class AddressService {
     }
 
     public Boolean deleteAddress(Long id) {
-        return addressRepository.findById(id).map(address -> {
-            address.setIsDelete(true);
-            addressRepository.save(address);
+        if (addressRepository.existsById(id)) {
+            addressRepository.deleteById(id);
             return true;
-        }).orElse(false);
+        }
+        return false;
     }
 
     public Address getAddress(Long id) {

@@ -1,5 +1,6 @@
 package org.edu.restaurantapi.service;
 
+import org.edu.restaurantapi.model.Branch;
 import org.edu.restaurantapi.model.Discount;
 import org.edu.restaurantapi.repository.DiscountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.List;
 import java.util.Map;
 
@@ -44,11 +46,11 @@ public class DiscountService {
 
 
     public Boolean delete(Long id) {
-        return repository.findById(id).map(b -> {
-            b.setIsDelete(true);
-            repository.save(b);
-            return true;
-        }).orElse(false);
+       if (repository.existsById(id)) {
+           repository.deleteById(id);
+           return true;
+       }
+       return false;
     }
 
     public Boolean findByCode(String code) {
@@ -59,9 +61,12 @@ public class DiscountService {
         return repository.findByCodeAndIdNotAndIsDeleteFalse(code, id) != null;
     }
 
+    public Page<Discount> getAllDiscountsByBranchId(Optional<Long> branchId, Pageable pageable) {
+        return repository.findDiscountsByBranchId(branchId.get(), pageable);
+    }
+  
     public Page<Map<String, Object>> getDiscountStatsByMonth(Pageable pageable) {
         return repository.getDiscountStatsByMonth(pageable);
     }
-
 
 }
