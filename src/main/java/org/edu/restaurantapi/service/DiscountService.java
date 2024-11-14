@@ -9,6 +9,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Map;
+
 
 @Service
 public class DiscountService {
@@ -55,5 +58,10 @@ public class DiscountService {
     public Boolean findByCodeAndIdNot(String code, Long id) {
         return repository.findByCodeAndIdNotAndIsDeleteFalse(code, id) != null;
     }
+
+    public Page<Map<String, Object>> getDiscountStatsByMonth(Pageable pageable) {
+        return repository.getDiscountStatsByMonth(pageable);
+    }
+
 
 }

@@ -10,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -69,5 +71,11 @@ public class BranchController {
         var response = BranchService.deleteBranch(id);
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
+    @GetMapping("/statistics")
+    public ResponseEntity<?> getBranchStatisticsByStatus(Pageable pageable) {
+      var response = BranchService.getBranchStatisticsByStatus(pageable);
+        return ResponseEntity.ok(ApiResponse.SUCCESS(response));
+    }
+
 
 }

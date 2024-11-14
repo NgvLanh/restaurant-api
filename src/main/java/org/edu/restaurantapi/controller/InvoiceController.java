@@ -52,4 +52,15 @@ public class InvoiceController {
                     .body(ApiResponse.NOT_FOUND("Invoice with id " + id + " not found"));
         }
     }
+
+
+
+
+
+
+    @GetMapping("/countInvoice")
+    public ResponseEntity<?> getInvoice(Pageable pageable) {
+        var response = invoiceService.getCountInvoiceMonth(pageable);
+        return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
+    }
 }
