@@ -22,10 +22,13 @@ public interface BranchRepository extends JpaRepository<Branch, Long> {
    Branch findByNameAndIsDeleteFalseAndIdNot(String name, Long id);
 
    Branch findByPhoneNumberAndIsDeleteFalseAndIdNot(String name, Long id);
+  
    @Query("SELECT bs.name AS BranchStatus, COUNT(b.id) AS TotalBranches " +
            "FROM branches b JOIN b.branchStatus bs " +
            "WHERE b.isDelete = false " +
            "GROUP BY bs.name " +
            "ORDER BY TotalBranches DESC")
    Page<Map<String, Object>> getBranchStatisticsByStatus(Pageable pageable);
+
+   Branch findByUserId(Long userId);
 }

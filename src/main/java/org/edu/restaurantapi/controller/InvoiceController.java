@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/invoices")
@@ -58,9 +59,20 @@ public class InvoiceController {
 
 
 
+
     @GetMapping("/countInvoice")
     public ResponseEntity<?> getInvoice(Pageable pageable) {
         var response = invoiceService.getCountInvoiceMonth(pageable);
+    return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
+    }
+    @GetMapping("/total-revenue")
+    public Double getTotalRevenue() {
+        return invoiceService.getTotalRevenue();
+    }
+
+    @GetMapping("/monthly-revenue")
+    public ResponseEntity<?> getInvoiceMonthly(Pageable pageable) {
+        var response = invoiceService.getMonthlyRevenue(pageable);
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
 }

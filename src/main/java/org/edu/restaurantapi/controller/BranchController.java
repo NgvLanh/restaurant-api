@@ -27,6 +27,12 @@ public class BranchController {
         return ResponseEntity.ok(ApiResponse.SUCCESS(response));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getBranchByUserId(@PathVariable Long id  ) {
+        var response = BranchService.findByUserId(id);
+        return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
+    }
+
     @PostMapping
     public ResponseEntity<?> createBranch(@Valid @RequestBody BranchRequest request) {
         var branchNameExists = BranchService.findByName(request.getName());

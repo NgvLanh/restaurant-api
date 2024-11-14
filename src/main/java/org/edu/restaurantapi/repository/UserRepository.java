@@ -5,12 +5,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-
 import java.util.Map;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByEmail(String email);
+    Optional<User> findByEmailAndIsDeleteFalse(String email);
 
     Optional<User> findByEmailOrPhoneNumber(String email, String phoneNumber);
 
@@ -21,14 +20,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Page<User> findUserByIsDeleteFalse(Pageable pageable);
 
 
-
-
-
-
-
-
-
-
     @Query("SELECT MONTH(u.createDate) AS month, COUNT(u) AS totalUsers " +
             "FROM users u " +
             "WHERE u.isDelete = false " +
@@ -37,4 +28,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "ORDER BY MONTH(u.createDate) ASC")
     Page<Map<String, Object>> getUserStatsByMonth(Pageable pageable);
 
+    Optional<User> findByEmail(String email);
+
+    @Query("SELECT COUNT(u) FROM users u WHERE u.isDelete = false")
+    Long countTotalRegisteredUsers();
 }

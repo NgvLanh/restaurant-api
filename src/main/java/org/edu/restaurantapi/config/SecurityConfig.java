@@ -30,7 +30,9 @@ public class SecurityConfig {
             "/api/auth/login",
             "/api/users",
             "/api/email/send-otp",
-            "/api/carts/async/*",
+            "/api/email/password-recovery/verify-code",
+            "/api/email/password-recovery/reset-password",
+            "/api/addresses/user/*",
     };
 
     private final String[] GET_API = {

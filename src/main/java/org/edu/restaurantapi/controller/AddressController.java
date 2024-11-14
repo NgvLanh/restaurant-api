@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/addresses")
 public class AddressController {
@@ -80,5 +82,11 @@ public class AddressController {
             return ResponseEntity.internalServerError()
                     .body(ApiResponse.SERVER_ERROR("Error deleting user: " + e.getMessage()));
         }
+    }
+
+    @GetMapping("/user/{userId}")
+    private ResponseEntity<?> getAddressByUserId(@PathVariable Long userId) {
+        List<Address> response = addressService.getAddressByUserId(userId);
+        return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
 }

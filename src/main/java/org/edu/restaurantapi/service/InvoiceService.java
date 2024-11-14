@@ -59,4 +59,11 @@ public class InvoiceService {
     public Page<Map<String, Object>> getCountInvoiceMonth(Pageable pageable) {
         return invoiceRepository.getInvoiceStatsByMonth(pageable);
     }
+    public Double getTotalRevenue() {
+        return invoiceRepository.getTotalRevenue();
+    }
+
+    public Page<Map<String, Object>> getMonthlyRevenue(Pageable pageable) {
+        return invoiceRepository.getMonthlyRevenue(pageable);
+    }
 }

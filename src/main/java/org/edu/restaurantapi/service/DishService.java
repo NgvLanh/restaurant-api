@@ -24,6 +24,8 @@ public class DishService {
 
     @Autowired
     private DishRepository repository;
+    @Autowired
+    private DishRepository dishRepository;
 
     public Page<Dish> getAllDishes(Optional<String> name, Pageable pageable) {
         Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
@@ -67,5 +69,9 @@ public class DishService {
 
     public Page<Dish> getDishesByCategoryId(Long categoryId, Pageable pageable) {
         return repository.findByCategoryId(categoryId, pageable);
+    }
+
+    public Long countTotalDishes() {
+        return dishRepository.countTotalDishes();
     }
 }
