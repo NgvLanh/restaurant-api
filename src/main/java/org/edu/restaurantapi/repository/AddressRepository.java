@@ -12,7 +12,4 @@ public interface AddressRepository extends JpaRepository<Address, Long> {
     List<Address> findAddressByUserId(Long userId);
 
     Address findAddressByProvinceIdAndDistrictIdAndWardId(String provinceId, String districtId, String wardId);
-    Page<Address> findAddressByIsDeleteFalse(Pageable pageable);
-
-    List<Address> findAddressByUserId(Long userId);
 }
