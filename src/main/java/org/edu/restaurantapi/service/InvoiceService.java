@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -42,5 +43,27 @@ public class InvoiceService {
             invoiceRepository.save(invoice);
             return true;
         }).orElse(false);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    public Page<Map<String, Object>> getCountInvoiceMonth(Pageable pageable) {
+        return invoiceRepository.getInvoiceStatsByMonth(pageable);
+    }
+    public Double getTotalRevenue() {
+        return invoiceRepository.getTotalRevenue();
+    }
+
+    public Page<Map<String, Object>> getMonthlyRevenue(Pageable pageable) {
+        return invoiceRepository.getMonthlyRevenue(pageable);
     }
 }

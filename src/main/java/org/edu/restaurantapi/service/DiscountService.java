@@ -11,6 +11,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.List;
+import java.util.Map;
 
 
 @Service
@@ -62,4 +64,9 @@ public class DiscountService {
     public Page<Discount> getAllDiscountsByBranchId(Optional<Long> branchId, Pageable pageable) {
         return repository.findDiscountsByBranchId(branchId.get(), pageable);
     }
+  
+    public Page<Map<String, Object>> getDiscountStatsByMonth(Pageable pageable) {
+        return repository.getDiscountStatsByMonth(pageable);
+    }
+
 }

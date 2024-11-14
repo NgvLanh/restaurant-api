@@ -131,4 +131,20 @@ public class UserController {
             }
         }
     }
+
+
+
+
+
+
+
+    @GetMapping("countUser")
+    public ResponseEntity<?> getCountUser(Pageable pageable) {
+        var response = userService.getCountUsersMonth(pageable);
+        return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
+    }
+    @GetMapping("/total-users")
+    public Long getTotalUsers() {
+        return userService.getTotalUsers();
+    }
 }

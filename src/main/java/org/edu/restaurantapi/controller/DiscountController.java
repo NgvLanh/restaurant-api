@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.List;
+import java.util.Map;
 
 
 @Slf4j
@@ -55,4 +57,11 @@ public class DiscountController {
         var response = service.delete(id);
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
+
+    @GetMapping("/countMonth")
+    public ResponseEntity<?> getDiscountData(Pageable pageable) {
+        var response = service.getDiscountStatsByMonth(pageable);
+        return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
+    }
+
 }

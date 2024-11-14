@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 @Slf4j
 @Service
 public class TableReservationService {
@@ -20,5 +22,9 @@ public class TableReservationService {
 
     public Page<TableReservation> gets(Long branchId, Pageable pageable) {
         return repository.findByIsDeleteFalseAndReservationBranchId(branchId, pageable);
+    }
+
+    public Page<Map<String, Object>> getReservationsByWeekday(Pageable pageable) {
+        return repository.findTotalReservationsPerDay(pageable);
     }
 }
