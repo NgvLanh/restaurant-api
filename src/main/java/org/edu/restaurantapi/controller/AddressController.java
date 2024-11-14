@@ -25,7 +25,11 @@ public class AddressController {
     private ResponseEntity<?> createAddress(@Valid @RequestBody Address address) {
         try {
             Address response = addressService.createAddress(address);
-            return ResponseEntity.status(HttpStatus.CREATED)
+            if (response == null) {
+                return ResponseEntity.badRequest()
+                        .body(ApiResponse.BAD_REQUEST("Bạn đã đăng ký địa chỉ này rồi"));
+            }
+            return ResponseEntity.ok()
                     .body(ApiResponse.CREATED(response));
         } catch (Exception e) {
             return ResponseEntity.internalServerError()

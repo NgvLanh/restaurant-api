@@ -1,7 +1,9 @@
 package org.edu.restaurantapi.service;
 
+import org.edu.restaurantapi.model.Cart;
 import org.edu.restaurantapi.model.CartItem;
 import org.edu.restaurantapi.repository.CartItemRepository;
+import org.edu.restaurantapi.repository.CartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,8 @@ public class CartItemService {
 
     @Autowired
     private CartItemRepository cartItemRepository;
+    @Autowired
+    private CartRepository cartRepository;
 
     public CartItem createCartItem(CartItem cartItem) {
         return cartItemRepository.save(cartItem);
@@ -38,5 +42,30 @@ public class CartItemService {
 
     public List<CartItem> findByCartItemsByCartId(Long cartId) {
         return cartItemRepository.findCartItemByCartId(cartId);
+    }
+
+    public Optional<CartItem> updateQuantityCartItem(Long cartItemId, Integer quantity) {
+        Optional<CartItem> cartItem = cartItemRepository.findById(cartItemId);
+        cartItem.ifPresent(e -> e.setQuantity(quantity));
+        return cartItem.map(cartItemRepository::save);
+    }
+
+    public List<CartItem> updateSelectAllCartItem(Long userId, Boolean status) {
+        Optional<Cart> cart = cartRepository.findCartByUserId(userId);
+        List<CartItem> cartItem = cartItemRepository.findCartItemByCartId(cart.get().getId());
+        cartItem.forEach(e->{
+            e.setStatus(status);
+            cartItemRepository.save(e);
+        });
+        return cartItem;
+    }
+
+    public CartItem updateSelectStatusCartItem(Long cartItemId) {
+        return cartItemRepository.findById(cartItemId)
+                .map(cartItem -> {
+                    cartItem.setStatus(!cartItem.getStatus());
+                    return cartItemRepository.save(cartItem);
+                })
+                .orElse(null);
     }
 }

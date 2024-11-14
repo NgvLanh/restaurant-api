@@ -32,6 +32,7 @@ public class UserService {
         String id = context.getAuthentication().getName();
         User user = userRepository.findById(Long.parseLong(id)).orElse(null);
         user.setPassword(null);
+        user.setImage("http://localhost:8080/api/files/" + user.getImage());
         return user;
     }
 
@@ -54,8 +55,10 @@ public class UserService {
         return userRepository.findById(id).map(existingUser -> {
             existingUser.setFullName(updatedUser.getFullName()
                     != null ? updatedUser.getFullName() : existingUser.getFullName());
-            existingUser.setPassword(updatedUser.getPassword()
-                    != null ? updatedUser.getPassword() : existingUser.getPassword());
+            existingUser.setPhoneNumber(updatedUser.getPhoneNumber()
+                    != null ? updatedUser.getPhoneNumber() : existingUser.getPhoneNumber());
+            existingUser.setImage(updatedUser.getImage()
+                    != null ? updatedUser.getImage() : existingUser.getImage());
             return userRepository.save(existingUser);
         }).orElse(null);
     }

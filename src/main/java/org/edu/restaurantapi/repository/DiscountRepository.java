@@ -1,5 +1,6 @@
 package org.edu.restaurantapi.repository;
 
+import org.edu.restaurantapi.model.Branch;
 import org.edu.restaurantapi.model.Discount;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,4 +16,6 @@ public interface DiscountRepository extends JpaRepository<Discount, Long> {
     Discount findByCodeAndIsDeleteFalse(String code);
 
     Discount findByCodeAndIdNotAndIsDeleteFalse(String code, Long id);
+
+    Page<Discount> findDiscountsByBranchId(Long branchId, Pageable pageable);
 }

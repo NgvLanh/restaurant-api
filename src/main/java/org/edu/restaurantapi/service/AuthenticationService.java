@@ -33,6 +33,7 @@ public class AuthenticationService {
         if (user != null) {
             var result = PasswordUtil.checkPassword(request.getPassword(), user.getPassword());
             user.setPassword(null);
+            user.setImage("http://localhost:8080/api/files/" + user.getImage());
             if (result) {
                 JwtUtil jwtUtil = new JwtUtil();
                 var token = jwtUtil.generateToken(user);
