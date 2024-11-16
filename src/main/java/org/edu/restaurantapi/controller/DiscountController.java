@@ -34,6 +34,15 @@ public class DiscountController {
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
 
+    @GetMapping("/{code}")
+    public ResponseEntity<?> checkDiscountCode(@PathVariable String code) {
+        var response = service.checkDiscountCode(code);
+        if (response == null) {
+            return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Mã giảm giá không chính xác"));
+        }
+        return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
+    }
+
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody Discount request) throws URISyntaxException, IOException {
         if (service.findByCode(request.getCode())) {

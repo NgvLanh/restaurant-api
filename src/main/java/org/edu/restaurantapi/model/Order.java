@@ -11,6 +11,7 @@ import org.edu.restaurantapi._enum.OrderStatus;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -46,5 +47,8 @@ public class Order {
     @JoinColumn(name = "branch_id")
     Branch branch;
 
+    Double total;
+
     Boolean isDelete = false;
+
 }

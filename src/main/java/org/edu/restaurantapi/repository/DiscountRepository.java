@@ -31,4 +31,8 @@ public interface DiscountRepository extends JpaRepository<Discount, Long> {
             "ORDER BY MONTH(d.createDate) ASC")
     Page<Map<String, Object>> getDiscountStatsByMonth(Pageable pageable);
 
+
+
+    Discount findDiscountsByCode(String code);
+
 }
