@@ -69,4 +69,7 @@ public class DiscountService {
         return repository.getDiscountStatsByMonth(pageable);
     }
 
+    public Discount checkDiscountCode(String code) {
+        return repository.findDiscountsByCode(code);
+    }
 }

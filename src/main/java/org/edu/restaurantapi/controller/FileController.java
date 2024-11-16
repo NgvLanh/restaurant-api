@@ -27,10 +27,10 @@ public class FileController {
         try {
             String urlFile = FileService.saveFile(file);
             return ResponseEntity.status(urlFile == null ? HttpStatus.BAD_REQUEST : HttpStatus.OK)
-                    .body(ApiResponse.SUCCESS(urlFile == null ? "Only one file is allowed" : urlFile));
+                    .body(ApiResponse.SUCCESS(urlFile == null ? "Chỉ cho phép tải lên 1 ảnh" : urlFile));
         } catch (Exception e) {
             return ResponseEntity.badRequest()
-                    .body(ApiResponse.BAD_REQUEST("Upload failed"));
+                    .body(ApiResponse.BAD_REQUEST("Tải ảnh thất bại"));
         }
     }
 
