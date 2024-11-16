@@ -15,6 +15,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -125,6 +127,10 @@ public class BranchService {
         return branchRepository.findByPhoneNumberAndIsDeleteFalseAndIdNot(name, id) != null;
     }
 
+    public Page<Map<String, Object>> getBranchStatisticsByStatus(Pageable pageable) {
+        return branchRepository.getBranchStatisticsByStatus(pageable);
+    }
+  
     public Branch findByUserId(Long userId) {
         return branchRepository.findByUserId(userId);
     }

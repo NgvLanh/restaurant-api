@@ -1,11 +1,15 @@
 package org.edu.restaurantapi.repository;
 
+import org.edu.restaurantapi.model.Branch;
+import org.edu.restaurantapi.model.Table;
 import org.edu.restaurantapi.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.util.Map;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -21,10 +25,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmail(String email);
 
-<<<<<<< Updated upstream
-    @Query("SELECT COUNT(u) FROM users u WHERE u.isDelete = false")
-    Long countTotalRegisteredUsers();
-=======
     @Query("SELECT MONTH(u.createDate) AS month, COUNT(u) AS totalUsers " +
             "FROM users u " +
             "WHERE u.isDelete = false " +
@@ -33,12 +33,20 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "ORDER BY MONTH(u.createDate) ASC")
     Page<Map<String, Object>> getUserStatsByMonth(Pageable pageable);
 
-//    @Query("SELECT COUNT(u) FROM users u WHERE u.isDelete = false")
-//    Long countTotalRegisteredUsers();
+    @Query("SELECT COUNT(u) FROM users u WHERE u.isDelete = false")
+    Long countTotalRegisteredUsers();
 
-    @Query("SELECT COUNT(u) FROM users u " +
+    Page<User> findByIsDeleteFalseAndBranchId(Long l, Pageable pageableSorted);
+
+    @Query("SELECT u FROM users u " +
             "WHERE u.isDelete = false " +
-            "AND :roleName MEMBER OF u.roles")
-    Long countTotalRegisteredUsers(String roleName);
->>>>>>> Stashed changes
+            "AND u.branch.id = :branchId " +
+            "AND 'EMPLOYEE' MEMBER OF u.roles")
+    Page<User> findUsersByBranchAndRole(
+            Long branchId,
+            Pageable pageable);
+
+
+
 }
+

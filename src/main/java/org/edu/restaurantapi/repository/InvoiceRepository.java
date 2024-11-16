@@ -11,9 +11,6 @@ import java.util.Map;
 
 public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
     Page<Invoice> findInvoiceByIsDeleteFalse(Pageable pageable);
-<<<<<<< Updated upstream
-    @Query("SELECT SUM(i.total) FROM invoices i WHERE i.isDelete = false")
-=======
 
 
 
@@ -33,19 +30,16 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
             "ORDER BY MONTH(i.date) ASC")
     Page<Map<String, Object>> getInvoiceStatsByMonth(Pageable pageable);
 
-    @Query("SELECT SUM(i.total) FROM invoices i JOIN i.order o WHERE i.isDelete = false AND (o.orderStatus = org.edu.restaurantapi._enum.OrderStatus.DELIVERED OR o.orderStatus = org.edu.restaurantapi._enum.OrderStatus.PAID)")
->>>>>>> Stashed changes
+    @Query("SELECT SUM(i.total) FROM invoices i WHERE i.isDelete = false")
     Double getTotalRevenue();
 
     @Query("SELECT EXTRACT(YEAR FROM i.date) AS nam, " +
             "EXTRACT(MONTH FROM i.date) AS thang, " +
             "SUM(i.total) AS tong_doanh_thu " +
             "FROM invoices i " +
-            "JOIN i.order o " +  // Kết nối với bảng orders
             "WHERE i.isDelete = false " +
-            "AND (o.orderStatus = org.edu.restaurantapi._enum.OrderStatus.DELIVERED " +
-            "OR o.orderStatus = org.edu.restaurantapi._enum.OrderStatus.PAID) " +  // Lọc theo trạng thái đơn hàng
             "GROUP BY EXTRACT(YEAR FROM i.date), EXTRACT(MONTH FROM i.date) " +
             "ORDER BY EXTRACT(YEAR FROM i.date), EXTRACT(MONTH FROM i.date)")
     Page<Map<String, Object>> getMonthlyRevenue(Pageable pageable);
+
 }

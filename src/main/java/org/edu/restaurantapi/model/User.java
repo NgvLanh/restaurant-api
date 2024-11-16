@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 @Data
@@ -46,4 +47,11 @@ public class User {
 
     @JsonIgnore
     Boolean isDelete = false;
+
+    LocalDate createDate = LocalDate.now();
+
+    @ManyToOne
+    @JoinColumn(name = "branch_id")
+    Branch branch;
+
 }

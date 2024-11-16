@@ -54,6 +54,17 @@ public class InvoiceController {
         }
     }
 
+
+
+
+
+
+
+    @GetMapping("/countInvoice")
+    public ResponseEntity<?> getInvoice(Pageable pageable) {
+        var response = invoiceService.getCountInvoiceMonth(pageable);
+    return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
+    }
     @GetMapping("/total-revenue")
     public Double getTotalRevenue() {
         return invoiceService.getTotalRevenue();

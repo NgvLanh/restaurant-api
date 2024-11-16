@@ -1,6 +1,8 @@
 package org.edu.restaurantapi.service;
 
 import org.edu.restaurantapi._enum.Role;
+import org.edu.restaurantapi.model.Table;
+import org.edu.restaurantapi.model.Cart;
 import org.edu.restaurantapi.model.User;
 import org.edu.restaurantapi.repository.UserRepository;
 import org.edu.restaurantapi.util.PasswordUtil;
@@ -15,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -22,28 +25,39 @@ import java.util.Set;
 @Service
 public class UserService {
 
-    private static final Logger log = LoggerFactory.getLogger(UserService.class);
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private CartService cartService;
 
     public User getUserInfo() {
         var context = SecurityContextHolder.getContext();
         String id = context.getAuthentication().getName();
         User user = userRepository.findById(Long.parseLong(id)).orElse(null);
         user.setPassword(null);
+        user.setImage("http://localhost:8080/api/files/" + user.getImage());
         return user;
     }
 
     public User createUser(User user) {
         user.setPassword(PasswordUtil.hashPassword(user.getPassword()));
         user.setRoles(Set.of("CLIENT"));
-        return userRepository.save(user);
+        User userCreated= userRepository.save(user);
+        Cart cart = Cart.builder().user(userCreated).build();
+        cartService.createCart(cart);
+        return userCreated;
     }
 
     public User createNonAdmin(User user) {
         user.setPassword(PasswordUtil.hashPassword(user.getPassword()));
         user.setRoles(Set.of("NON_ADMIN"));
+        return userRepository.save(user);
+    }
+
+    public User createEmployee(User user) {
+        user.setPassword(PasswordUtil.hashPassword(user.getPassword()));
+        user.setRoles(Set.of("EMPLOYEE"));
         return userRepository.save(user);
     }
 
@@ -54,8 +68,12 @@ public class UserService {
         return userRepository.findById(id).map(existingUser -> {
             existingUser.setFullName(updatedUser.getFullName()
                     != null ? updatedUser.getFullName() : existingUser.getFullName());
-            existingUser.setPassword(updatedUser.getPassword()
-                    != null ? updatedUser.getPassword() : existingUser.getPassword());
+            existingUser.setPhoneNumber(updatedUser.getPhoneNumber()
+                    != null ? updatedUser.getPhoneNumber() : existingUser.getPhoneNumber());
+            existingUser.setImage(updatedUser.getImage()
+                    != null ? updatedUser.getImage() : existingUser.getImage());
+            existingUser.setBranch(updatedUser.getBranch() != null
+                    ? updatedUser.getBranch() : existingUser.getBranch());
             return userRepository.save(existingUser);
         }).orElse(null);
     }
@@ -72,6 +90,12 @@ public class UserService {
 
     public Page<User> getUserByPhoneNumber(String phoneNumber, Pageable pageable) {
         return userRepository.findByPhoneNumberContaining(phoneNumber, pageable);
+    }
+
+    public Page<User> getEmployee(Optional<String> branch, Pageable pageable) {
+        Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
+                pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
+        return userRepository.findUsersByBranchAndRole(Long.parseLong(branch.get()), pageableSorted);
     }
 
     public Boolean deleteUser(Long id) {
@@ -107,8 +131,22 @@ public class UserService {
         return userRepository.findById(userId);
     }
 
+
+    public Page<Map<String, Object>> getCountUsersMonth(Pageable pageable) {
+        return userRepository.getUserStatsByMonth(pageable);
+}
     public Long getTotalUsers() {
         String roleName = "CLIENT";
         return userRepository.countTotalRegisteredUsers(roleName);
     }
 }
+
+
+
+
+
+
+
+
+
+
