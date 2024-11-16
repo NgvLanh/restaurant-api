@@ -39,8 +39,8 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@Valid @RequestBody Order request) {
-        var response = service.create(request);
+    public ResponseEntity<?> createOrder(@Valid @RequestBody Order request) {
+        var response = service.createOrder(request);
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
 
