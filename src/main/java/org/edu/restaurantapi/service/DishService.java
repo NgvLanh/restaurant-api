@@ -41,10 +41,13 @@ public class DishService {
     }
 
     public Dish update(Long id, Dish request) {
+        request.setImage(request.getImage().substring(request.getImage().lastIndexOf("/") + 1));
         return repository.findById(id).map(d -> {
             d.setName(request.getName() != null ? request.getName() : d.getName());
             d.setPrice(request.getPrice() != null ? request.getPrice() : d.getPrice());
-            d.setImage(request.getImage() != null ? request.getImage() : d.getImage());
+            if (request.getImage() != null && !request.getImage().isEmpty()) {
+                d.setImage(request.getImage());
+            }
             d.setDescription(request.getDescription() != null ? request.getDescription() : d.getDescription());
             d.setCategory(request.getCategory() != null ? request.getCategory() : d.getCategory());
             return repository.save(d);
