@@ -108,6 +108,7 @@ public class UserService {
     }
 
     public Long getTotalUsers() {
-        return userRepository.countTotalRegisteredUsers();
+        String roleName = "CLIENT";
+        return userRepository.countTotalRegisteredUsers(roleName);
     }
 }

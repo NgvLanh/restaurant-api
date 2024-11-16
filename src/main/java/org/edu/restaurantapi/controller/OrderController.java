@@ -64,4 +64,9 @@ public class OrderController {
     public Long getTotalOrder() {
         return service.getTotalOrder();
     }
+
+    @GetMapping("/total-order-cancelled")
+    public Long getTotalOrderCancelled() {
+        return service.getTotalOrderCancelled();
+    }
 }

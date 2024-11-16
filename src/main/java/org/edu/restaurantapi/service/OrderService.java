@@ -53,4 +53,8 @@ public class OrderService {
     public Long getTotalOrder() {
         return repository.countTotalOrders();
     }
+
+    public Long getTotalOrderCancelled() {
+        return repository.countTotalOrdersCancelled();
+    }
 }

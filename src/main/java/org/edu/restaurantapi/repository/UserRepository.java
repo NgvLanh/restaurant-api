@@ -21,6 +21,24 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmail(String email);
 
+<<<<<<< Updated upstream
     @Query("SELECT COUNT(u) FROM users u WHERE u.isDelete = false")
     Long countTotalRegisteredUsers();
+=======
+    @Query("SELECT MONTH(u.createDate) AS month, COUNT(u) AS totalUsers " +
+            "FROM users u " +
+            "WHERE u.isDelete = false " +
+            "AND YEAR(u.createDate) = YEAR(CURRENT_DATE) " +
+            "GROUP BY MONTH(u.createDate) " +
+            "ORDER BY MONTH(u.createDate) ASC")
+    Page<Map<String, Object>> getUserStatsByMonth(Pageable pageable);
+
+//    @Query("SELECT COUNT(u) FROM users u WHERE u.isDelete = false")
+//    Long countTotalRegisteredUsers();
+
+    @Query("SELECT COUNT(u) FROM users u " +
+            "WHERE u.isDelete = false " +
+            "AND :roleName MEMBER OF u.roles")
+    Long countTotalRegisteredUsers(String roleName);
+>>>>>>> Stashed changes
 }

@@ -14,7 +14,7 @@ import org.edu.restaurantapi._enum.TableStatus;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "tables")
-public class    Table {
+public class Table {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
