@@ -1,6 +1,7 @@
 package org.edu.restaurantapi.service;
 
 import org.edu.restaurantapi._enum.Role;
+import org.edu.restaurantapi.model.Table;
 import org.edu.restaurantapi.model.User;
 import org.edu.restaurantapi.repository.UserRepository;
 import org.edu.restaurantapi.util.PasswordUtil;
@@ -49,6 +50,12 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public User createEmployee(User user) {
+        user.setPassword(PasswordUtil.hashPassword(user.getPassword()));
+        user.setRoles(Set.of("EMPLOYEE"));
+        return userRepository.save(user);
+    }
+
     public User updateUser(Long id, User updatedUser) {
         if (updatedUser.getPassword() != null) {
             updatedUser.setPassword(PasswordUtil.hashPassword(updatedUser.getPassword()));
@@ -60,6 +67,8 @@ public class UserService {
                     != null ? updatedUser.getPhoneNumber() : existingUser.getPhoneNumber());
             existingUser.setImage(updatedUser.getImage()
                     != null ? updatedUser.getImage() : existingUser.getImage());
+            existingUser.setBranch(updatedUser.getBranch() != null
+                    ? updatedUser.getBranch() : existingUser.getBranch());
             return userRepository.save(existingUser);
         }).orElse(null);
     }
@@ -76,6 +85,12 @@ public class UserService {
 
     public Page<User> getUserByPhoneNumber(String phoneNumber, Pageable pageable) {
         return userRepository.findByPhoneNumberContaining(phoneNumber, pageable);
+    }
+
+    public Page<User> getEmployee(Optional<String> branch, Pageable pageable) {
+        Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
+                pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
+        return userRepository.findUsersByBranchAndRole(Long.parseLong(branch.get()), pageableSorted);
     }
 
     public Boolean deleteUser(Long id) {
