@@ -16,6 +16,10 @@ public class Address {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
+    String phoneNumber;
+
+    String fullName;
+
     @NotBlank(message = "Địa chỉ không được để trống")
     @Size(max = 255, message = "Địa chỉ không được vượt quá 255 ký tự")
     String address;

@@ -1,6 +1,7 @@
 package org.edu.restaurantapi.service;
 
 import org.edu.restaurantapi._enum.Role;
+import org.edu.restaurantapi.model.Cart;
 import org.edu.restaurantapi.model.User;
 import org.edu.restaurantapi.repository.UserRepository;
 import org.edu.restaurantapi.util.PasswordUtil;
@@ -23,10 +24,11 @@ import java.util.Set;
 @Service
 public class UserService {
 
-    private static final Logger log = LoggerFactory.getLogger(UserService.class);
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private CartService cartService;
 
     public User getUserInfo() {
         var context = SecurityContextHolder.getContext();
@@ -40,7 +42,10 @@ public class UserService {
     public User createUser(User user) {
         user.setPassword(PasswordUtil.hashPassword(user.getPassword()));
         user.setRoles(Set.of("CLIENT"));
-        return userRepository.save(user);
+        User userCreated= userRepository.save(user);
+        Cart cart = Cart.builder().user(userCreated).build();
+        cartService.createCart(cart);
+        return userCreated;
     }
 
     public User createNonAdmin(User user) {

@@ -41,7 +41,7 @@ public class SecurityConfig {
             "/api/*",
             "/api/dishes/*",
             "/api/tables/reservations",
-            "/api/vnpay/return"
+            "/api/vnpay/*",
     };
 
     @Autowired

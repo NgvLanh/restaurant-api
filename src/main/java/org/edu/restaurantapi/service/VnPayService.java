@@ -2,7 +2,9 @@ package org.edu.restaurantapi.service;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.edu.restaurantapi.repository.OrderRepository;
 import org.edu.restaurantapi.request.VnPayRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 

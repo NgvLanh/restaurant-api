@@ -17,13 +17,13 @@ public class AddressService {
     private AddressRepository addressRepository;
 
     public Address createAddress(Address address){
-        Address addressExists = addressRepository
-                .findAddressByProvinceIdAndDistrictIdAndWardId(address.getProvinceId(),
-                address.getDistrictId(), address.getWardId());
-        if (addressExists == null) {
+//        Address addressExists = addressRepository
+//                .findAddressByProvinceIdAndDistrictIdAndWardId(address.getProvinceId(),
+//                address.getDistrictId(), address.getWardId());
+//        if (addressExists == null) {
             return addressRepository.save(address);
-        }
-        return null;
+//        }
+//        return null;
     }
 
     public Page<Address> getAddresses(Pageable pageable) {

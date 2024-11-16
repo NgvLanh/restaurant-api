@@ -3,12 +3,11 @@ package org.edu.restaurantapi.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-
+@Data
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,12 +17,12 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @NotNull(message = "Quantity cannot be empty")
-    @Positive(message = "Quantity must be greater than 0")
+    @NotNull(message = "Số lượng không được để trống")
+    @Positive(message = "Số lượng phải lớn hơn 0")
     Integer quantity;
 
-    @NotNull(message = "Price cannot be empty")
-    @Positive(message = "Price must be greater than 0")
+    @NotNull(message = "Giá không được để trống")
+    @Positive(message = "Giá phải lớn hơn 0")
     Double price;
 
     @ManyToOne
@@ -34,5 +33,4 @@ public class OrderItem {
     @JoinColumn(name = "dish_id")
     Dish dish;
 
-    Boolean isDelete = false;
 }
