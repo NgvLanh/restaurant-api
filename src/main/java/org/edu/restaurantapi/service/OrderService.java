@@ -91,4 +91,8 @@ public class OrderService {
     public Optional<Order> findById(long l) {
         return orderRepository.findById(l);
     }
+
+    public Long getTotalOrderCancelled() {
+        return repository.countTotalOrdersCancelled();
+    }
 }

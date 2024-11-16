@@ -21,6 +21,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     Page<Order> findByIsDeleteFalse(Pageable pageable);
 
-    @Query("SELECT COUNT(o) FROM orders o WHERE o.isDelete = false")
+    @Query("SELECT COUNT(o) FROM orders o WHERE o.isDelete = false AND o.orderStatus = org.edu.restaurantapi._enum.OrderStatus.PAID OR o.orderStatus = org.edu.restaurantapi._enum.OrderStatus.DELIVERED")
     Long countTotalOrders();
+
+    @Query("SELECT COUNT(o) FROM orders o WHERE o.isDelete = false AND o.orderStatus = org.edu.restaurantapi._enum.OrderStatus.CANCELLED")
+    Long countTotalOrdersCancelled();
 }

@@ -25,7 +25,8 @@ public class Order {
 
     Date time = new Date();
 
-    OrderStatus orderStatus;
+    @Enumerated(EnumType.STRING)
+    OrderStatus orderStatus = OrderStatus.ORDERED;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
