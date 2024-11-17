@@ -33,8 +33,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "ORDER BY MONTH(u.createDate) ASC")
     Page<Map<String, Object>> getUserStatsByMonth(Pageable pageable);
 
-    @Query("SELECT COUNT(u) FROM users u WHERE u.isDelete = false")
-    Long countTotalRegisteredUsers();
+    @Query("SELECT COUNT(u) FROM users u " +
+            "WHERE u.isDelete = false " +
+            "AND :roleName MEMBER OF u.roles")
+    Long countTotalRegisteredUsers(String roleName);
 
     Page<User> findByIsDeleteFalseAndBranchId(Long l, Pageable pageableSorted);
 
@@ -45,8 +47,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Page<User> findUsersByBranchAndRole(
             Long branchId,
             Pageable pageable);
-
-
-
 }
 
