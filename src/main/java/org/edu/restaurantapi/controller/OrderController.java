@@ -1,6 +1,7 @@
 package org.edu.restaurantapi.controller;
 
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.edu.restaurantapi._enum.OrderStatus;
 import org.edu.restaurantapi.model.Order;
 import org.edu.restaurantapi.model.Order;
@@ -20,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/orders")
 public class OrderController {
@@ -29,12 +31,13 @@ public class OrderController {
 
     @GetMapping
     public ResponseEntity<?> getAllOrders(@RequestParam(value = "branchId", required = false)
-                                      Optional<Long> branchId,
+                                          Optional<Long> branchId,
                                           @RequestParam(value = "time", required = false)
                                           Optional<Date> time,
                                           @RequestParam(value = "orderStatus", required = false)
-                                              Optional<OrderStatus> orderStatus,
-                                  Pageable pageable) {
+                                          Optional<OrderStatus> orderStatus,
+                                          Pageable pageable) {
+        log.info(String.valueOf(branchId), time, orderStatus);
         var response = service.getAllOrders(branchId, time, orderStatus, pageable);
         return ResponseEntity.ok(ApiResponse.SUCCESS(response));
     }
