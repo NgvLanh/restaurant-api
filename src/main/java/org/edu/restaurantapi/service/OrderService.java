@@ -31,13 +31,58 @@ public class OrderService {
 
     public Page<Order> getAllOrders(Optional<Long> branchId, Optional<Date> time,
                                     Optional<OrderStatus> orderStatus, Pageable pageable) {
+        // Sắp xếp theo id giảm dần (mới nhất lên đầu)
         Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
                 pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
-        if (branchId.isEmpty() || time.isEmpty() || orderStatus.isEmpty()) {
+
+        // Nếu tất cả các tham số đều không có (branchId, time, orderStatus), trả về tất cả đơn hàng chưa xóa
+        if (branchId.isEmpty() && time.isEmpty() && orderStatus.isEmpty()) {
             return orderRepository.findByIsDeleteFalse(pageableSorted);
         }
-        return orderRepository.findByIsDeleteFalseAndBranchIdAndTimeAndOrderStatus(branchId.get(), time.get(), orderStatus.get(), pageableSorted);
+
+        // Nếu có đầy đủ 3 tham số lọc: branchId, time, và orderStatus
+        if (branchId.isPresent() && time.isPresent() && orderStatus.isPresent()) {
+            return orderRepository.findByIsDeleteFalseAndBranchIdAndTimeAndOrderStatus(
+                    branchId.get(), time.get(), orderStatus.get(), pageableSorted);
+        }
+
+        // Nếu chỉ có branchId và orderStatus
+        if (branchId.isPresent() && orderStatus.isPresent()) {
+            return orderRepository.findByIsDeleteFalseAndBranchIdAndOrderStatus(
+                    branchId.get(), orderStatus.get(), pageableSorted);
+        }
+
+        // Nếu chỉ có branchId và time
+        if (branchId.isPresent() && time.isPresent()) {
+            return orderRepository.findByIsDeleteFalseAndBranchIdAndTime(
+                    branchId.get(), time.get(), pageableSorted);
+        }
+
+        // Nếu chỉ có time và orderStatus
+        if (time.isPresent() && orderStatus.isPresent()) {
+            return orderRepository.findByIsDeleteFalseAndTimeAndOrderStatus(
+                    time.get(), orderStatus.get(), pageableSorted);
+        }
+
+        // Nếu chỉ có branchId
+        if (branchId.isPresent()) {
+            return orderRepository.findByIsDeleteFalseAndBranchId(branchId.get(), pageableSorted);
+        }
+
+        // Nếu chỉ có time
+        if (time.isPresent()) {
+            return orderRepository.findByIsDeleteFalseAndTime(time.get(), pageableSorted);
+        }
+
+        // Nếu chỉ có orderStatus
+        if (orderStatus.isPresent()) {
+            return orderRepository.findByIsDeleteFalseAndOrderStatus(orderStatus.get(), pageableSorted);
+        }
+
+        // Trường hợp cuối cùng: trả về tất cả đơn hàng chưa xóa nếu không có tham số lọc nào
+        return orderRepository.findByIsDeleteFalse(pageableSorted);
     }
+
 
     public Order createOrder(Order request) {
         Order response = orderRepository.save(request);
@@ -93,6 +138,6 @@ public class OrderService {
     }
 
     public Long getTotalOrderCancelled() {
-        return repository.countTotalOrdersCancelled();
+        return orderRepository.countTotalOrdersCancelled();
     }
 }

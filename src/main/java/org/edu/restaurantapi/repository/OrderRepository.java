@@ -14,12 +14,23 @@ import java.util.Date;
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
 
-    Page<Order> findByIsDeleteFalseAndBranchIdAndTimeAndOrderStatus(Long branchId,
-                                                                    Date time,
-                                                                    OrderStatus orderStatus,
-                                                                    Pageable pageable);
+    public Page<Order> findByIsDeleteFalse(Pageable pageable);
 
-    Page<Order> findByIsDeleteFalse(Pageable pageable);
+    public Page<Order> findByIsDeleteFalseAndBranchId(Long branchId, Pageable pageable);
+
+    public Page<Order> findByIsDeleteFalseAndTime(Date time, Pageable pageable);
+
+    public Page<Order> findByIsDeleteFalseAndOrderStatus(OrderStatus orderStatus, Pageable pageable);
+
+    public Page<Order> findByIsDeleteFalseAndBranchIdAndTime(Long branchId, Date time, Pageable pageable);
+
+    public Page<Order> findByIsDeleteFalseAndBranchIdAndOrderStatus(Long branchId, OrderStatus orderStatus, Pageable pageable);
+
+    public Page<Order> findByIsDeleteFalseAndTimeAndOrderStatus(Date time, OrderStatus orderStatus, Pageable pageable);
+
+    public Page<Order> findByIsDeleteFalseAndBranchIdAndTimeAndOrderStatus(Long branchId, Date time, OrderStatus orderStatus, Pageable pageable);
+
+//    Page<Order> findByIsDeleteFalse(Pageable pageable);
 
     @Query("SELECT COUNT(o) FROM orders o WHERE o.isDelete = false AND o.orderStatus = org.edu.restaurantapi._enum.OrderStatus.PAID OR o.orderStatus = org.edu.restaurantapi._enum.OrderStatus.DELIVERED")
     Long countTotalOrders();
