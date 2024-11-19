@@ -68,6 +68,8 @@ public class UserService {
         return userRepository.findById(id).map(existingUser -> {
             existingUser.setFullName(updatedUser.getFullName()
                     != null ? updatedUser.getFullName() : existingUser.getFullName());
+            existingUser.setEmail(updatedUser.getEmail()
+                    != null ? updatedUser.getEmail() : existingUser.getEmail());
             existingUser.setPhoneNumber(updatedUser.getPhoneNumber()
                     != null ? updatedUser.getPhoneNumber() : existingUser.getPhoneNumber());
             existingUser.setImage(updatedUser.getImage()

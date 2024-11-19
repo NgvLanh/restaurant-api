@@ -19,17 +19,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
             "ORDER BY MONTH(i.date) ASC")
     Page<Map<String, Object>> getInvoiceStatsByMonth(Pageable pageable);
 
-
-    @Query("SELECT SUM(i.total) FROM invoices i WHERE i.isDelete = false")
-
-
-    @Query("SELECT MONTH(i.date) AS month, COUNT(i) AS totalInvoices " +
-            "FROM invoices i " +
-            "WHERE YEAR(i.date) = YEAR(CURRENT_DATE) AND i.isDelete = false " +
-            "GROUP BY MONTH(i.date) " +
-            "ORDER BY MONTH(i.date) ASC")
-    Page<Map<String, Object>> getInvoiceStatsByMonth(Pageable pageable);
-
+    
     @Query("SELECT SUM(i.total) FROM invoices i JOIN i.order o WHERE i.isDelete = false AND (o.orderStatus = org.edu.restaurantapi._enum.OrderStatus.DELIVERED OR o.orderStatus = org.edu.restaurantapi._enum.OrderStatus.PAID)")
 
     Double getTotalRevenue();

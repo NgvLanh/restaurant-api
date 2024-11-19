@@ -1,11 +1,14 @@
 package org.edu.restaurantapi.repository;
 
+import jakarta.transaction.Transactional;
 import org.edu.restaurantapi.model.Branch;
 import org.edu.restaurantapi.model.BranchStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -31,4 +34,9 @@ public interface BranchRepository extends JpaRepository<Branch, Long> {
    Page<Map<String, Object>> getBranchStatisticsByStatus(Pageable pageable);
 
    Branch findByUserId(Long userId);
+
+   @Modifying
+   @Transactional
+   @Query("UPDATE branches b SET b.user = NULL WHERE b.user.id = :userId")
+   void updateBranchesUserNull(@Param("userId") Long userId);
 }

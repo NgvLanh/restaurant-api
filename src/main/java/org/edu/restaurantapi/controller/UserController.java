@@ -53,15 +53,16 @@ public class UserController {
 
     @PatchMapping("/{id}")
     private ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User user) {
-        try {
-            User response = userService.updateUser(id, user);
-            response.setPassword(null);
-            return ResponseEntity.ok()
-                    .body(ApiResponse.SUCCESS(response));
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError()
-                    .body(ApiResponse.SERVER_ERROR(e.getMessage()));
+            try {
+                User response = userService.updateUser(id, user);
+                response.setPassword(null);
+                return ResponseEntity.ok()
+                        .body(ApiResponse.SUCCESS(response));
+            } catch (Exception e) {
+                return ResponseEntity.internalServerError()
+                        .body(ApiResponse.SERVER_ERROR(e.getMessage()));
         }
+
     }
 
     @GetMapping

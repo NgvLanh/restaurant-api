@@ -93,6 +93,6 @@ public class OrderService {
     }
 
     public Long getTotalOrderCancelled() {
-        return repository.countTotalOrdersCancelled();
+        return orderRepository.countTotalOrdersCancelled();
     }
 }
