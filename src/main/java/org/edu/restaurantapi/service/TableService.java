@@ -1,18 +1,13 @@
 package org.edu.restaurantapi.service;
 
-import org.edu.restaurantapi._enum.TableStatus;
 import org.edu.restaurantapi.model.Branch;
 import org.edu.restaurantapi.model.Table;
-import org.edu.restaurantapi.model.User;
-import org.edu.restaurantapi.model.Table;
-import org.edu.restaurantapi.repository.TableRepository;
 import org.edu.restaurantapi.repository.TableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -63,8 +58,8 @@ public class TableService {
         return repository.findByIsDeleteFalseAndNumberAndBranchIs(number, branch) != null;
     }
 
-    public List<Table> getTablesByBranchIdAndSeats(Optional<Long> branch, Optional<String> time, Optional<Integer> seats) {
-        return repository.findTableByIsDeleteFalseAndBranchIdAndSeatsAndTableStatusLike(branch.get(), seats.get(), TableStatus.AVAILABLE) ;
+    public List<Table> getTablesByBranchId(Optional<Long> branch, Optional<String> time) {
+        return repository.findTableByIsDeleteFalseAndBranchIdAndTableStatusTrue(branch.get()) ;
     }
 
 }

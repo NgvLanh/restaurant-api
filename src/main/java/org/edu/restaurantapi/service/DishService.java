@@ -27,11 +27,11 @@ public class DishService {
     @Autowired
     private DishRepository dishRepository;
 
-    public Page<Dish> getAllDishes(Optional<String> name, Pageable pageable) {
+    public Page<Dish> getAllDishes(Optional<Long> branch, Optional<String> name, Pageable pageable) {
         Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
                 pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
         if (name.isPresent()) {
-            return repository.findByNameContainingAndIsDeleteFalse(name.get(), pageableSorted);
+            return repository.findByBranchIdAndNameContainingAndIsDeleteFalse(branch.get(), name.get(), pageableSorted);
         }
         return repository.findByIsDeleteFalse(pageableSorted);
     }
@@ -70,8 +70,8 @@ public class DishService {
         return repository.findByNameAndIdNotAndIsDeleteFalse(name, id) != null;
     }
 
-    public Page<Dish> getDishesByCategoryId(Long categoryId, Pageable pageable) {
-        return repository.findByCategoryId(categoryId, pageable);
+    public Page<Dish> getDishesByCategoryId(Long branchId, Long categoryId, Pageable pageable) {
+        return repository.findByBranchIdAndCategoryId(branchId, categoryId, pageable);
     }
 
     public Long countTotalDishes() {

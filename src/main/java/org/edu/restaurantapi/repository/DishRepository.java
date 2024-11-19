@@ -11,13 +11,13 @@ import java.util.Optional;
 
 public interface DishRepository extends JpaRepository<Dish, Long> {
 
-    Page<Dish> findByNameContainingAndIsDeleteFalse(String name, Pageable pageable);
+    Page<Dish> findByBranchIdAndNameContainingAndIsDeleteFalse(Long branchId, String name, Pageable pageable);
 
     Dish findByNameAndIsDeleteFalse(String name);
 
     Dish findByNameAndIdNotAndIsDeleteFalse(String name, Long id);
 
-    Page<Dish> findByCategoryId(Long categoryId, Pageable pageable);
+    Page<Dish> findByBranchIdAndCategoryId(Long branchId, Long categoryId, Pageable pageable);
 
     Page<Dish> findByIsDeleteFalse(Pageable pageableSorted);
 

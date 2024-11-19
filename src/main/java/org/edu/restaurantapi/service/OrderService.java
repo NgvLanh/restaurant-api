@@ -140,4 +140,23 @@ public class OrderService {
     public Long getTotalOrderCancelled() {
         return orderRepository.countTotalOrdersCancelled();
     }
+
+    public List<Order> getAllOrdersByUserId(Optional<Long> branchId, Optional<Long> userId, Optional<OrderStatus> orderStatus) {
+        if (orderStatus.isPresent() && orderStatus.get() == OrderStatus.ALL) {
+            return orderRepository.findOrdersByBranchIdAndUserId(branchId.get(), userId.get());
+        }
+        return orderRepository.findOrdersByBranchIdAndUserIdAndOrderStatus(branchId.get(), userId.get(), orderStatus.get());
+    }
+
+    public Order cancelOrder(Long orderId, Optional<String> reason) {
+        return orderRepository.findById(orderId).map(b -> {
+            if (b.getOrderStatus() == OrderStatus.PENDING) {
+                b.setOrderStatus(OrderStatus.CANCELLED);
+                b.setCancelReason(reason.get());
+            } else {
+                return null;
+            }
+            return orderRepository.save(b);
+        }).orElse(null);
+    }
 }

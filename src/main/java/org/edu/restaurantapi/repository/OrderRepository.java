@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.Date;
+import java.util.List;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
@@ -37,4 +38,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("SELECT COUNT(o) FROM orders o WHERE o.isDelete = false AND o.orderStatus = org.edu.restaurantapi._enum.OrderStatus.CANCELLED")
     Long countTotalOrdersCancelled();
+
+    List<Order> findOrdersByBranchIdAndUserIdAndOrderStatus(Long branchId, Long useId, OrderStatus orderStatus);
+
+    List<Order> findOrdersByBranchIdAndUserId(Long branchId, Long useId);
 }

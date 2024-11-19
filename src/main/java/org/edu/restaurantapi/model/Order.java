@@ -1,5 +1,6 @@
 package org.edu.restaurantapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
@@ -25,8 +26,7 @@ public class Order {
 
     Date time = new Date();
 
-    @Enumerated(EnumType.STRING)
-    OrderStatus orderStatus = OrderStatus.ORDERED;
+    OrderStatus orderStatus;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -48,8 +48,12 @@ public class Order {
     @JoinColumn(name = "branch_id")
     Branch branch;
 
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    List<OrderItem> orderItems;
+
     Double total;
 
-    Boolean isDelete = false;
+    String cancelReason;
 
+    Boolean isDelete = false;
 }

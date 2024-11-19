@@ -1,13 +1,9 @@
 package org.edu.restaurantapi.service;
 
-import org.edu.restaurantapi._enum.Role;
-import org.edu.restaurantapi.model.Table;
 import org.edu.restaurantapi.model.Cart;
 import org.edu.restaurantapi.model.User;
 import org.edu.restaurantapi.repository.UserRepository;
 import org.edu.restaurantapi.util.PasswordUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,7 +12,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;

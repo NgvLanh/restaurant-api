@@ -1,25 +1,27 @@
 package org.edu.restaurantapi.repository;
 
+import jakarta.validation.constraints.NotNull;
 import org.edu.restaurantapi.model.Reservation;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.edu.restaurantapi.response.ReservationTableResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import org.springframework.data.jpa.repository.query.Procedure;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
+import java.util.List;
 
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
-    Page<Reservation> findByBranchIdAndIsConflictTrue(Long branch, Pageable pageable);
+    List<Reservation> findByBranchId(Long branch);
 
-    @Query("SELECT CASE WHEN COUNT(r) > 0 THEN TRUE ELSE FALSE END " +
-            "FROM reservations r " +
-            "WHERE r.table.id = :tableId " +
-            "AND r.bookingDate = :bookingDate " +
-            "AND CAST(:time AS localtime) BETWEEN r.startTime AND r.endTime")
-    Boolean isTableReserved(@Param("tableId") Long tableId,
-                            @Param("bookingDate") LocalDate bookingDate,
-                            @Param("time") LocalTime time);
+    List<Reservation> findReservationsByBookingDate(LocalDate bookingDate);
+
+//    @Query("SELECT CASE WHEN COUNT(r) > 0 THEN TRUE ELSE FALSE END " +
+//            "FROM reservations r " +
+//            "WHERE r.tables. = :tableId " +
+//            "AND r.bookingDate = :bookingDate " +
+//            "AND CAST(:time AS localtime) BETWEEN r.startTime AND r.endTime")
+//    Boolean isTableReserved(@Param("tableId") Long tableId,
+//                            @Param("bookingDate") LocalDate bookingDate,
+//                            @Param("time") LocalTime time);
 }

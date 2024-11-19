@@ -23,6 +23,8 @@ public class CustomAuthenticationEntryPoint  implements AuthenticationEntryPoint
 
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.getWriter().write(String.format("{\"code\":401, \"status\":false, \"message\":\"%s\"}", errorMessage));
+        response.getWriter().write(String.format("{\"code\":401," +
+                " \"status\":false," +
+                " \"message\":\"%s\"}", errorMessage));
     }
 }

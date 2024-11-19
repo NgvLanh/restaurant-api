@@ -34,7 +34,6 @@ public class ZoneService {
         return repository.findById(id).map(b -> {
             b.setAddress(request.getAddress() != null ? request.getAddress() : b.getAddress());
             b.setName(request.getName() != null ? request.getName() : b.getName());
-            b.setColorCode(request.getColorCode() != null ? request.getColorCode() : b.getColorCode());
             return repository.save(b);
         }).orElse(null);
     }

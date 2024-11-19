@@ -32,12 +32,12 @@ public class UserController {
 
     @PostMapping
     private ResponseEntity<?> createUser(@Valid @RequestBody User user) {
-        if (userService.userPhoneNumberExists(user)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(ApiResponse.BAD_REQUEST("Số điện thoại này đã tồn tại"));
-        } else if (userService.userEmailExists(user)) {
+        if (userService.userEmailExists(user)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(ApiResponse.BAD_REQUEST("Email này đã tồn tại"));
+        } else if (userService.userPhoneNumberExists(user)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(ApiResponse.BAD_REQUEST("Số điện thoại này đã tồn tại"));
         } else {
             try {
                 User response = userService.createUser(user);
@@ -152,11 +152,13 @@ public class UserController {
             }
         }
     }
+
     @GetMapping("countUser")
     public ResponseEntity<?> getCountUser(Pageable pageable) {
         var response = userService.getCountUsersMonth(pageable);
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
+
     @GetMapping("/total-users")
     public Long getTotalUsers() {
         return userService.getTotalUsers();

@@ -22,6 +22,8 @@ public class Dish {
 
     Double price;
 
+    Integer quantity = 0;
+
     String description;
 
     Boolean status = true;
@@ -29,6 +31,10 @@ public class Dish {
     @ManyToOne
     @JoinColumn(name = "category_id")
     Category category;
+
+    @ManyToOne
+    @JoinColumn(name = "branch_id")
+    Branch branch;
 
     @JsonIgnore
     Boolean isDelete = false;

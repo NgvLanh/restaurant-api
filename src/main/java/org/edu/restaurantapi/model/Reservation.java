@@ -1,18 +1,19 @@
 package org.edu.restaurantapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Data
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,7 +26,6 @@ public class Reservation {
     @NotNull(message = "Thời gian bắt đầu không được để trống")
     LocalTime startTime;
 
-    @NotNull(message = "Thời gian kết thúc không được để trống")
     LocalTime endTime;
 
     @NotNull(message = "Ngày đặt không được để trống")
@@ -46,7 +46,7 @@ public class Reservation {
     @JoinColumn(name = "branch_id")
     Branch branch;
 
-    Boolean isConflict = false;
+    String cancelReason;
 
     Boolean isDelete = false;
 }
