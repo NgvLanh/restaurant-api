@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.edu.restaurantapi._enum.TableStatus;
+
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -25,8 +25,7 @@ public class Table {
     @Max(value = 20, message = "Số ghế không được vượt quá 20")
     Integer seats;
 
-    @Enumerated(EnumType.STRING)
-    TableStatus tableStatus = TableStatus.AVAILABLE;
+    Boolean tableStatus = true;
 
     @ManyToOne
     @JoinColumn(name = "zone_id")
@@ -37,4 +36,5 @@ public class Table {
     Branch branch;
 
     Boolean isDelete = false;
+
 }

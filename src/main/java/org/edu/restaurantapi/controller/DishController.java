@@ -23,9 +23,10 @@ public class DishController {
     private DishService service;
 
     @GetMapping
-    public ResponseEntity<?> getAllDishes(@RequestParam(value = "name", required = false) Optional<String> name,
-                                  Pageable pageable) {
-        var response = service.getAllDishes(name, pageable);
+    public ResponseEntity<?> getAllDishes(@RequestParam(value = "branch", required = false) Optional<Long> branch,
+                                          @RequestParam(value = "name", required = false) Optional<String> name,
+                                          Pageable pageable) {
+        var response = service.getAllDishes(branch, name, pageable);
         var updateResponse = response.map((res) -> {
             res.setImage("http://localhost:8080/api/files/" + res.getImage());
             return res;
@@ -57,11 +58,11 @@ public class DishController {
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
 
-    @GetMapping("/{categoryId}")
-    public ResponseEntity<?> getDishesByCategoryId(@PathVariable Long categoryId, Pageable pageable) {
+    @GetMapping("/{branchId}/{categoryId}")
+    public ResponseEntity<?> getDishesByCategoryId(@PathVariable Optional<Long> branchId, @PathVariable Long categoryId, Pageable pageable) {
         var response = (categoryId == 0)
-                ? service.getAllDishes(Optional.empty(), pageable)
-                : service.getDishesByCategoryId(categoryId, pageable);
+                ? service.getAllDishes(branchId, Optional.empty(), pageable)
+                : service.getDishesByCategoryId(branchId.get(), categoryId, pageable);
 
         // Cập nhật đường dẫn ảnh cho tất cả món ăn
         var updatedResponse = response.map(this::updateDishImageUrl);

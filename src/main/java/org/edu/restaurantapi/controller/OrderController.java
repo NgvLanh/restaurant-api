@@ -17,9 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -37,7 +35,6 @@ public class OrderController {
                                           @RequestParam(value = "orderStatus", required = false)
                                           Optional<OrderStatus> orderStatus,
                                           Pageable pageable) {
-        log.info(String.valueOf(branchId), time, orderStatus);
         var response = service.getAllOrders(branchId, time, orderStatus, pageable);
         return ResponseEntity.ok(ApiResponse.SUCCESS(response));
     }
@@ -72,5 +69,28 @@ public class OrderController {
     @GetMapping("/total-order-cancelled")
     public Long getTotalOrderCancelled() {
         return service.getTotalOrderCancelled();
+    }
+
+    @GetMapping("/status")
+    public ResponseEntity<?> getAllOrdersByUserId(@RequestParam(value = "branchId", required = false)
+                                          Optional<Long> branchId,
+                                          @RequestParam(value = "userId", required = false)
+                                          Optional<Long> userId,
+                                          @RequestParam(value = "orderStatus", required = false)
+                                          Optional<OrderStatus> orderStatus) {
+        var response = service.getAllOrdersByUserId(branchId, userId, orderStatus);
+        response.sort((o1, o2) -> Long.compare(o2.getId(), o1.getId()));
+        return ResponseEntity.ok(ApiResponse.SUCCESS(response));
+    }
+
+    @PatchMapping("/cancel/{orderId}")
+    public ResponseEntity<?> cancelOrder(@PathVariable Long orderId,
+                                         @RequestParam(value = "reason", required = false)
+                                        Optional<String> reason) {
+        var response = service.cancelOrder(orderId, reason);
+        if (response==null) {
+            return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Đơn hàng đã được xác nhận trước đó"));
+        }
+        return ResponseEntity.ok(ApiResponse.SUCCESS(response));
     }
 }
