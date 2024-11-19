@@ -102,11 +102,47 @@ public class OrderService {
         return response;
     }
 
-    public Order update(Long id, Order request) {
-        return orderRepository.findById(id).map(b -> {
-            return orderRepository.save(b);
-        }).orElse(null);
+    public Order cancelOrders(Long orderId) {
+        var order = orderRepository.findById(orderId).orElse(null);
+        if (order.getOrderStatus() != OrderStatus.PENDING_CONFIRMATION)
+            return null;
+        order.setOrderStatus(OrderStatus.CANCELLED);
+        return orderRepository.save(order);
     }
+
+    public Order update(Long id, Order request) {
+        var order = orderRepository.findById(id).orElse(null);
+        if (order == null) {
+            return null;
+        }
+
+        switch (order.getOrderStatus()) {
+            // Các trạng thái liên quan đến giao hàng
+            case PENDING_CONFIRMATION -> order.setOrderStatus(OrderStatus.CONFIRMED);
+            case CONFIRMED -> order.setOrderStatus(OrderStatus.DELIVERY);
+            case DELIVERY -> order.setOrderStatus(OrderStatus.DELIVERED);
+            case DELIVERED -> order.setOrderStatus(OrderStatus.PAID);
+            case PAID -> {
+                return null;
+            }
+
+            // Các trạng thái liên quan đến món ăn
+
+            case ORDERED -> order.setOrderStatus(OrderStatus.IN_KITCHEN);
+            case IN_KITCHEN -> order.setOrderStatus(OrderStatus.READY_TO_SERVE);
+            case READY_TO_SERVE -> order.setOrderStatus(OrderStatus.SERVED);
+            case SERVED -> order.setOrderStatus(OrderStatus.PAID);
+            case CANCELLED -> {
+                return null;
+            }
+
+
+            default -> throw new IllegalStateException("Unexpected status: " + order.getOrderStatus());
+        }
+
+        return orderRepository.save(order);  // Lưu lại đơn hàng đã được cập nhật
+    }
+
 
     public Boolean delete(Long id) {
         return orderRepository.findById(id).map(o -> {

@@ -55,6 +55,12 @@ public class OrderController {
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
 
+    @PatchMapping("/{id}/cancel")
+    public ResponseEntity<?> cancelOrders(@PathVariable Long id) {
+        var orders = service.cancelOrders(id);
+        return ResponseEntity.ok(orders);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         var response = service.delete(id);
