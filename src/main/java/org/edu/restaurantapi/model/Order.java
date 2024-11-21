@@ -26,7 +26,7 @@ public class Order {
 
     Date time = new Date();
 
-    OrderStatus orderStatus;
+    OrderStatus orderStatus = OrderStatus.PENDING;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
