@@ -1,5 +1,7 @@
 package org.edu.restaurantapi.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AccessLevel;
@@ -7,7 +9,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.edu.restaurantapi._enum.TableStatus;
+
+import java.util.List;
+
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -25,8 +29,11 @@ public class Table {
     @Max(value = 20, message = "Số ghế không được vượt quá 20")
     Integer seats;
 
-    @Enumerated(EnumType.STRING)
-    TableStatus tableStatus = TableStatus.AVAILABLE;
+    Boolean tableStatus = true;
+
+    @OneToMany(mappedBy = "table", cascade = CascadeType.ALL)
+    @JsonManagedReference(value = "table-reservation")
+    List<Reservation> reservations;
 
     @ManyToOne
     @JoinColumn(name = "zone_id")
@@ -34,7 +41,9 @@ public class Table {
 
     @ManyToOne
     @JoinColumn(name = "branch_id")
+    @JsonBackReference
     Branch branch;
 
     Boolean isDelete = false;
+
 }

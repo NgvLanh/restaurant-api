@@ -1,14 +1,18 @@
 package org.edu.restaurantapi._enum;
 
 public enum OrderStatus {
-    PENDING_CONFIRMATION, // Chờ xác nhận
-    CONFIRMED,            // Đã xác nhận
-    ORDERED,              // Đã đặt món
-    IN_KITCHEN,           // Đang chế biến
-    READY_TO_SERVE,       // Sẵn sàng phục vụ
-    SERVED,               // Đã phục vụ (dành cho ăn tại bàn)
-    DELIVERY,             // Đang giao (dành cho giao hàng)
-    DELIVERED,            // Đã giao (dành cho giao hàng)
-    CANCELLED,            // Đã hủy
-    PAID;                 // Đã thanh toán
+    // Dùng chung
+    CANCELLED,             // Đã hủy (Chung)
+    PAID,                  // Đã thanh toán (Chung)
+    ALL,                   // Dùng để select (Không phải trạng thái thực tế)
+
+    // Dành cho ăn tại nhà hàng
+    READY_TO_SERVE,        // Sẵn sàng phục vụ (Ăn tại nhà hàng)
+    SERVED,                // Đã phục vụ (Ăn tại nhà hàng)
+
+    // Dành cho giao hàng
+    PENDING,               // Chờ xác nhận ()D
+    CONFIRMED,             // Đã xác nhận ()
+    SHIPPED,               // Đang giao (Giao hàng)
+    DELIVERED              // Đã giao (Giao hàng)
 }

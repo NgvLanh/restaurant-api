@@ -1,8 +1,5 @@
 package org.edu.restaurantapi.repository;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import org.edu.restaurantapi._enum.TableStatus;
 import org.edu.restaurantapi.model.Branch;
 import org.edu.restaurantapi.model.Table;
 import org.springframework.data.domain.Page;
@@ -28,8 +25,8 @@ public interface TableRepository extends JpaRepository<Table, Long> {
 
     Page<Table> findByIsDeleteFalseAndBranchId(Long l, Pageable pageableSorted);
 
-    List<Table> findTableByIsDeleteFalseAndBranchIdAndSeatsAndTableStatusLike(
-            Long branch_id,
-            Integer seats,
-            TableStatus tableStatus);
+    List<Table> findTableByIsDeleteFalseAndBranchIdOrderByNumber(Long branchId);
+
+    @Query("SELECT t FROM tables t LEFT JOIN t.reservations r WHERE t.isDelete = FALSE AND t.branch.id = :branchId")
+    List<Table> findAllWithReservationsByBranchId(Long branchId);
 }
