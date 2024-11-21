@@ -21,14 +21,18 @@ public class TableService {
 
     public Page<Table> getAllTables(Optional<String> branch, Pageable pageable) {
         Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
-                pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
+                pageable.getPageSize(), Sort.by(Sort.Direction.ASC, "number"));
         return repository.findByIsDeleteFalseAndBranchId(Long.parseLong(branch.get()), pageableSorted);
     }
 
     public Table create(Table request) {
         Integer number;
         if (request.getNumber() == null) {
-            number = repository.findMaxNumberByBranchId(request.getBranch().getId()) + 1;
+           try {
+               number = repository.findMaxNumberByBranchId(request.getBranch().getId()) + 1;
+           } catch (Exception e) {
+               number = 1;
+           }
         } else {
             number = request.getNumber();
         }
@@ -59,7 +63,7 @@ public class TableService {
     }
 
     public List<Table> getTablesByBranchId(Optional<Long> branch, Optional<String> time) {
-        return repository.findTableByIsDeleteFalseAndBranchIdAndTableStatusTrue(branch.get()) ;
+        return repository.findTableByIsDeleteFalseAndBranchIdOrderByNumber(branch.get()) ;
     }
 
 }

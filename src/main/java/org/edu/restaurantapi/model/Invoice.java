@@ -38,5 +38,7 @@ public class Invoice {
     @JoinColumn(name = "branch_id")
     Branch branch;
 
+    Boolean status = false;
+
     Boolean isDelete = false;
 }

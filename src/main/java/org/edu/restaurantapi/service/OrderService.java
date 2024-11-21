@@ -1,11 +1,14 @@
 package org.edu.restaurantapi.service;
 
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.weaver.ast.Or;
 import org.edu.restaurantapi._enum.OrderStatus;
 import org.edu.restaurantapi.model.*;
 import org.edu.restaurantapi.model.Order;
 import org.edu.restaurantapi.repository.*;
 import org.edu.restaurantapi.repository.OrderRepository;
+import org.edu.restaurantapi.request.OrderManualRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,10 +16,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class OrderService {
 
@@ -28,6 +36,10 @@ public class OrderService {
     private CartRepository cartRepository;
     @Autowired
     private CartItemRepository cartItemRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private TableRepository tableRepository;
 
     public Page<Order> getAllOrders(Optional<Long> branchId, Optional<Date> time,
                                     Optional<OrderStatus> orderStatus, Pageable pageable) {
@@ -158,5 +170,52 @@ public class OrderService {
             }
             return orderRepository.save(b);
         }).orElse(null);
+    }
+
+    public List<Order> getAllOrdersWithTable(Optional<Long> branchId, Optional<String> date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate localDate = date.map(d -> LocalDate.parse(d, formatter))
+                .orElseThrow(() -> new IllegalArgumentException("Bạn chưa cung cấp ngày"));
+
+        Date startOfDay = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date endOfDay = Date.from(localDate.atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant());
+
+        return orderRepository.findOrdersByBranchIdAndOrderStatusAndTimeBetweenAndAddressIdIsNull(
+                branchId.get(),
+                OrderStatus.READY_TO_SERVE,
+                startOfDay,
+                endOfDay
+        );
+    }
+
+
+    public Order createOrderManual(OrderManualRequest request) {
+        User user = userRepository.findByPhoneNumber(request.getPhoneNumber()).orElse(null);
+        request.getTable().setTableStatus(false);
+        tableRepository.save(request.getTable());
+        Order order = Order
+                .builder()
+                .branch(request.getBranch())
+                .user(user)
+                .fullName(request.getFullName())
+                .table(request.getTable())
+                .phoneNumber(request.getPhoneNumber())
+                .isDelete(false)
+                .total(0.0)
+                .time(new Date())
+                .orderStatus(OrderStatus.READY_TO_SERVE)
+                .build();
+        return orderRepository.save(order);
+    }
+
+    public Order updateServedOrder(Long id) {
+        Order order = orderRepository.findById(id).get();
+        Table table = order.getTable();
+        table.setTableStatus(true);
+        tableRepository.save(table);
+        if (order.getOrderStatus() == OrderStatus.READY_TO_SERVE) {
+            order.setOrderStatus(OrderStatus.SERVED);
+        }
+        return orderRepository.save(order);
     }
 }
