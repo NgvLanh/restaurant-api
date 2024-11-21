@@ -139,9 +139,6 @@ public class OrderService {
             }
 
             // Các trạng thái liên quan đến món ăn
-
-            case ORDERED -> order.setOrderStatus(OrderStatus.IN_KITCHEN);
-            case IN_KITCHEN -> order.setOrderStatus(OrderStatus.READY_TO_SERVE);
             case READY_TO_SERVE -> order.setOrderStatus(OrderStatus.SERVED);
             case SERVED -> order.setOrderStatus(OrderStatus.PAID);
             case CANCELLED -> {
