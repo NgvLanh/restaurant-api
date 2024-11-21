@@ -26,4 +26,7 @@ public interface TableRepository extends JpaRepository<Table, Long> {
     Page<Table> findByIsDeleteFalseAndBranchId(Long l, Pageable pageableSorted);
 
     List<Table> findTableByIsDeleteFalseAndBranchIdOrderByNumber(Long branchId);
+
+    @Query("SELECT t FROM tables t LEFT JOIN t.reservations r WHERE t.isDelete = FALSE AND t.branch.id = :branchId")
+    List<Table> findAllWithReservationsByBranchId(Long branchId);
 }

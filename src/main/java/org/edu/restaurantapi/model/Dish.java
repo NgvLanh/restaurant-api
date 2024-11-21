@@ -1,5 +1,6 @@
 package org.edu.restaurantapi.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -34,6 +35,7 @@ public class Dish {
 
     @ManyToOne
     @JoinColumn(name = "branch_id")
+    @JsonBackReference
     Branch branch;
 
     @JsonIgnore
