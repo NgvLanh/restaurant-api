@@ -65,7 +65,7 @@ public class OrderController {
 
     @PatchMapping("/{id}/cancel")
     public ResponseEntity<?> cancelOrders(@PathVariable Long id) {
-        var orders = service.cancelOrders(id);
+        var orders = orderService.cancelOrders(id);
         return ResponseEntity.ok(orders);
     }
 
