@@ -41,6 +41,10 @@ public class TableController {
 //        if (bse) {
 //            return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Tên trạng thái đã tồn tại"));
 //        }
+        var bse = tableService.findByIsDeleteFalseAndNumberAndBranchIs(request.getNumber(), request.getBranch());
+        if (bse) {
+            return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Số bàn đã tồn tại ở chi nhánh này"));
+        }
         var response = tableService.update(id, request);
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }

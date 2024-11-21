@@ -31,10 +31,10 @@ public class ZoneController {
 
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody Zone request) {
-//        var bse = service.findByName(request.getAddress());
-//        if (bse) {
-//            return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Khu vực đã tồn tại"));
-//        }
+        var bse = service.findByName(request.getAddress());
+        if (bse) {
+            return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Vị trí khu vực đã tồn tại"));
+        }
         var response = service.create(request);
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
@@ -43,7 +43,7 @@ public class ZoneController {
     public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody Zone request) {
         var bse = service.findByNameAndIdNot(request.getAddress(), id);
         if (bse) {
-            return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Khu vực đã tồn tại"));
+            return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Vị trí khu vực đã tồn tại"));
         }
         var response = service.update(id, request);
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
