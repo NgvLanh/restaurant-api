@@ -26,7 +26,11 @@ public class Order {
     Date time = new Date();
 
     @Enumerated(EnumType.STRING)
+<<<<<<< Updated upstream
     OrderStatus orderStatus = OrderStatus.ORDERED;
+=======
+    OrderStatus orderStatus = OrderStatus.PENDING;
+>>>>>>> Stashed changes
 
     @ManyToOne
     @JoinColumn(name = "user_id")
