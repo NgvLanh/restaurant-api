@@ -1,18 +1,13 @@
 package org.edu.restaurantapi.service;
 
-import org.edu.restaurantapi._enum.TableStatus;
 import org.edu.restaurantapi.model.Branch;
 import org.edu.restaurantapi.model.Table;
-import org.edu.restaurantapi.model.User;
-import org.edu.restaurantapi.model.Table;
-import org.edu.restaurantapi.repository.TableRepository;
 import org.edu.restaurantapi.repository.TableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,14 +21,18 @@ public class TableService {
 
     public Page<Table> getAllTables(Optional<String> branch, Pageable pageable) {
         Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
-                pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
+                pageable.getPageSize(), Sort.by(Sort.Direction.ASC, "number"));
         return repository.findByIsDeleteFalseAndBranchId(Long.parseLong(branch.get()), pageableSorted);
     }
 
     public Table create(Table request) {
         Integer number;
         if (request.getNumber() == null) {
-            number = repository.findMaxNumberByBranchId(request.getBranch().getId()) + 1;
+           try {
+               number = repository.findMaxNumberByBranchId(request.getBranch().getId()) + 1;
+           } catch (Exception e) {
+               number = 1;
+           }
         } else {
             number = request.getNumber();
         }
@@ -63,8 +62,8 @@ public class TableService {
         return repository.findByIsDeleteFalseAndNumberAndBranchIs(number, branch) != null;
     }
 
-    public List<Table> getTablesByBranchIdAndSeats(Optional<Long> branch, Optional<String> time, Optional<Integer> seats) {
-        return repository.findTableByIsDeleteFalseAndBranchIdAndSeatsAndTableStatusLike(branch.get(), seats.get(), TableStatus.AVAILABLE) ;
+    public List<Table> getTablesByBranchId(Optional<Long> branch, Optional<String> time) {
+        return repository.findAllWithReservationsByBranchId(branch.get()) ;
     }
 
 }

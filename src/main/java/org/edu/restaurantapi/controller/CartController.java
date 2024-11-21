@@ -54,48 +54,40 @@ public class CartController {
 
     @GetMapping("/{cartId}")
     private ResponseEntity<?> getCarts(@PathVariable Long cartId) {
-        var response = cartService.getCarts(cartId);
-        if (response != null) {
-            return ResponseEntity.ok(ApiResponse.SUCCESS(response));
+        log.error(cartId.toString());
+        try {
+            var response = cartService.getCarts(cartId);
+            if (!response.isEmpty()) {
+                return ResponseEntity.ok(ApiResponse.SUCCESS("Danh sách rỗng"));
+            } else {
+                return ResponseEntity.ok(ApiResponse.SUCCESS(response));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.SERVER_ERROR("Lỗi lấy danh sách sản phầm trong giỏ hàng."));
         }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.SERVER_ERROR("Lỗi lấy danh sách sản phầm trong giỏ hàng."));
     }
 
 
+
     @PostMapping("/async/{userId}")
-    private ResponseEntity<?> asyncCart(@RequestBody AsyncDish[] request,
+    private ResponseEntity<?> asyncCart(@RequestBody CartItem[] request,
                                         @PathVariable Long userId) {
         Optional<Cart> cartExists = cartService.findByCartUserId(userId);
-        Optional<User> userExist = userService.findUserById(userId);
 
-        Cart cart;
-        if (!cartExists.isPresent()) {
-            cart = Cart.builder().user(userExist.get()).build();
-            cartService.createCart(cart);
-        } else {
-            cart = cartExists.get();
-        }
-
-        for (AsyncDish dishRequest : request) {
-            Optional<CartItem> existingCartItem = cartItemService.findByCartIdAndDishId(cart.getId(), dishRequest.getId());
-
-            if (existingCartItem.isPresent()) {
-                CartItem cartItem = existingCartItem.get();
-                cartItem.setQuantity(cartItem.getQuantity() + dishRequest.getQuantity());
-                cartItemService.createCartItem(cartItem);
-            } else {
-                CartItem cartItem = CartItem.builder()
-                        .cart(cart)
-                        .dish(new Dish(dishRequest.getId(), dishRequest.getName(), dishRequest.getImage(), dishRequest.getPrice(),
-                                dishRequest.getDescription(), dishRequest.getStatus(), dishRequest.getCategory(), false))
-                        .quantity(dishRequest.getQuantity())
-                        .status(dishRequest.getStatus())
-                        .build();
-                cartItemService.createCartItem(cartItem);
+        if (request != null) {
+            for (CartItem cartItemRequest : request) {
+                Optional<CartItem> existingCartItem = cartItemService.findByCartIdAndDishId(cartExists.get().getId(), cartItemRequest.getDish().getId());
+                if (existingCartItem.isPresent()) {
+                    CartItem cartItem = existingCartItem.get();
+                    cartItem.setQuantity(cartItem.getQuantity() + cartItemRequest.getQuantity());
+                    cartItemService.createCartItem(cartItem);
+                } else {
+                    cartItemRequest.setCart(cartExists.get());
+                    cartItemService.createCartItem(cartItemRequest);
+                }
             }
         }
-
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(request));
     }
 

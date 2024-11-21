@@ -1,5 +1,6 @@
 package org.edu.restaurantapi.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -22,6 +23,8 @@ public class Dish {
 
     Double price;
 
+    Integer quantity = 0;
+
     String description;
 
     Boolean status = true;
@@ -29,6 +32,11 @@ public class Dish {
     @ManyToOne
     @JoinColumn(name = "category_id")
     Category category;
+
+    @ManyToOne
+    @JoinColumn(name = "branch_id")
+    @JsonBackReference
+    Branch branch;
 
     @JsonIgnore
     Boolean isDelete = false;

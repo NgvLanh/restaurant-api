@@ -54,13 +54,9 @@ public class TableController {
     @GetMapping("/reservations")
     public ResponseEntity<?> getTablesByBranchIdAndSeats(
             @RequestParam(value = "branch", required = false) Optional<Long> branch,
-            @RequestParam(value = "time", required = false) Optional<String> time,
-            @RequestParam(value = "seats", required = false) Optional<Integer> seats
+            @RequestParam(value = "time", required = false) Optional<String> time
     ) {
-        var response = tableService.getTablesByBranchIdAndSeats(branch, time, seats);
-        response.forEach(res->{
-            System.out.println(res.getNumber());
-        });
+        var response = tableService.getTablesByBranchId(branch, time);
         return ResponseEntity.ok(ApiResponse.SUCCESS(response));
     }
 

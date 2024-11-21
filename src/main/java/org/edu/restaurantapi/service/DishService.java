@@ -27,11 +27,11 @@ public class DishService {
     @Autowired
     private DishRepository dishRepository;
 
-    public Page<Dish> getAllDishes(Optional<String> name, Pageable pageable) {
+    public Page<Dish> getAllDishes(Optional<Long> branch, Optional<String> name, Pageable pageable) {
         Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
                 pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
         if (name.isPresent()) {
-            return repository.findByNameContainingAndIsDeleteFalse(name.get(), pageableSorted);
+            return repository.findByBranchIdAndNameContainingAndIsDeleteFalse(branch.get(), name.get(), pageableSorted);
         }
         return repository.findByIsDeleteFalse(pageableSorted);
     }
@@ -41,10 +41,13 @@ public class DishService {
     }
 
     public Dish update(Long id, Dish request) {
+        request.setImage(request.getImage().substring(request.getImage().lastIndexOf("/") + 1));
         return repository.findById(id).map(d -> {
             d.setName(request.getName() != null ? request.getName() : d.getName());
             d.setPrice(request.getPrice() != null ? request.getPrice() : d.getPrice());
-            d.setImage(request.getImage() != null ? request.getImage() : d.getImage());
+            if (request.getImage() != null && !request.getImage().isEmpty()) {
+                d.setImage(request.getImage());
+            }
             d.setDescription(request.getDescription() != null ? request.getDescription() : d.getDescription());
             d.setCategory(request.getCategory() != null ? request.getCategory() : d.getCategory());
             return repository.save(d);
@@ -67,8 +70,8 @@ public class DishService {
         return repository.findByNameAndIdNotAndIsDeleteFalse(name, id) != null;
     }
 
-    public Page<Dish> getDishesByCategoryId(Long categoryId, Pageable pageable) {
-        return repository.findByCategoryId(categoryId, pageable);
+    public Page<Dish> getDishesByCategoryId(Long branchId, Long categoryId, Pageable pageable) {
+        return repository.findByBranchIdAndCategoryId(branchId, categoryId, pageable);
     }
 
     public Long countTotalDishes() {

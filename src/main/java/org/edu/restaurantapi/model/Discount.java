@@ -1,5 +1,6 @@
 package org.edu.restaurantapi.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AccessLevel;
@@ -33,11 +34,9 @@ public class Discount {
     Integer quantity;
 
     @NotNull(message = "Ngày kết thúc không được để trống.")
-    @FutureOrPresent(message = "Ngày kết thúc phải là ngày hôm nay hoặc trong tương lai.")
     LocalDate endDate;
 
     @NotNull(message = "Ngày bắt đầu không được để trống.")
-    @FutureOrPresent(message = "Ngày bắt đầu phải là ngày hôm nay hoặc trong tương lai.")
     LocalDate startDate;
 
     LocalDate createDate = LocalDate.now();
@@ -54,6 +53,7 @@ public class Discount {
 
     @ManyToOne
     @JoinColumn(name = "branch_id")
+    @JsonBackReference
     Branch branch;
 
     Boolean isDelete = false;

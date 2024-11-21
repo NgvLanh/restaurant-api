@@ -50,4 +50,8 @@ public class User {
 
     LocalDate createDate = LocalDate.now();
 
+    @ManyToOne
+    @JoinColumn(name = "branch_id")
+    Branch branch;
+
 }

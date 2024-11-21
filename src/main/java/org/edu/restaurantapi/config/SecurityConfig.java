@@ -29,17 +29,21 @@ public class SecurityConfig {
     private final String[] POST_API = {
             "/api/auth/login",
             "/api/users",
+//            "/api/users/info",
             "/api/email/send-otp",
             "/api/email/password-recovery/verify-code",
             "/api/email/password-recovery/reset-password",
             "/api/addresses/user/*",
+            "/api/reservations",
     };
 
     private final String[] GET_API = {
             "/api/files/*",
             "/api/*",
             "/api/dishes/*",
+            "/api/dishes/*/*",
             "/api/tables/reservations",
+            "/api/vnpay/*",
     };
 
     @Autowired
