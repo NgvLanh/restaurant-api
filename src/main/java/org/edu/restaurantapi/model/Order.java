@@ -1,12 +1,10 @@
 package org.edu.restaurantapi.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.edu.restaurantapi._enum.OrderStatus;
 
@@ -14,6 +12,7 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
+@Builder
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
@@ -49,11 +48,16 @@ public class Order {
     Branch branch;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
     List<OrderItem> orderItems;
 
     Double total;
 
     String cancelReason;
+
+    String fullName;
+
+    String phoneNumber;
 
     Boolean isDelete = false;
 }

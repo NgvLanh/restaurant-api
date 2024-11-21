@@ -10,6 +10,8 @@ import org.edu.restaurantapi.repository.TableRepository;
 import org.edu.restaurantapi.request.EmailRequest;
 import org.edu.restaurantapi.response.ReservationTableResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -102,7 +104,7 @@ public class ReservationService {
                 .to(request.getEmail())
                 .subject("Xác nhận đặt bàn thành công tại Nhà hàng FooDY")
                 .build();
-        emailService.sendHtmlEmail(emailRequest, content);
+        emailService.sendHtmlEmailAsync(emailRequest, content);
     }
 
     public Reservation cancelReservation(Long reservationId, String reason) throws MessagingException {
@@ -177,4 +179,10 @@ public class ReservationService {
                 .build();
         emailService.sendHtmlEmail(emailRequest, content);
     }
+
+    public Page<Reservation> getAllCancelReservations(String branch, Pageable pageable) {
+        return reservationRepository.findByBranchIdAndCancelReasonIsNotNull(Long.parseLong(branch), pageable);
+    }
+
+
 }

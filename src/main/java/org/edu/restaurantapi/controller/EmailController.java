@@ -39,7 +39,6 @@ public class EmailController {
     public ResponseEntity<?> sendOtpEmail(@Valid @RequestBody EmailRequest request) {
         try {
             Optional<User> userExists = userService.findUserByEmail(request.getTo());
-            log.info(userExists.toString());
             if (userExists.isEmpty()) {
                 return ResponseEntity.badRequest()
                         .body(ApiResponse.BAD_REQUEST("Email này chưa đăng ký"));

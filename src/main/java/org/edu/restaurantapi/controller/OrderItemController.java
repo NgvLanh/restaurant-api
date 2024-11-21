@@ -22,4 +22,17 @@ public class OrderItemController {
         OrderItem response = orderItemService.createOrderItem(orderItem);
         return ResponseEntity.ok(ApiResponse.SUCCESS(response));
     }
+
+    @PatchMapping("/{orderItemId}/{quantity}")
+    public ResponseEntity<?> updateQuantityOrderItem(@PathVariable Long orderItemId,
+                                                     @PathVariable Integer quantity) {
+        OrderItem response = orderItemService.updateQuantityOrderItem(orderItemId, quantity);
+        return ResponseEntity.ok(ApiResponse.SUCCESS(response));
+    }
+
+    @DeleteMapping("/{orderItemId}")
+    public ResponseEntity<?> deleteOrderItem(@PathVariable Long orderItemId) {
+        orderItemService.deleteOrderItem(orderItemId);
+        return ResponseEntity.ok(ApiResponse.SUCCESS("Xoá thành công"));
+    }
 }
