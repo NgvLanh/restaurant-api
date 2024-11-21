@@ -116,7 +116,7 @@ public class OrderService {
 
     public Order cancelOrders(Long orderId) {
         var order = orderRepository.findById(orderId).orElse(null);
-        if (order.getOrderStatus() != OrderStatus.PENDING_CONFIRMATION)
+        if (order.getOrderStatus() != OrderStatus.PENDING)
             return null;
         order.setOrderStatus(OrderStatus.CANCELLED);
         return orderRepository.save(order);
@@ -130,9 +130,9 @@ public class OrderService {
 
         switch (order.getOrderStatus()) {
             // Các trạng thái liên quan đến giao hàng
-            case PENDING_CONFIRMATION -> order.setOrderStatus(OrderStatus.CONFIRMED);
-            case CONFIRMED -> order.setOrderStatus(OrderStatus.DELIVERY);
-            case DELIVERY -> order.setOrderStatus(OrderStatus.DELIVERED);
+            case PENDING -> order.setOrderStatus(OrderStatus.CONFIRMED);
+            case CONFIRMED -> order.setOrderStatus(OrderStatus.SHIPPED);
+            case SHIPPED -> order.setOrderStatus(OrderStatus.DELIVERED);
             case DELIVERED -> order.setOrderStatus(OrderStatus.PAID);
             case PAID -> {
                 return null;
