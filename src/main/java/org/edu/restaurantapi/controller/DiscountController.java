@@ -27,13 +27,20 @@ public class DiscountController {
     @GetMapping
     public ResponseEntity<?> gets(@RequestParam(value = "code", required = false) String code,
                                   Pageable pageable) {
+<<<<<<< Updated upstream
         var response = service.gets(code, pageable);
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
+=======
+        var response = service.getAllDiscountsByBranchId(branchId, pageable);
+        return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
+    }
+
+>>>>>>> Stashed changes
 
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody Discount request) throws URISyntaxException, IOException {
-        if (service.findByCode(request.getCode())) {
+        if (service.checkDiscountCode(request.getCode())) {
             return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Mã giảm giá đã tồn tại"));
         }
         var response = service.create(request);

@@ -63,5 +63,12 @@ public class DiscountService {
         return repository.getDiscountStatsByMonth(pageable);
     }
 
+<<<<<<< Updated upstream
 
+=======
+    public boolean checkDiscountCode(String code)
+    {
+        return repository.findDiscountsByCode(code) !=null;
+    }
+>>>>>>> Stashed changes
 }
