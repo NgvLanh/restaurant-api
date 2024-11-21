@@ -40,6 +40,8 @@ public class OrderService {
     private UserRepository userRepository;
     @Autowired
     private TableRepository tableRepository;
+    @Autowired
+    private DishRepository dishRepository;
 
     public Page<Order> getAllOrders(Optional<Long> branchId, Optional<Date> time,
                                     Optional<OrderStatus> orderStatus, Pageable pageable) {
@@ -109,6 +111,9 @@ public class OrderService {
                     .price(e.getDish().getPrice())
                     .quantity(e.getQuantity())
                     .build();
+            Dish dish = dishRepository.findById(e.getDish().getId()).get();
+            dish.setQuantity(dish.getQuantity() - e.getQuantity());
+            dishRepository.save(dish);
             orderItemRepository.save(orderItem);
         });
         return response;
@@ -194,6 +199,13 @@ public class OrderService {
     }
 
     public Order cancelOrder(Long orderId, Optional<String> reason) {
+        Order order = orderRepository.findById(orderId).orElse(null);
+        List<OrderItem> orderItems = order.getOrderItems();
+        orderItems.forEach(e -> {
+            Dish dish = dishRepository.findById(e.getDish().getId()).get();
+            dish.setQuantity(dish.getQuantity() + e.getQuantity());
+            dishRepository.save(dish);
+        });
         return orderRepository.findById(orderId).map(b -> {
             if (b.getOrderStatus() == OrderStatus.PENDING) {
                 b.setOrderStatus(OrderStatus.CANCELLED);

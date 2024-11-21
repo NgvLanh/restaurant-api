@@ -25,5 +25,4 @@ public class BranchStatus {
     @Size(max = 50, message = "Tên tình trạng chi nhánh chỉ được dưới 50 ký tự")
     String name;
 
-    String colorCode = "#FFFFFF"; // Lưu  màu cho đẹp
 }

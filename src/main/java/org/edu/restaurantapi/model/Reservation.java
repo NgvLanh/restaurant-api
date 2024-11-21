@@ -1,6 +1,8 @@
 package org.edu.restaurantapi.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -40,10 +42,12 @@ public class Reservation {
 
     @ManyToOne
     @JoinColumn(name = "table_id")
+    @JsonBackReference(value = "table-reservation")
     Table table;
 
     @ManyToOne
     @JoinColumn(name = "branch_id")
+    @JsonBackReference
     Branch branch;
 
     String cancelReason;

@@ -63,7 +63,7 @@ public class TableService {
     }
 
     public List<Table> getTablesByBranchId(Optional<Long> branch, Optional<String> time) {
-        return repository.findTableByIsDeleteFalseAndBranchIdOrderByNumber(branch.get()) ;
+        return repository.findAllWithReservationsByBranchId(branch.get()) ;
     }
 
 }
