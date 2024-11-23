@@ -1,6 +1,5 @@
 package org.edu.restaurantapi.service;
 
-import org.edu.restaurantapi.model.Branch;
 import org.edu.restaurantapi.model.Discount;
 import org.edu.restaurantapi.repository.DiscountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.List;
 import java.util.Map;
 
 
@@ -69,7 +67,7 @@ public class DiscountService {
         return repository.getDiscountStatsByMonth(pageable);
     }
 
-    public Discount checkDiscountCode(String code) {
-        return repository.findDiscountsByCode(code);
+    public boolean checkDiscountCode(String code) {
+        return repository.findDiscountsByCode(code) != null;
     }
 }
