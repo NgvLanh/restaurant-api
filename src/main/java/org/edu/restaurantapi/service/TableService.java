@@ -2,7 +2,11 @@ package org.edu.restaurantapi.service;
 
 import org.edu.restaurantapi.model.Branch;
 import org.edu.restaurantapi.model.Table;
+import org.edu.restaurantapi.model.Zone;
+import org.edu.restaurantapi.repository.BranchRepository;
 import org.edu.restaurantapi.repository.TableRepository;
+import org.edu.restaurantapi.repository.ZoneRepository;
+import org.edu.restaurantapi.request.TableRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +24,10 @@ public class TableService {
 
     @Autowired
     private TableRepository tableRepository;
+    @Autowired
+    private BranchRepository branchRepository;
+    @Autowired
+    private ZoneRepository zoneRepository;
 
     public Page<Table> getAllTables(Optional<String> branch, Pageable pageable) {
         Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
@@ -27,26 +35,34 @@ public class TableService {
         return tableRepository.findByIsDeleteFalseAndBranchId(Long.parseLong(branch.get()), pageableSorted);
     }
 
-    public Table create(Table request) {
+    public Table create(TableRequest request) {
         Integer number;
+        Branch branch = branchRepository.findById(request.getBranchId()).get();
+        Zone zone = zoneRepository.findById(request.getZoneId()).get();
         if (request.getNumber() == null) {
            try {
-               number = tableRepository.findMaxNumberByBranchId(request.getBranch().getId()) + 1;
+               number = tableRepository.findMaxNumberByBranchId(request.getBranchId()) + 1;
            } catch (Exception e) {
                number = 1;
            }
         } else {
             number = request.getNumber();
         }
-        request.setNumber(number);
-        return tableRepository.save(request);
+        Table table = Table.builder()
+                .number(number)
+                .seats(request.getSeats())
+                .branch(branch)
+                .zone(zone)
+                .build();
+        return tableRepository.save(table);
     }
 
-    public Table update(Long id, Table request) {
+    public Table update(Long id, TableRequest request) {
+        Zone zone = zoneRepository.findById(request.getZoneId()).orElse(null);
         return tableRepository.findById(id).map(t -> {
             t.setNumber(request.getNumber() != null ? request.getNumber() : t.getNumber());
             t.setSeats(request.getSeats() != null ? request.getSeats() : t.getSeats());
-            t.setZone(request.getZone() != null ? request.getZone() : t.getZone());
+            t.setZone(zone != null ? zone : t.getZone());
             return tableRepository.save(t);
         }).orElse(null);
     }
@@ -60,8 +76,8 @@ public class TableService {
         }).orElse(false);
     }
 
-    public Boolean findByIsDeleteFalseAndNumberAndBranchIs(Integer number, Branch branch) {
-        return tableRepository.findByIsDeleteFalseAndNumberAndBranchIs(number, branch) != null;
+    public Boolean findByIsDeleteFalseAndNumberAndBranchId(Integer number, Long branch) {
+        return tableRepository.findByIsDeleteFalseAndNumberAndBranchId(number, branch) != null;
     }
 
     public List<Table> getTablesByBranchId(Optional<Long> branch, LocalDate date) {

@@ -2,6 +2,7 @@ package org.edu.restaurantapi.controller;
 
 import jakarta.validation.Valid;
 import org.edu.restaurantapi.model.Table;
+import org.edu.restaurantapi.request.TableRequest;
 import org.edu.restaurantapi.response.ApiResponse;
 import org.edu.restaurantapi.service.TableService;
 import org.slf4j.Logger;
@@ -19,7 +20,6 @@ import java.util.Optional;
 @RequestMapping("/api/tables")
 public class TableController {
 
-    private static final Logger log = LoggerFactory.getLogger(TableController.class);
     @Autowired
     private TableService tableService;
 
@@ -31,8 +31,8 @@ public class TableController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@Valid @RequestBody Table request) {
-        var bse = tableService.findByIsDeleteFalseAndNumberAndBranchIs(request.getNumber(), request.getBranch());
+    public ResponseEntity<?> create(@Valid @RequestBody TableRequest request) {
+        var bse = tableService.findByIsDeleteFalseAndNumberAndBranchId(request.getNumber(), request.getBranchId());
         if (bse) {
             return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Số bàn đã tồn tại ở chi nhánh này"));
         }
@@ -41,7 +41,7 @@ public class TableController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody Table request) {
+    public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody TableRequest request) {
 //        var bse = service.findByNameAndIdNot(request.getName(), id);
 //        if (bse) {
 //            return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Tên trạng thái đã tồn tại"));
