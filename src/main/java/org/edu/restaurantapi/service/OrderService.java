@@ -257,6 +257,12 @@ public class OrderService {
 
     public Order updateServedOrder(Long id, Double total) {
         Order order = orderRepository.findById(id).get();
+        List<OrderItem> orderItems = orderItemRepository.findOrderItemsByOrderId(order.getId());
+        orderItems.forEach(e->{
+            Dish dish = dishRepository.findById(e.getDish().getId()).orElse(null);
+            dish.setQuantity(dish.getQuantity() - e.getQuantity());
+            dishRepository.save(dish);
+        });
         Table table = order.getTable();
         table.setTableStatus(true);
         Reservation reservation = reservationRepository.findReservationsByOrderId(order.getId());
