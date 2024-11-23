@@ -3,8 +3,11 @@ package org.edu.restaurantapi.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.edu.restaurantapi.model.Cart;
+import org.edu.restaurantapi.model.Invoice;
 import org.edu.restaurantapi.model.Order;
 import org.edu.restaurantapi.model.User;
+import org.edu.restaurantapi.repository.InvoiceRepository;
+import org.edu.restaurantapi.repository.OrderRepository;
 import org.edu.restaurantapi.request.VnPayRequest;
 import org.edu.restaurantapi.response.ApiResponse;
 import org.edu.restaurantapi.response.VnPayResponse;
@@ -34,6 +37,10 @@ public class VnPayController {
     private CartItemService cartItemService;
     @Autowired
     private CartService cartService;
+    @Autowired
+    private OrderRepository orderRepository;
+    @Autowired
+    private InvoiceRepository invoiceRepository;
 
     @PostMapping
     private ResponseEntity<?> createVnPayPayment(@RequestBody @Valid VnPayRequest vnPayRequest) {
@@ -58,6 +65,15 @@ public class VnPayController {
         Optional<Cart> cart = cartService.findByCartUserId(order.get().getUser().getId());
         if (response == 0) {
             cartItemService.deleteCartItemsByCartId(cart.get().getId());
+            order.get().setPaymentStatus(true);
+            order.get().setOnLineOrder(true);
+            orderRepository.save(order.get());
+            Invoice invoice = Invoice.builder()
+                    .total(order.get().getTotal())
+                    .order(order.get())
+                    .branch(order.get().getBranch())
+                    .build();
+            invoiceRepository.save(invoice);
             // Trả về response với mã 302 (Found) kèm URL chuyển hướng
             return ResponseEntity.status(302)
                     .header("Location", "http://localhost:4000/home")

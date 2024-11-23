@@ -18,7 +18,7 @@ public class InvoiceService {
     private InvoiceRepository invoiceRepository;
 
     public Page<Invoice> getAllInvoices(Pageable pageable) {
-        return invoiceRepository.findInvoiceByIsDeleteFalse(pageable);
+        return invoiceRepository.findAll(pageable);
     }
 
     public Optional<Invoice> getInvoiceById(Long id) {
@@ -39,7 +39,6 @@ public class InvoiceService {
 
     public Boolean deleteInvoice(Long id) {
         return invoiceRepository.findById(id).map(invoice -> {
-            invoice.setIsDelete(true);
             invoiceRepository.save(invoice);
             return true;
         }).orElse(false);

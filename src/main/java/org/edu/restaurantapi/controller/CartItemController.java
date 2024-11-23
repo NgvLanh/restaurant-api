@@ -4,6 +4,8 @@ import org.edu.restaurantapi.model.Cart;
 import org.edu.restaurantapi.model.CartItem;
 import org.edu.restaurantapi.model.Dish;
 import org.edu.restaurantapi.model.User;
+import org.edu.restaurantapi.repository.CartItemRepository;
+import org.edu.restaurantapi.repository.DishRepository;
 import org.edu.restaurantapi.response.ApiResponse;
 import org.edu.restaurantapi.service.CartItemService;
 import org.edu.restaurantapi.service.CartService;
@@ -26,6 +28,10 @@ public class CartItemController {
 
     @Autowired
     private CartService cartService;
+    @Autowired
+    private DishRepository dishRepository;
+    @Autowired
+    private CartItemRepository cartItemRepository;
 
     @PostMapping
     public ResponseEntity<?> createCartItem(@RequestBody CartItem cartItem) {
@@ -42,8 +48,8 @@ public class CartItemController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.SERVER_ERROR("CartItem not found"));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteCartItem(@PathVariable Long id) {
+    @DeleteMapping("/cart/{id}")
+    public ResponseEntity<?> deleteCartItemsByCartId(@PathVariable Long id) {
         Optional<Cart> cart = cartService.findByCartUserId(id);
         cartItemService.deleteCartItemsByCartId(cart.get().getId());
         return ResponseEntity.ok(ApiResponse.SUCCESS("Xoá sp #:" + id + " thành công"));
@@ -62,6 +68,11 @@ public class CartItemController {
 
     @PatchMapping("/{cartItemId}/{quantity}")
     public ResponseEntity<?> updateQuantityCartItem(@PathVariable Long cartItemId, @PathVariable Integer quantity) {
+        CartItem cartItem = cartItemRepository.findById(cartItemId).get();
+        Dish dish = dishRepository.findById(cartItem.getDish().getId()).orElse(null);
+        if (dish.getQuantity() < quantity) {
+            return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Số lương món ăn này chỉ còn: " + dish.getQuantity()));
+        }
         var response = cartItemService.updateQuantityCartItem(cartItemId, quantity);
         if (response.isPresent()) {
             return ResponseEntity.ok(ApiResponse.SUCCESS(response));
@@ -84,7 +95,20 @@ public class CartItemController {
     @PostMapping("/{userId}/{dishId}/{quantity}")
     public ResponseEntity<?> addDishToCart(@PathVariable Long userId, @PathVariable Long dishId,
                                            @PathVariable Integer quantity) {
+        Dish dish = dishRepository.findById(dishId).orElse(null);
+        if (dish.getQuantity() == 0) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.BAD_REQUEST("Món này đã hết hàng"));
+        } else if (dish.getQuantity() < quantity) {
+            return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Số lương món ăn này chỉ còn: " + dish.getQuantity()));
+        }
         var response = cartItemService.addDishToCart(userId, dishId, quantity);
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteCartItem(@PathVariable Long id) {
+        cartItemService.deleteCartItem(id);
+        return ResponseEntity.ok(ApiResponse.SUCCESS("Xoá sp #:" + id + " thành công"));
     }
 }

@@ -7,6 +7,7 @@ import org.edu.restaurantapi.model.Order;
 import org.edu.restaurantapi.model.Order;
 import org.edu.restaurantapi.model.User;
 import org.edu.restaurantapi.request.OrderManualRequest;
+import org.edu.restaurantapi.request.OrderRequest;
 import org.edu.restaurantapi.response.ApiResponse;
 import org.edu.restaurantapi.service.OrderService;
 import org.edu.restaurantapi.service.OrderService;
@@ -42,7 +43,7 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createOrder(@Valid @RequestBody Order request) {
+    public ResponseEntity<?> createOrder(@RequestBody OrderRequest request) {
         var response = orderService.createOrder(request);
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
@@ -54,12 +55,8 @@ public class OrderController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody Order request) {
-//        var ose = orderService.findByNameAndIdNot(request.getName(), id);
-//        if (ose) {
-//            return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Tên trạng thái đã tồn tại"));
-//        }
-        var response = orderService.update(id, request);
+    public ResponseEntity<?> update(@PathVariable Long id) {
+        var response = orderService.update(id);
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
 
@@ -117,9 +114,9 @@ public class OrderController {
         return ResponseEntity.ok(ApiResponse.SUCCESS(response));
     }
 
-    @PatchMapping("/Served/{id}")
-    public ResponseEntity<?> updateServedOrder(@PathVariable Long id) {
-        var response = orderService.updateServedOrder(id);
+    @PatchMapping("/served/{id}/{total}")
+    public ResponseEntity<?> updateServedOrder(@PathVariable Long id, @PathVariable Double total) {
+        var response = orderService.updateServedOrder(id, total);
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
 }

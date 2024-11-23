@@ -32,7 +32,7 @@ public class Table {
     Boolean tableStatus = true;
 
     @OneToMany(mappedBy = "table", cascade = CascadeType.ALL)
-    @JsonManagedReference(value = "table-reservation")
+    @JsonManagedReference
     List<Reservation> reservations;
 
     @ManyToOne

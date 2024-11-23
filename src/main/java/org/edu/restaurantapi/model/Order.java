@@ -24,6 +24,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
+    @Builder.Default
     Date time = new Date();
 
     OrderStatus orderStatus;
@@ -34,6 +35,7 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name = "table_id")
+    @JsonBackReference
     Table table;
 
     @ManyToOne
@@ -50,7 +52,6 @@ public class Order {
     Branch branch;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference
     List<OrderItem> orderItems;
 
     Double total;
@@ -61,5 +62,12 @@ public class Order {
 
     String phoneNumber;
 
+    @Builder.Default
+    Boolean onLineOrder = false;
+
+    @Builder.Default
     Boolean isDelete = false;
+
+    @Builder.Default
+    Boolean paymentStatus = false;
 }

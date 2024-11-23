@@ -9,6 +9,7 @@ import org.edu.restaurantapi.model.Order;
 import org.edu.restaurantapi.repository.*;
 import org.edu.restaurantapi.repository.OrderRepository;
 import org.edu.restaurantapi.request.OrderManualRequest;
+import org.edu.restaurantapi.request.OrderRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -42,65 +43,68 @@ public class OrderService {
     private TableRepository tableRepository;
     @Autowired
     private DishRepository dishRepository;
+    @Autowired
+    private BranchRepository branchRepository;
+    @Autowired
+    private AddressRepository addressRepository;
+    @Autowired
+    private DiscountRepository discountRepository;
+    @Autowired
+    private ReservationRepository reservationRepository;
+    @Autowired
+    private InvoiceRepository invoiceRepository;
 
     public Page<Order> getAllOrders(Optional<Long> branchId, Optional<Date> time,
                                     Optional<OrderStatus> orderStatus, Pageable pageable) {
-        // Sắp xếp theo id giảm dần (mới nhất lên đầu)
         Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
                 pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
-
-        // Nếu tất cả các tham số đều không có (branchId, time, orderStatus), trả về tất cả đơn hàng chưa xóa
         if (branchId.isEmpty() && time.isEmpty() && orderStatus.isEmpty()) {
             return orderRepository.findByIsDeleteFalse(pageableSorted);
         }
-
-        // Nếu có đầy đủ 3 tham số lọc: branchId, time, và orderStatus
         if (branchId.isPresent() && time.isPresent() && orderStatus.isPresent()) {
             return orderRepository.findByIsDeleteFalseAndBranchIdAndTimeAndOrderStatus(
                     branchId.get(), time.get(), orderStatus.get(), pageableSorted);
         }
-
-        // Nếu chỉ có branchId và orderStatus
         if (branchId.isPresent() && orderStatus.isPresent()) {
             return orderRepository.findByIsDeleteFalseAndBranchIdAndOrderStatus(
                     branchId.get(), orderStatus.get(), pageableSorted);
         }
-
-        // Nếu chỉ có branchId và time
         if (branchId.isPresent() && time.isPresent()) {
             return orderRepository.findByIsDeleteFalseAndBranchIdAndTime(
                     branchId.get(), time.get(), pageableSorted);
         }
-
-        // Nếu chỉ có time và orderStatus
         if (time.isPresent() && orderStatus.isPresent()) {
             return orderRepository.findByIsDeleteFalseAndTimeAndOrderStatus(
                     time.get(), orderStatus.get(), pageableSorted);
         }
-
-        // Nếu chỉ có branchId
         if (branchId.isPresent()) {
             return orderRepository.findByIsDeleteFalseAndBranchId(branchId.get(), pageableSorted);
         }
-
-        // Nếu chỉ có time
         if (time.isPresent()) {
             return orderRepository.findByIsDeleteFalseAndTime(time.get(), pageableSorted);
         }
-
-        // Nếu chỉ có orderStatus
         if (orderStatus.isPresent()) {
             return orderRepository.findByIsDeleteFalseAndOrderStatus(orderStatus.get(), pageableSorted);
         }
-
-        // Trường hợp cuối cùng: trả về tất cả đơn hàng chưa xóa nếu không có tham số lọc nào
         return orderRepository.findByIsDeleteFalse(pageableSorted);
     }
 
 
-    public Order createOrder(Order request) {
-        Order response = orderRepository.save(request);
-        User user = request.getUser();
+    public Order createOrder(OrderRequest request) {
+        Branch branch = branchRepository.findById(request.getBranchId()).orElse(null);
+        User user = userRepository.findById(request.getUserId()).orElse(null);
+        Address address = addressRepository.findById(request.getAddressId()).orElse(null);
+        Optional<Discount> discount = discountRepository.findById(request.getDiscountId() == null ? 0 : request.getDiscountId());
+
+        Order requestOrder = Order.builder()
+                .branch(branch)
+                .address(address)
+                .discount(discount.orElse(null))
+                .user(user)
+                .orderStatus(request.getOrderStatus())
+                .total(request.getTotal())
+                .build();
+        Order response = orderRepository.save(requestOrder);
         Optional<Cart> cart = cartRepository.findCartByUserId(user.getId());
         List<CartItem> items = cartItemRepository.findCartItemByCartId(cart.get().getId());
         items.forEach(e -> {
@@ -121,20 +125,26 @@ public class OrderService {
 
     public Order cancelOrders(Long orderId) {
         var order = orderRepository.findById(orderId).orElse(null);
-        if (order.getOrderStatus() != OrderStatus.PENDING)
+        if (order.getOrderStatus() != OrderStatus.PENDING) {
             return null;
+        }
         order.setOrderStatus(OrderStatus.CANCELLED);
+        List<OrderItem> orderItems = orderItemRepository.findOrderItemsByOrderId(orderId);
+        orderItems.forEach(e -> {
+            Dish dish = dishRepository.findById(e.getDish().getId()).orElse(null);
+            dish.setQuantity(dish.getQuantity() + e.getQuantity());
+            dishRepository.save(dish);
+        });
         return orderRepository.save(order);
     }
 
-    public Order update(Long id, Order request) {
+    public Order update(Long id) {
         var order = orderRepository.findById(id).orElse(null);
         if (order == null) {
             return null;
         }
 
         switch (order.getOrderStatus()) {
-            // Các trạng thái liên quan đến giao hàng
             case PENDING -> order.setOrderStatus(OrderStatus.CONFIRMED);
             case CONFIRMED -> order.setOrderStatus(OrderStatus.SHIPPED);
             case SHIPPED -> order.setOrderStatus(OrderStatus.DELIVERED);
@@ -143,18 +153,10 @@ public class OrderService {
                 return null;
             }
 
-            // Các trạng thái liên quan đến món ăn
-            case READY_TO_SERVE -> order.setOrderStatus(OrderStatus.SERVED);
-            case SERVED -> order.setOrderStatus(OrderStatus.PAID);
-            case CANCELLED -> {
-                return null;
-            }
-
-
             default -> throw new IllegalStateException("Unexpected status: " + order.getOrderStatus());
         }
 
-        return orderRepository.save(order);  // Lưu lại đơn hàng đã được cập nhật
+        return orderRepository.save(order);
     }
 
 
@@ -253,13 +255,25 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
-    public Order updateServedOrder(Long id) {
+    public Order updateServedOrder(Long id, Double total) {
         Order order = orderRepository.findById(id).get();
         Table table = order.getTable();
         table.setTableStatus(true);
+        Reservation reservation = reservationRepository.findReservationsByOrderId(order.getId());
+        reservation.setIsDelete(true);
+        reservation.setEndTime(LocalTime.now());
+        reservationRepository.save(reservation);
         tableRepository.save(table);
         if (order.getOrderStatus() == OrderStatus.READY_TO_SERVE) {
-            order.setOrderStatus(OrderStatus.SERVED);
+            order.setOrderStatus(OrderStatus.PAID);
+            order.setPaymentStatus(true);
+            order.setTotal(total);
+            Invoice invoice = Invoice.builder()
+                    .order(order)
+                    .branch(order.getBranch())
+                    .total(order.getTotal())
+                    .build();
+            invoiceRepository.save(invoice);
         }
         return orderRepository.save(order);
     }

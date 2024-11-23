@@ -25,14 +25,15 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @NotNull(message = "Thời gian bắt đầu không được để trống")
+    //    @NotNull(message = "Thời gian bắt đầu không được để trống")
     LocalTime startTime;
 
     LocalTime endTime;
 
-    @NotNull(message = "Ngày đặt không được để trống")
+    //    @NotNull(message = "Ngày đặt không được để trống")
     LocalDate bookingDate;
 
+    @Builder.Default
     Date createDate = new Date();
 
     String fullName;
@@ -42,15 +43,19 @@ public class Reservation {
 
     @ManyToOne
     @JoinColumn(name = "table_id")
-    @JsonBackReference(value = "table-reservation")
+    @JsonBackReference
     Table table;
 
     @ManyToOne
     @JoinColumn(name = "branch_id")
-    @JsonBackReference
+    @JsonBackReference // mở comment lúc làm đặt bàn
     Branch branch;
+
+    @OneToOne
+    Order order;
 
     String cancelReason;
 
+    @Builder.Default
     Boolean isDelete = false;
 }
