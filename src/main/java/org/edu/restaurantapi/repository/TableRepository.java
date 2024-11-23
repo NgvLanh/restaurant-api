@@ -33,4 +33,5 @@ public interface TableRepository extends JpaRepository<Table, Long> {
             "AND t.branch.id = :branchId")
     List<Table> findAllWithReservationsByBranchId(Long branchId);
 
+
 }

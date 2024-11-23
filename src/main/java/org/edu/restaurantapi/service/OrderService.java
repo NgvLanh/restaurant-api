@@ -54,6 +54,7 @@ public class OrderService {
     @Autowired
     private InvoiceRepository invoiceRepository;
 
+
     public Page<Order> getAllOrders(Optional<Long> branchId, Optional<Date> time,
                                     Optional<OrderStatus> orderStatus, Pageable pageable) {
         Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
@@ -158,7 +159,6 @@ public class OrderService {
 
         return orderRepository.save(order);
     }
-
 
     public Boolean delete(Long id) {
         return orderRepository.findById(id).map(o -> {
