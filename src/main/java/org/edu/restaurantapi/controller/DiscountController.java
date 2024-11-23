@@ -37,7 +37,7 @@ public class DiscountController {
     @GetMapping("/{code}")
     public ResponseEntity<?> checkDiscountCode(@PathVariable String code) {
         var response = service.checkDiscountCode(code);
-        if (response == null) {
+        if (service.checkDiscountCode(code)) {
             return ResponseEntity.badRequest().body(ApiResponse.BAD_REQUEST("Mã giảm giá không chính xác"));
         }
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
