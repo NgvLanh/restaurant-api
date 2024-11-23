@@ -1,5 +1,6 @@
 package org.edu.restaurantapi.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.edu.restaurantapi.model.Cart;
 import org.edu.restaurantapi.model.CartItem;
 import org.edu.restaurantapi.model.Dish;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class CartItemService {
 
@@ -58,7 +60,9 @@ public class CartItemService {
 
     public Optional<CartItem> updateQuantityCartItem(Long cartItemId, Integer quantity) {
         Optional<CartItem> cartItem = cartItemRepository.findById(cartItemId);
-        cartItem.ifPresent(e -> e.setQuantity(quantity));
+        if (cartItem.get().getDish().getQuantity() >= quantity) {
+            cartItem.ifPresent(e -> e.setQuantity(quantity));
+        }
         return cartItem.map(cartItemRepository::save);
     }
 
@@ -87,7 +91,9 @@ public class CartItemService {
         List<CartItem> cartItems = cartItemRepository.findCartItemByCartId(cart.get().getId());
         for (CartItem existingCartItem : cartItems) {
             if (existingCartItem.getDish().getId().equals(dishId)) {
-                existingCartItem.setQuantity(existingCartItem.getQuantity() + quantity);
+                if (dish.get().getQuantity() > existingCartItem.getQuantity() + quantity) {
+                    existingCartItem.setQuantity(existingCartItem.getQuantity() + quantity);
+                }
                 return cartItemRepository.save(existingCartItem);
             }
         }
@@ -99,5 +105,9 @@ public class CartItemService {
                 .quantity(quantity)
                 .build();
         return cartItemRepository.save(cartItem);
+    }
+
+    public void deleteCartItem(Long id) {
+        cartItemRepository.deleteById(id);
     }
 }

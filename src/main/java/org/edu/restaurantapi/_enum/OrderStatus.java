@@ -11,7 +11,7 @@ public enum OrderStatus {
     SERVED,                // Đã phục vụ (Ăn tại nhà hàng)
 
     // Dành cho giao hàng
-    PENDING,               // Chờ xác nhận ()D
+    PENDING,               // Chờ xác nhận ()
     CONFIRMED,             // Đã xác nhận ()
     SHIPPED,               // Đang giao (Giao hàng)
     DELIVERED              // Đã giao (Giao hàng)

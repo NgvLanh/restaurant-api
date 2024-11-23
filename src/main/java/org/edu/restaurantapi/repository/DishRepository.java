@@ -19,7 +19,7 @@ public interface DishRepository extends JpaRepository<Dish, Long> {
 
     Page<Dish> findByBranchIdAndCategoryId(Long branchId, Long categoryId, Pageable pageable);
 
-    Page<Dish> findByIsDeleteFalse(Pageable pageableSorted);
+    Page<Dish> findByBranchIdAndIsDeleteFalse(Long branchId, Pageable pageableSorted);
 
     @Query("SELECT COUNT(d) FROM dishes d WHERE d.isDelete = false")
     long countTotalDishes();

@@ -2,24 +2,30 @@ package org.edu.restaurantapi.service;
 
 import jakarta.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.math3.analysis.function.Tan;
+import org.edu.restaurantapi._enum.OrderStatus;
+import org.edu.restaurantapi.model.Branch;
+import org.edu.restaurantapi.model.Order;
 import org.edu.restaurantapi.model.Reservation;
 import org.edu.restaurantapi.model.Table;
+import org.edu.restaurantapi.repository.BranchRepository;
+import org.edu.restaurantapi.repository.OrderRepository;
 import org.edu.restaurantapi.repository.ReservationRepository;
 import org.edu.restaurantapi.repository.TableRepository;
 import org.edu.restaurantapi.request.EmailRequest;
-import org.edu.restaurantapi.response.ReservationTableResponse;
+import org.edu.restaurantapi.request.ReserTableCancelRequest;
+import org.edu.restaurantapi.request.ReserTableOffLineRequest;
+import org.edu.restaurantapi.request.ReservationOnlineRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class ReservationService {
     @Autowired
@@ -31,16 +37,34 @@ public class ReservationService {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private BranchRepository branchRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
+
     public List<Reservation> getAllReservations(String branch) {
         return reservationRepository.findByBranchId(Long.parseLong(branch));
     }
 
-    public Reservation createReservation(Reservation request) throws MessagingException {
-        sendConfirm(request);
-        Table table = request.getTable();
-        table.setTableStatus(false);
-        tableRepository.save(table);
-        return reservationRepository.save(request);
+    public Reservation createReservation(ReservationOnlineRequest request) throws MessagingException {
+        Branch branch = branchRepository.findById(request.getBranchId()).orElse(null);
+        List<Table> tables = tableRepository.findAllById(List.of(request.getTableIds()));
+        List<Reservation> reservations = tables.stream()
+                .map(table -> Reservation.builder()
+                        .branch(branch)
+                        .table(table)
+                        .fullName(request.getFullName())
+                        .email(request.getEmail())
+                        .phoneNumber(request.getPhoneNumber())
+                        .bookingDate(request.getBookingDate())
+                        .startTime(request.getStartTime())
+                        .notes(request.getNotes())
+                        .build())
+                .collect(Collectors.toList());
+
+        reservationRepository.saveAll(reservations);
+        return reservations.isEmpty() ? null : reservations.get(0);
     }
 
     private void sendConfirm(Reservation request) throws MessagingException {
@@ -107,19 +131,18 @@ public class ReservationService {
         emailService.sendHtmlEmailAsync(emailRequest, content);
     }
 
-    public Reservation cancelReservation(Long reservationId, String reason) throws MessagingException {
-        sendCancel(reservationId, reason);
-        Optional<Reservation> reservation = reservationRepository.findById(reservationId);
-        reservation.get().setCancelReason(reason);
-        Table table = reservation.get().getTable();
-        table.setTableStatus(true);
-        tableRepository.save(table);
-        return reservationRepository.save(reservation.get());
+    public Reservation cancelReservation(ReserTableCancelRequest request) {
+        List<Reservation> reservations = reservationRepository.findAllById(Arrays.asList(request.getReservationIds()));
+        reservations.forEach(r -> {
+            r.setCancelReason(request.getReason());
+            r.setIsDelete(true);
+            reservationRepository.save(r);
+        });
+        return reservations.isEmpty() ? null : reservations.get(0);
     }
 
     private void sendCancel(Long reservationId, String reason) throws MessagingException {
         Optional<Reservation> reservation = reservationRepository.findById(reservationId);
-
         // Nội dung email
         String content = "<!DOCTYPE html>" +
                 "<html lang='vi'>" +
@@ -184,5 +207,40 @@ public class ReservationService {
         return reservationRepository.findByBranchIdAndCancelReasonIsNotNull(Long.parseLong(branch), pageable);
     }
 
+    public Reservation createReservationOffline(ReserTableOffLineRequest request) {
+        Branch branch = branchRepository.findById(request.getBranchId()).orElse(null);
+        List<Table> tables = tableRepository.findAllById(List.of(request.getTableIds()));
+
+        List<Reservation> reservations = tables.stream()
+                .map(table -> {
+                    // Tạo reservation
+                    Order order = Order.builder()
+                            .orderStatus(OrderStatus.READY_TO_SERVE)
+                            .branch(branch)
+                            .table(table)
+                            .fullName(request.getFullName())
+                            .phoneNumber(request.getPhoneNumber())
+                            .build();
+
+                    orderRepository.save(order);
+
+                    Reservation reservation = Reservation.builder()
+                            .branch(branch)
+                            .table(table)
+                            .fullName(request.getFullName())
+                            .phoneNumber(request.getPhoneNumber())
+                            .bookingDate(request.getBookingDate())
+                            .startTime(request.getStartTime())
+                            .order(order)
+                            .build();
+
+                    return reservation;
+                })
+                .collect(Collectors.toList());
+
+        reservationRepository.saveAll(reservations);
+
+        return reservations.isEmpty() ? null : reservations.get(0);
+    }
 
 }

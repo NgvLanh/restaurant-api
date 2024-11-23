@@ -4,17 +4,22 @@ import jakarta.validation.Valid;
 import org.edu.restaurantapi.model.Table;
 import org.edu.restaurantapi.response.ApiResponse;
 import org.edu.restaurantapi.service.TableService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/tables")
 public class TableController {
 
+    private static final Logger log = LoggerFactory.getLogger(TableController.class);
     @Autowired
     private TableService tableService;
 
@@ -54,9 +59,11 @@ public class TableController {
     @GetMapping("/reservations")
     public ResponseEntity<?> getTablesByBranchIdAndSeats(
             @RequestParam(value = "branch", required = false) Optional<Long> branch,
-            @RequestParam(value = "time", required = false) Optional<String> time
+            @RequestParam(value = "date", required = false) String date
     ) {
-        var response = tableService.getTablesByBranchId(branch, time);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate parsedDate = LocalDate.parse(date, formatter);
+        var response = tableService.getTablesByBranchId(branch, parsedDate);
         return ResponseEntity.ok(ApiResponse.SUCCESS(response));
     }
 

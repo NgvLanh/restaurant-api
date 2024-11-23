@@ -22,7 +22,7 @@ public class AuthenticationController {
     private ResponseEntity<?> authenticated(@RequestBody AuthenticationRequest request) {
         var authenticated = authenticationService.authenticated(request);
         if (authenticated.getAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.OK)
+            return ResponseEntity.ok()
                     .body(ApiResponse.SUCCESS(authenticated));
         }
         return ResponseEntity.badRequest()

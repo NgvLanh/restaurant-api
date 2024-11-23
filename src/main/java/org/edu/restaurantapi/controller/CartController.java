@@ -54,7 +54,6 @@ public class CartController {
 
     @GetMapping("/{cartId}")
     private ResponseEntity<?> getCarts(@PathVariable Long cartId) {
-        log.error(cartId.toString());
         try {
             var response = cartService.getCarts(cartId);
             if (!response.isEmpty()) {

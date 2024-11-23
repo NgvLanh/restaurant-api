@@ -53,7 +53,7 @@ public class Branch {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonBackReference
+//    @JsonBackReference
     User user;
 
     @JsonIgnore

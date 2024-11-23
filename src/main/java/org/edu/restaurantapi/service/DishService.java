@@ -33,7 +33,7 @@ public class DishService {
         if (name.isPresent()) {
             return repository.findByBranchIdAndNameContainingAndIsDeleteFalse(branch.get(), name.get(), pageableSorted);
         }
-        return repository.findByIsDeleteFalse(pageableSorted);
+        return repository.findByBranchIdAndIsDeleteFalse(branch.get(), pageableSorted);
     }
 
     public Dish create(Dish request) {

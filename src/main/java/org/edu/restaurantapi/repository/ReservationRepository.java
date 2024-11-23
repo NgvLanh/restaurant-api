@@ -16,6 +16,8 @@ import java.util.List;
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
     List<Reservation> findByBranchId(Long branch);
 
+    Reservation findReservationsByOrderId(Long orderId);
+
     Page<Reservation> findByBranchIdAndCancelReasonIsNotNull(Long branch, Pageable pageable);
 
 //    @Query("SELECT CASE WHEN COUNT(r) > 0 THEN TRUE ELSE FALSE END " +
