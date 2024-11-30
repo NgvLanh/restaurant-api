@@ -48,6 +48,7 @@ public class DishService {
             if (request.getImage() != null && !request.getImage().isEmpty()) {
                 d.setImage(request.getImage());
             }
+            d.setQuantity(request.getQuantity() != null ? request.getQuantity() : d.getQuantity());
             d.setDescription(request.getDescription() != null ? request.getDescription() : d.getDescription());
             d.setCategory(request.getCategory() != null ? request.getCategory() : d.getCategory());
             return repository.save(d);

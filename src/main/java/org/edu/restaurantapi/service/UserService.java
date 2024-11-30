@@ -134,6 +134,10 @@ public class UserService {
         String roleName = "CLIENT";
         return userRepository.countTotalRegisteredUsers(roleName);
     }
+
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElse(null);
+    }
 }
 
 

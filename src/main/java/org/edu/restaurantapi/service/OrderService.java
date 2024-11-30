@@ -60,34 +60,34 @@ public class OrderService {
         Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
                 pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
         if (branchId.isEmpty() && time.isEmpty() && orderStatus.isEmpty()) {
-            return orderRepository.findByIsDeleteFalse(pageableSorted);
+            return orderRepository.findByIsDeleteFalseAndPaymentStatusTrue(pageableSorted);
         }
         if (branchId.isPresent() && time.isPresent() && orderStatus.isPresent()) {
-            return orderRepository.findByIsDeleteFalseAndBranchIdAndTimeAndOrderStatus(
+            return orderRepository.findByIsDeleteFalseAndBranchIdAndTimeAndOrderStatusAndPaymentStatusTrue(
                     branchId.get(), time.get(), orderStatus.get(), pageableSorted);
         }
         if (branchId.isPresent() && orderStatus.isPresent()) {
-            return orderRepository.findByIsDeleteFalseAndBranchIdAndOrderStatus(
+            return orderRepository.findByIsDeleteFalseAndBranchIdAndOrderStatusAndPaymentStatusTrue(
                     branchId.get(), orderStatus.get(), pageableSorted);
         }
         if (branchId.isPresent() && time.isPresent()) {
-            return orderRepository.findByIsDeleteFalseAndBranchIdAndTime(
+            return orderRepository.findByIsDeleteFalseAndBranchIdAndTimeAndPaymentStatusTrue(
                     branchId.get(), time.get(), pageableSorted);
         }
         if (time.isPresent() && orderStatus.isPresent()) {
-            return orderRepository.findByIsDeleteFalseAndTimeAndOrderStatus(
+            return orderRepository.findByIsDeleteFalseAndTimeAndOrderStatusAndPaymentStatusTrue(
                     time.get(), orderStatus.get(), pageableSorted);
         }
         if (branchId.isPresent()) {
-            return orderRepository.findByIsDeleteFalseAndBranchId(branchId.get(), pageableSorted);
+            return orderRepository.findByIsDeleteFalseAndBranchIdAndPaymentStatusTrue(branchId.get(), pageableSorted);
         }
         if (time.isPresent()) {
-            return orderRepository.findByIsDeleteFalseAndTime(time.get(), pageableSorted);
+            return orderRepository.findByIsDeleteFalseAndTimeAndPaymentStatusTrue(time.get(), pageableSorted);
         }
         if (orderStatus.isPresent()) {
-            return orderRepository.findByIsDeleteFalseAndOrderStatus(orderStatus.get(), pageableSorted);
+            return orderRepository.findByIsDeleteFalseAndOrderStatusAndPaymentStatusTrue(orderStatus.get(), pageableSorted);
         }
-        return orderRepository.findByIsDeleteFalse(pageableSorted);
+        return orderRepository.findByIsDeleteFalseAndPaymentStatusTrue(pageableSorted);
     }
 
 
@@ -96,6 +96,10 @@ public class OrderService {
         User user = userRepository.findById(request.getUserId()).orElse(null);
         Address address = addressRepository.findById(request.getAddressId()).orElse(null);
         Optional<Discount> discount = discountRepository.findById(request.getDiscountId() == null ? 0 : request.getDiscountId());
+        if (discount.isPresent()) {
+            discount.get().setQuantity(discount.get().getQuantity() -1);
+            discountRepository.save(discount.get());
+        }
 
         Order requestOrder = Order.builder()
                 .branch(branch)
@@ -104,6 +108,7 @@ public class OrderService {
                 .user(user)
                 .orderStatus(request.getOrderStatus())
                 .total(request.getTotal())
+                .paymentStatus(true)
                 .build();
         Order response = orderRepository.save(requestOrder);
         Optional<Cart> cart = cartRepository.findCartByUserId(user.getId());
@@ -149,12 +154,17 @@ public class OrderService {
             case PENDING -> order.setOrderStatus(OrderStatus.CONFIRMED);
             case CONFIRMED -> order.setOrderStatus(OrderStatus.SHIPPED);
             case SHIPPED -> order.setOrderStatus(OrderStatus.DELIVERED);
-            case DELIVERED -> order.setOrderStatus(OrderStatus.PAID);
-            case PAID -> {
-                return null;
+            case DELIVERED -> {
+                order.setOrderStatus(OrderStatus.PAID);
+                order.setPaymentStatus(true);
+                Invoice invoice = Invoice
+                        .builder()
+                        .order(order)
+                        .branch(order.getBranch())
+                        .total(order.getTotal())
+                        .build();
+                invoiceRepository.save(invoice);
             }
-
-            default -> throw new IllegalStateException("Unexpected status: " + order.getOrderStatus());
         }
 
         return orderRepository.save(order);
@@ -195,9 +205,9 @@ public class OrderService {
 
     public List<Order> getAllOrdersByUserId(Optional<Long> branchId, Optional<Long> userId, Optional<OrderStatus> orderStatus) {
         if (orderStatus.isPresent() && orderStatus.get() == OrderStatus.ALL) {
-            return orderRepository.findOrdersByBranchIdAndUserId(branchId.get(), userId.get());
+            return orderRepository.findOrdersByBranchIdAndUserIdAndPaymentStatusTrue(branchId.get(), userId.get());
         }
-        return orderRepository.findOrdersByBranchIdAndUserIdAndOrderStatus(branchId.get(), userId.get(), orderStatus.get());
+        return orderRepository.findOrdersByBranchIdAndUserIdAndOrderStatusAndIsDeleteFalseAndPaymentStatusTrue(branchId.get(), userId.get(), orderStatus.get());
     }
 
     public Order cancelOrder(Long orderId, Optional<String> reason) {
@@ -238,7 +248,7 @@ public class OrderService {
 
     public Order createOrderManual(OrderManualRequest request) {
         User user = userRepository.findByPhoneNumber(request.getPhoneNumber()).orElse(null);
-        request.getTable().setTableStatus(false);
+//        request.getTable().setTableStatus(false);
         tableRepository.save(request.getTable());
         Order order = Order
                 .builder()
@@ -258,13 +268,13 @@ public class OrderService {
     public Order updateServedOrder(Long id, Double total) {
         Order order = orderRepository.findById(id).get();
         List<OrderItem> orderItems = orderItemRepository.findOrderItemsByOrderId(order.getId());
-        orderItems.forEach(e->{
+        orderItems.forEach(e -> {
             Dish dish = dishRepository.findById(e.getDish().getId()).orElse(null);
             dish.setQuantity(dish.getQuantity() - e.getQuantity());
             dishRepository.save(dish);
         });
         Table table = order.getTable();
-        table.setTableStatus(true);
+//        table.setTableStatus(true);
         Reservation reservation = reservationRepository.findReservationsByOrderId(order.getId());
         reservation.setIsDelete(true);
         reservation.setEndTime(LocalTime.now());

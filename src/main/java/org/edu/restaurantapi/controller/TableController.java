@@ -25,8 +25,9 @@ public class TableController {
 
     @GetMapping
     public ResponseEntity<?> getAllTables(@RequestParam(value = "branch", required = false) Optional<String> branch,
+                                          @RequestParam(value = "zoneId", required = false) Long zoneId,
                                           Pageable pageable) {
-        var response = tableService.getAllTables(branch, pageable);
+        var response = tableService.getAllTables(branch, zoneId, pageable);
         return ResponseEntity.ok(ApiResponse.SUCCESS(response));
     }
 

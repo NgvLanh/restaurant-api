@@ -51,25 +51,47 @@ public class ReservationService {
         Branch branch = branchRepository.findById(request.getBranchId()).orElse(null);
         List<Table> tables = tableRepository.findAllById(List.of(request.getTableIds()));
         List<Reservation> reservations = tables.stream()
-                .map(table -> Reservation.builder()
-                        .branch(branch)
-                        .table(table)
-                        .fullName(request.getFullName())
-                        .email(request.getEmail())
-                        .phoneNumber(request.getPhoneNumber())
-                        .bookingDate(request.getBookingDate())
-                        .startTime(request.getStartTime())
-                        .notes(request.getNotes())
-                        .build())
+                .map(table -> {
+                    // Tạo reservation
+                    Order order = Order.builder()
+                            .orderStatus(OrderStatus.READY_TO_SERVE)
+                            .branch(branch)
+                            .table(table)
+                            .fullName(request.getFullName())
+                            .phoneNumber(request.getPhoneNumber())
+                            .paymentStatus(true)
+                            .build();
+
+                    orderRepository.save(order);
+
+                    return Reservation.builder()
+                            .branch(branch)
+                            .table(table)
+                            .fullName(request.getFullName())
+                            .phoneNumber(request.getPhoneNumber())
+                            .bookingDate(request.getBookingDate())
+                            .startTime(request.getStartTime())
+                            .order(order)
+                            .build();
+                })
                 .collect(Collectors.toList());
 
         reservationRepository.saveAll(reservations);
+        if (!request.getEmail().isEmpty()) {
+            sendConfirm(request);
+        }
         return reservations.isEmpty() ? null : reservations.get(0);
     }
 
-    private void sendConfirm(Reservation request) throws MessagingException {
-        String branchName = request.getBranch() != null ? request.getBranch().getName() : "Chưa cập nhật";
-        String tableInfo = request.getTable() != null ? "Bàn " + request.getTable().getNumber() : "Chưa cập nhật";
+    private void sendConfirm(ReservationOnlineRequest request) throws MessagingException {
+        Branch branch = branchRepository.findById(request.getBranchId()).orElse(null);
+        String branchName = branch.getName();
+        List<Table> tables = tableRepository.findAllById(List.of(request.getTableIds()));
+        String tableInfo = tables.stream()
+                .map(Table::getNumber)
+                .map(String::valueOf)
+                .collect(Collectors.joining(", "));
+
 
         // Nội dung email
         String content = "<!DOCTYPE html>" +
@@ -105,7 +127,7 @@ public class ReservationService {
                 "                <p><strong>Chi nhánh:</strong> " + branchName + "</p>" +
                 "                <p><strong>Bàn:</strong> " + tableInfo + "</p>" +
                 "                <p><strong>Ngày đặt:</strong> " + request.getBookingDate() + "</p>" +
-                "                <p><strong>Thời gian:</strong> " + request.getStartTime() + (request.getEndTime() != null ? " - " + request.getEndTime() : "") + "</p>" +
+                "                <p><strong>Thời gian:</strong> " + request.getStartTime() + "</p>" +
                 "                <p><strong>Yêu cầu đặc biệt:</strong> " + (request.getNotes() != null ? request.getNotes() : "Không có") + "</p>" +
                 "            </div>" +
                 "            <p>Vui lòng đến sớm 10 phút trước giờ đặt để được phục vụ tốt nhất.</p>" +
@@ -136,6 +158,9 @@ public class ReservationService {
         reservations.forEach(r -> {
             r.setCancelReason(request.getReason());
             r.setIsDelete(true);
+            r.getOrder().setCancelReason(request.getReason());
+            r.getOrder().setOrderStatus(OrderStatus.CANCELLED);
+            orderRepository.save(r.getOrder());
             reservationRepository.save(r);
         });
         return reservations.isEmpty() ? null : reservations.get(0);
@@ -220,6 +245,7 @@ public class ReservationService {
                             .table(table)
                             .fullName(request.getFullName())
                             .phoneNumber(request.getPhoneNumber())
+                            .paymentStatus(true)
                             .build();
 
                     orderRepository.save(order);

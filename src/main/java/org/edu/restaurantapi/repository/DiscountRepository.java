@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +24,7 @@ public interface DiscountRepository extends JpaRepository<Discount, Long> {
     Discount findByCodeAndIdNotAndIsDeleteFalse(String code, Long id);
 
     Page<Discount> findDiscountsByBranchId(Long branchId, Pageable pageable);
-  
+
     @Query("SELECT MONTH(d.createDate) AS month, COUNT(d) AS discountCount " +
             "FROM discounts d " +
             "WHERE YEAR(d.createDate) = YEAR(CURRENT_DATE) " +
@@ -31,8 +32,14 @@ public interface DiscountRepository extends JpaRepository<Discount, Long> {
             "ORDER BY MONTH(d.createDate) ASC")
     Page<Map<String, Object>> getDiscountStatsByMonth(Pageable pageable);
 
-
-
     Discount findDiscountsByCode(String code);
+
+    @Query("SELECT d FROM discounts d WHERE " +
+            "d.branch.id = :branchId AND " +
+            ":month BETWEEN d.startDate AND d.endDate")
+    Page<Discount> findDiscountsByMonth(Long branchId,
+                                        LocalDate month,
+                                        Pageable pageable);
+
 
 }

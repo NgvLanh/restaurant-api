@@ -16,21 +16,21 @@ import java.util.List;
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
 
-    public Page<Order> findByIsDeleteFalse(Pageable pageable);
+    Page<Order> findByIsDeleteFalseAndPaymentStatusTrue(Pageable pageable);
 
-    public Page<Order> findByIsDeleteFalseAndBranchId(Long branchId, Pageable pageable);
+    Page<Order> findByIsDeleteFalseAndBranchIdAndPaymentStatusTrue(Long branchId, Pageable pageable);
 
-    public Page<Order> findByIsDeleteFalseAndTime(Date time, Pageable pageable);
+    Page<Order> findByIsDeleteFalseAndTimeAndPaymentStatusTrue(Date time, Pageable pageable);
 
-    public Page<Order> findByIsDeleteFalseAndOrderStatus(OrderStatus orderStatus, Pageable pageable);
+    Page<Order> findByIsDeleteFalseAndOrderStatusAndPaymentStatusTrue(OrderStatus orderStatus, Pageable pageable);
 
-    public Page<Order> findByIsDeleteFalseAndBranchIdAndTime(Long branchId, Date time, Pageable pageable);
+    Page<Order> findByIsDeleteFalseAndBranchIdAndTimeAndPaymentStatusTrue(Long branchId, Date time, Pageable pageable);
 
-    public Page<Order> findByIsDeleteFalseAndBranchIdAndOrderStatus(Long branchId, OrderStatus orderStatus, Pageable pageable);
+    Page<Order> findByIsDeleteFalseAndBranchIdAndOrderStatusAndPaymentStatusTrue(Long branchId, OrderStatus orderStatus, Pageable pageable);
 
-    public Page<Order> findByIsDeleteFalseAndTimeAndOrderStatus(Date time, OrderStatus orderStatus, Pageable pageable);
+    Page<Order> findByIsDeleteFalseAndTimeAndOrderStatusAndPaymentStatusTrue(Date time, OrderStatus orderStatus, Pageable pageable);
 
-    public Page<Order> findByIsDeleteFalseAndBranchIdAndTimeAndOrderStatus(Long branchId, Date time, OrderStatus orderStatus, Pageable pageable);
+    Page<Order> findByIsDeleteFalseAndBranchIdAndTimeAndOrderStatusAndPaymentStatusTrue(Long branchId, Date time, OrderStatus orderStatus, Pageable pageable);
 
 //    Page<Order> findByIsDeleteFalse(Pageable pageable);
 
@@ -40,9 +40,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT COUNT(o) FROM orders o WHERE o.isDelete = false AND o.orderStatus = org.edu.restaurantapi._enum.OrderStatus.CANCELLED")
     Long countTotalOrdersCancelled();
 
-    List<Order> findOrdersByBranchIdAndUserIdAndOrderStatus(Long branchId, Long useId, OrderStatus orderStatus);
+    List<Order> findOrdersByBranchIdAndUserIdAndOrderStatusAndIsDeleteFalseAndPaymentStatusTrue(Long branchId, Long useId, OrderStatus orderStatus);
 
-    List<Order> findOrdersByBranchIdAndUserId(Long branchId, Long useId);
+    List<Order> findOrdersByBranchIdAndUserIdAndPaymentStatusTrue(Long branchId, Long useId);
 
     List<Order> findOrdersByBranchIdAndOrderStatusAndTimeBetweenAndAddressIdIsNull(
             Long branchId, OrderStatus orderStatus, Date startTime, Date endTime);

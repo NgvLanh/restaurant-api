@@ -3,10 +3,7 @@ package org.edu.restaurantapi.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.edu.restaurantapi._enum.DiscountMethod;
 
@@ -14,6 +11,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
@@ -39,6 +37,7 @@ public class Discount {
     @NotNull(message = "Ngày bắt đầu không được để trống.")
     LocalDate startDate;
 
+    @Builder.Default
     LocalDate createDate = LocalDate.now();
 
     DiscountMethod discountMethod;
@@ -56,6 +55,7 @@ public class Discount {
     @JsonBackReference
     Branch branch;
 
+    @Builder.Default
     Boolean isDelete = false;
 
 }

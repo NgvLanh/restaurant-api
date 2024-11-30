@@ -28,8 +28,6 @@ public class Table {
     @Max(value = 20, message = "Số ghế không được vượt quá 20")
     Integer seats;
 
-    @JsonIgnore
-    Boolean tableStatus = true;
 
     @OneToMany(mappedBy = "table", cascade = CascadeType.ALL)
     @JsonManagedReference
