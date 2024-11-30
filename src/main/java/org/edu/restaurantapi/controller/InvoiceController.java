@@ -54,12 +54,6 @@ public class InvoiceController {
         }
     }
 
-
-
-
-
-
-
     @GetMapping("/countInvoice")
     public ResponseEntity<?> getInvoice(Pageable pageable) {
         var response = invoiceService.getCountInvoiceMonth(pageable);
@@ -71,8 +65,20 @@ public class InvoiceController {
     }
 
     @GetMapping("/monthly-revenue")
-    public ResponseEntity<?> getInvoiceMonthly(Pageable pageable) {
-        var response = invoiceService.getMonthlyRevenue(pageable);
+    public ResponseEntity<?> getInvoiceMonthly() {
+        var response = invoiceService.getMonthlyRevenue();
+        return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
+    }
+    //
+    @GetMapping("/reservations-weekly")
+    public ResponseEntity<?> getReversionByWeek() {
+        var response = invoiceService.getReversionByWeek();
+        return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
+    }
+
+    @GetMapping("/monthly-orders")
+    public ResponseEntity<?> getMonthlyOrderStatistics() {
+        var response = invoiceService.getMonthlyOrderStatistics();
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
 }

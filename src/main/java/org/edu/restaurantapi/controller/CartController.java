@@ -79,11 +79,18 @@ public class CartController {
                 Optional<CartItem> existingCartItem = cartItemService.findByCartIdAndDishId(cartExists.get().getId(), cartItemRequest.getDish().getId());
                 if (existingCartItem.isPresent()) {
                     CartItem cartItem = existingCartItem.get();
-                    cartItem.setQuantity(cartItem.getQuantity() + cartItemRequest.getQuantity());
+                    if (cartItem.getDish().getQuantity() > cartItemRequest.getQuantity()) {
+                        cartItem.setQuantity(cartItem.getQuantity() + cartItemRequest.getQuantity());
+                    }
                     cartItemService.createCartItem(cartItem);
                 } else {
                     cartItemRequest.setCart(cartExists.get());
-                    cartItemService.createCartItem(cartItemRequest);
+                    if (cartItemRequest.getQuantity() < cartItemRequest.getDish().getQuantity()) {
+                        cartItemService.createCartItem(cartItemRequest);
+                    } else {
+                        cartItemRequest.setQuantity(cartItemRequest.getDish().getQuantity());
+                        cartItemService.createCartItem(cartItemRequest);
+                    }
                 }
             }
         }

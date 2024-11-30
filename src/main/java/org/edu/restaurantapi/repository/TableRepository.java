@@ -19,6 +19,7 @@ public interface TableRepository extends JpaRepository<Table, Long> {
 
     Page<Table> findByIsDeleteFalseAndBranchId(Long l, Pageable pageableSorted);
 
+    Page<Table> findByIsDeleteFalseAndBranchIdAndZoneId(Long l, Long z, Pageable pageableSorted);
 //    @Query(value = "SELECT DISTINCT t.* " +
 //            "FROM tables t " +
 //            "LEFT JOIN reservations r " +

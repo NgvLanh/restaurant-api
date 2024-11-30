@@ -29,10 +29,13 @@ public class TableService {
     @Autowired
     private ZoneRepository zoneRepository;
 
-    public Page<Table> getAllTables(Optional<String> branch, Pageable pageable) {
+    public Page<Table> getAllTables(Optional<String> branch, Long zoneId, Pageable pageable) {
         Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
                 pageable.getPageSize(), Sort.by(Sort.Direction.ASC, "number"));
-        return tableRepository.findByIsDeleteFalseAndBranchId(Long.parseLong(branch.get()), pageableSorted);
+        if (zoneId == null || zoneId == 0) {
+            return tableRepository.findByIsDeleteFalseAndBranchId(Long.parseLong(branch.get()), pageableSorted);
+        }
+        return tableRepository.findByIsDeleteFalseAndBranchIdAndZoneId(Long.parseLong(branch.get()), zoneId, pageableSorted);
     }
 
     public Table create(TableRequest request) {
@@ -40,11 +43,11 @@ public class TableService {
         Branch branch = branchRepository.findById(request.getBranchId()).get();
         Zone zone = zoneRepository.findById(request.getZoneId()).get();
         if (request.getNumber() == null) {
-           try {
-               number = tableRepository.findMaxNumberByBranchId(request.getBranchId()) + 1;
-           } catch (Exception e) {
-               number = 1;
-           }
+            try {
+                number = tableRepository.findMaxNumberByBranchId(request.getBranchId()) + 1;
+            } catch (Exception e) {
+                number = 1;
+            }
         } else {
             number = request.getNumber();
         }

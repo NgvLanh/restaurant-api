@@ -49,11 +49,6 @@ public class ReservationController {
 
     @PostMapping("/offline")
     private ResponseEntity<?> createReservationOffline(@RequestBody ReserTableOffLineRequest request) {
-        LocalTime now = LocalTime.now();
-        if (request.getStartTime().isBefore(now)) {
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.BAD_REQUEST("Thời gian đặt phải lớn hơn hiện tại"));
-        }
         var response = reservationService.createReservationOffline(request);
         return ResponseEntity.ok(ApiResponse.SUCCESS(response));
     }

@@ -31,7 +31,7 @@ public class OrderController {
     private OrderService orderService;
 
     @GetMapping
-    public ResponseEntity<?> getAllOrders(@RequestParam(value = "branchId", required = false)
+    public ResponseEntity<?> getAllOrders(@RequestParam(value = "branch", required = false)
                                           Optional<Long> branchId,
                                           @RequestParam(value = "time", required = false)
                                           Optional<Date> time,

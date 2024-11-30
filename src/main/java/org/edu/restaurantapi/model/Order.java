@@ -48,7 +48,7 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name = "branch_id")
-    @JsonBackReference
+//    @JsonBackReference
     Branch branch;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
