@@ -1,6 +1,7 @@
 package org.edu.restaurantapi.controller;
 
 import com.nimbusds.jose.JOSEException;
+import org.edu.restaurantapi.request.AuthenticationGoogleRequest;
 import org.edu.restaurantapi.request.AuthenticationRequest;
 import org.edu.restaurantapi.response.ApiResponse;
 import org.edu.restaurantapi.service.AuthenticationService;
@@ -39,6 +40,17 @@ public class AuthenticationController {
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(ApiResponse.UNAUTHORIZED("Token không có giá trị"));
+    }
+
+    @PostMapping("/login-google")
+    private ResponseEntity<?> authenticatedWithGoogle(@RequestBody AuthenticationGoogleRequest request) {
+        var authenticated = authenticationService.authenticatedWithGoogle(request);
+        if (authenticated.getAuthenticated()) {
+            return ResponseEntity.ok()
+                    .body(ApiResponse.SUCCESS(authenticated));
+        }
+        return ResponseEntity.badRequest()
+                .body(ApiResponse.BAD_REQUEST("Đăng nhập Google thất bại"));
     }
 
 }
