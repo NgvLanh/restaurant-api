@@ -31,7 +31,9 @@ public class UserService {
         String id = context.getAuthentication().getName();
         User user = userRepository.findById(Long.parseLong(id)).orElse(null);
         user.setPassword(null);
-        user.setImage("http://localhost:8080/api/files/" + user.getImage());
+        if (!user.getImage().contains("http")) {
+            user.setImage("http://localhost:8080/api/files/" + user.getImage());
+        }
         return user;
     }
 
