@@ -51,7 +51,7 @@ public class AuthenticationController {
         var emailExists = userService.findUserByEmail(request.getEmail());
         if (emailExists.isPresent()) {
             ResponseEntity.badRequest()
-                    .body(ApiResponse.BAD_REQUEST("Ema"));
+                    .body(ApiResponse.BAD_REQUEST("Email này đã đăng ký tài khoản trước đó"));
         }
         if (authenticated.getAuthenticated()) {
             return ResponseEntity.ok()
