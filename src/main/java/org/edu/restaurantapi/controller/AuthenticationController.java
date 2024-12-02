@@ -5,6 +5,7 @@ import org.edu.restaurantapi.request.AuthenticationGoogleRequest;
 import org.edu.restaurantapi.request.AuthenticationRequest;
 import org.edu.restaurantapi.response.ApiResponse;
 import org.edu.restaurantapi.service.AuthenticationService;
+import org.edu.restaurantapi.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,8 @@ public class AuthenticationController {
 
     @Autowired
     private AuthenticationService authenticationService;
+    @Autowired
+    private UserService userService;
 
     @PostMapping("/login")
     private ResponseEntity<?> authenticated(@RequestBody AuthenticationRequest request) {
@@ -45,6 +48,11 @@ public class AuthenticationController {
     @PostMapping("/login-google")
     private ResponseEntity<?> authenticatedWithGoogle(@RequestBody AuthenticationGoogleRequest request) {
         var authenticated = authenticationService.authenticatedWithGoogle(request);
+        var emailExists = userService.findUserByEmail(request.getEmail());
+        if (emailExists.isPresent()) {
+            ResponseEntity.badRequest()
+                    .body(ApiResponse.BAD_REQUEST("Ema"));
+        }
         if (authenticated.getAuthenticated()) {
             return ResponseEntity.ok()
                     .body(ApiResponse.SUCCESS(authenticated));
