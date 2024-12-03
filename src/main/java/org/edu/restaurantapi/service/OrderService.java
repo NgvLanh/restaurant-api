@@ -153,17 +153,20 @@ public class OrderService {
         switch (order.getOrderStatus()) {
             case PENDING -> order.setOrderStatus(OrderStatus.CONFIRMED);
             case CONFIRMED -> order.setOrderStatus(OrderStatus.SHIPPED);
-            case SHIPPED -> order.setOrderStatus(OrderStatus.DELIVERED);
-            case DELIVERED -> {
+//            case SHIPPED -> order.setOrderStatus(OrderStatus.DELIVERED);
+            case SHIPPED -> {
                 order.setOrderStatus(OrderStatus.PAID);
                 order.setPaymentStatus(true);
-                Invoice invoice = Invoice
-                        .builder()
-                        .order(order)
-                        .branch(order.getBranch())
-                        .total(order.getTotal())
-                        .build();
-                invoiceRepository.save(invoice);
+                Invoice orderExists = invoiceRepository.findInvoiceByOrderId(order.getId());
+                if (orderExists == null) {
+                    Invoice invoice = Invoice
+                            .builder()
+                            .order(order)
+                            .branch(order.getBranch())
+                            .total(order.getTotal())
+                            .build();
+                    invoiceRepository.save(invoice);
+                }
             }
         }
 
