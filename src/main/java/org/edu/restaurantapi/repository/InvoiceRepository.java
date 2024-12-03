@@ -12,6 +12,8 @@ import java.util.Map;
 
 public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
 
+    Invoice findInvoiceByOrderId(Long orderId);
+
     @Query("SELECT MONTH(i.date) AS month, COUNT(i) AS totalInvoices " +
             "FROM invoices i " +
             "WHERE YEAR(i.date) = YEAR(CURRENT_DATE)  " +
