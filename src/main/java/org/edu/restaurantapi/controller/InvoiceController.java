@@ -71,8 +71,8 @@ public class InvoiceController {
     }
     //
     @GetMapping("/reservations-weekly")
-    public ResponseEntity<?> getReversionByWeek() {
-        var response = invoiceService.getReversionByWeek();
+    public ResponseEntity<?> getReversionByWeek(@RequestParam(value = "branchId", required = false) Long branchId) {
+        var response = invoiceService.getReversionByWeek(branchId);
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
 

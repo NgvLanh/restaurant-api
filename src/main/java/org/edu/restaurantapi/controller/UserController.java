@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -70,7 +71,7 @@ public class UserController {
             Pageable pageable) {
         Page<User> response;
         if (!phoneNumber.isEmpty()) {
-            response = userService.getUserByPhoneNumber(phoneNumber, pageable);
+            response = userService.getUserByPhoneNumber(phoneNumber,0L, pageable);
         } else {
             response = userService.getUsers(pageable);
         }
@@ -166,8 +167,18 @@ public class UserController {
 
     @GetMapping("/employee")
     public ResponseEntity<?> getAllTables(@RequestParam(value = "branch", required = false) Optional<String> branch,
+                                          @RequestParam(value = "phoneNumber", required = false) String phoneNumber,
                                           Pageable pageable) {
-        var response = userService.getEmployee(branch, pageable);
+        Page<User> response;
+        if (phoneNumber.length() == 10) {
+            return ResponseEntity.ok(ApiResponse.SUCCESS(userService.findByPhoneNumberAndBranchId(phoneNumber,Long.parseLong(branch.get()), pageable)));
+        }
+        if (!phoneNumber.isEmpty()) {
+            response = userService.getEmployee(branch, pageable);
+        } else {
+            response = userService.getUserByPhoneNumber(phoneNumber,Long.parseLong(branch.get()), pageable);
+        }
+        response.forEach(res -> res.setPassword(null));
         return ResponseEntity.ok(ApiResponse.SUCCESS(response));
     }
 }
