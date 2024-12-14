@@ -74,8 +74,8 @@ public class InvoiceService {
         return list;
     }
 
-    public List<Object[]> getReversionByWeek() {
-        return invoiceRepository.getWeeklyReservations();
+    public List<Object[]> getReversionByWeek(Long branchId) {
+        return invoiceRepository.getWeeklyReservations(branchId);
     }
 
     public List<Object[]> getMonthlyOrderStatistics() {

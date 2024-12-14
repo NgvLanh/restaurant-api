@@ -19,6 +19,7 @@ import org.edu.restaurantapi.util.PasswordUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -34,6 +35,8 @@ public class AuthenticationService {
     private UserRepository userRepository;
     @Autowired
     private CartRepository cartRepository;
+    @Autowired
+    private CartService cartService;
 
     public AuthenticationResponse authenticated(AuthenticationRequest request) {
         var user = userRepository.findByEmail(request.getEmail())
@@ -103,10 +106,10 @@ public class AuthenticationService {
                     .roles(Set.of("CLIENT"))
                     .build();
             userRepository.save(newUser);
-            newUser.setPassword(null);
             Cart cart = Cart.builder().user(newUser).build();
             cartRepository.save(cart);
             JwtUtil jwtUtil = new JwtUtil();
+            newUser.setPassword(null);
             var token = jwtUtil.generateToken(newUser);
             return AuthenticationResponse
                     .builder()

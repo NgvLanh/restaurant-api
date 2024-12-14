@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.query.Procedure;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -46,12 +47,14 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
                 reservations r
             ON 
                 wd.booking_date = DATE(r.booking_date)
+            AND r.branch_id = :branchId
             GROUP BY 
                 wd.booking_date
             ORDER BY 
                 wd.booking_date;
             """, nativeQuery = true)
-    List<Object[]> getWeeklyReservations();
+    List<Object[]> getWeeklyReservations(@Param("branchId") Long branchId);
+
 
     @Query(value = "SELECT " +
             "    CONCAT(YEAR(CURDATE()), '-', LPAD(month, 2, '0')) AS month, " +

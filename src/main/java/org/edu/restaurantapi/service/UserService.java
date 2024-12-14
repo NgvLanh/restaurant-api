@@ -40,7 +40,7 @@ public class UserService {
     public User createUser(User user) {
         user.setPassword(PasswordUtil.hashPassword(user.getPassword()));
         user.setRoles(Set.of("CLIENT"));
-        User userCreated= userRepository.save(user);
+        User userCreated = userRepository.save(user);
         Cart cart = Cart.builder().user(userCreated).build();
         cartService.createCart(cart);
         return userCreated;
@@ -85,8 +85,12 @@ public class UserService {
         return userRepository.findById(id).orElse(null);
     }
 
-    public Page<User> getUserByPhoneNumber(String phoneNumber, Pageable pageable) {
-        return userRepository.findByPhoneNumberContaining(phoneNumber, pageable);
+    public Page<User> getUserByPhoneNumber(String phoneNumber, Long branchId, Pageable pageable) {
+        return userRepository.findByPhoneNumberContainingAndBranchId(phoneNumber, branchId, pageable);
+    }
+
+    public Page<User> findByPhoneNumberAndBranchId(String phoneNumber, Long branchId, Pageable pageable) {
+        return userRepository.findByPhoneNumberAndBranchId(phoneNumber, branchId, pageable);
     }
 
     public Page<User> getEmployee(Optional<String> branch, Pageable pageable) {
@@ -131,7 +135,8 @@ public class UserService {
 
     public Page<Map<String, Object>> getCountUsersMonth(Pageable pageable) {
         return userRepository.getUserStatsByMonth(pageable);
-}
+    }
+
     public Long getTotalUsers() {
         String roleName = "CLIENT";
         return userRepository.countTotalRegisteredUsers(roleName);
