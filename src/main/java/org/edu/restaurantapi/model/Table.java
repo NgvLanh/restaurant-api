@@ -43,6 +43,6 @@ public class Table {
     Branch branch;
 
     @Builder.Default
-    Boolean isDelete = false;
+    Boolean active = true;
 
 }

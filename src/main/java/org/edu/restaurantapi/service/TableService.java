@@ -33,9 +33,9 @@ public class TableService {
         Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
                 pageable.getPageSize(), Sort.by(Sort.Direction.ASC, "number"));
         if (zoneId == null || zoneId == 0) {
-            return tableRepository.findByIsDeleteFalseAndBranchId(Long.parseLong(branch.get()), pageableSorted);
+            return tableRepository.findByBranchIdAndActiveTrue(Long.parseLong(branch.get()), pageableSorted);
         }
-        return tableRepository.findByIsDeleteFalseAndBranchIdAndZoneId(Long.parseLong(branch.get()), zoneId, pageableSorted);
+        return tableRepository.findByBranchIdAndZoneIdAndActiveTrue(Long.parseLong(branch.get()), zoneId, pageableSorted);
     }
 
     public Table create(TableRequest request) {
@@ -71,16 +71,15 @@ public class TableService {
     }
 
 
-    public Boolean delete(Long id) {
+    public Table delete(Long id) {
         return tableRepository.findById(id).map(t -> {
-            t.setIsDelete(true);
-            tableRepository.save(t);
-            return true;
-        }).orElse(false);
+            t.setActive(false);
+            return tableRepository.save(t);
+        }).orElse(null);
     }
 
     public Boolean findByIsDeleteFalseAndNumberAndBranchId(Integer number, Long branch) {
-        return tableRepository.findByIsDeleteFalseAndNumberAndBranchId(number, branch) != null;
+        return tableRepository.findByNumberAndBranchIdAndActiveTrue(number, branch) != null;
     }
 
     public List<Table> getTablesByBranchId(Optional<Long> branch, LocalDate date) {
@@ -89,7 +88,7 @@ public class TableService {
             table.setReservations(
                     table.getReservations().stream()
                             .filter(reservation -> reservation.getBookingDate().equals(date))
-                            .filter(reservation -> !reservation.getIsDelete())
+                            .filter(reservation -> reservation.getActive())
                             .collect(Collectors.toList())
             );
         }

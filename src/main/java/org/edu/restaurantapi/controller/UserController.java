@@ -71,7 +71,7 @@ public class UserController {
             Pageable pageable) {
         Page<User> response;
         if (!phoneNumber.isEmpty()) {
-            response = userService.getUserByPhoneNumber(phoneNumber,0L, pageable);
+            response = userService.getUserByPhoneNumber(phoneNumber, 0L, pageable);
         } else {
             response = userService.getUsers(pageable);
         }
@@ -97,19 +97,9 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     private ResponseEntity<?> deleteUser(@PathVariable Long id) {
-        try {
-            Boolean response = userService.deleteUser(id);
-            if (response) {
-                return ResponseEntity.ok()
-                        .body(ApiResponse.DELETE("Xoá người dùng thành công"));
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(ApiResponse.NOT_FOUND("Không tìm thấy người dung #:" + id));
-            }
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError()
-                    .body(ApiResponse.SERVER_ERROR(e.getMessage()));
-        }
+            var response = userService.deleteUser(id);
+        return ResponseEntity.ok()
+                .body(ApiResponse.CREATED(response));
     }
 
     @PostMapping("/roles")
@@ -171,14 +161,21 @@ public class UserController {
                                           Pageable pageable) {
         Page<User> response;
         if (phoneNumber.length() == 10) {
-            return ResponseEntity.ok(ApiResponse.SUCCESS(userService.findByPhoneNumberAndBranchId(phoneNumber,Long.parseLong(branch.get()), pageable)));
+            return ResponseEntity.ok(ApiResponse.SUCCESS(userService.findByPhoneNumberAndBranchId(phoneNumber, Long.parseLong(branch.get()), pageable)));
         }
         if (!phoneNumber.isEmpty()) {
             response = userService.getEmployee(branch, pageable);
         } else {
-            response = userService.getUserByPhoneNumber(phoneNumber,Long.parseLong(branch.get()), pageable);
+            response = userService.getUserByPhoneNumber(phoneNumber, Long.parseLong(branch.get()), pageable);
         }
         response.forEach(res -> res.setPassword(null));
         return ResponseEntity.ok(ApiResponse.SUCCESS(response));
+    }
+
+    @GetMapping("/change-role")
+    public ResponseEntity<?> changeRole(@RequestParam(value = "userId", required = false) Integer userId,
+                                        @RequestParam(value = "role", required = false) String role,
+                                        @RequestParam(value = "branchId", required = false) Integer branchId) {
+        return ResponseEntity.ok(ApiResponse.SUCCESS(userService.changeRole(userId, branchId, role)));
     }
 }

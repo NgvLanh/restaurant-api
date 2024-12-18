@@ -56,6 +56,6 @@ public class Branch {
 //    @JsonBackReference
     User user;
 
-    @JsonIgnore
-    Boolean isDelete = false;
+    @Builder.Default
+    Boolean active = true;
 }

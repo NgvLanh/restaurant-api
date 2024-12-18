@@ -32,7 +32,7 @@ public class DiscountService {
                 pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
 
         if (month == null || month.isEmpty()) {
-            return discountRepository.findDiscountsByBranchId(branchId, pageableSorted);
+            return discountRepository.findDiscountsByBranchIdAndActiveTrue(branchId, pageableSorted);
         }
 
         DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -65,30 +65,29 @@ public class DiscountService {
             discount.setDiscountMethod(request.getDiscountMethod() != null ? request.getDiscountMethod() : discount.getDiscountMethod());
             discount.setQuota(request.getQuota() != null ? request.getQuota() : discount.getQuota());
             discount.setValue(request.getValue() != null ? request.getValue() : discount.getValue());
-            discount.setIsDelete(request.getIsDelete() != null ? request.getIsDelete() : discount.getIsDelete());
             return discountRepository.save(discount);
         }).orElse(null);
     }
 
 
-    public Boolean delete(Long id) {
-        if (discountRepository.existsById(id)) {
-            discountRepository.deleteById(id);
-            return true;
-        }
-        return false;
+    public Discount delete(Long id) {
+        System.out.println(id);
+        return discountRepository.findById(id).map(discount -> {
+            discount.setActive(false);
+            return discountRepository.save(discount);
+        }).orElse(null);
     }
 
     public Boolean findByCode(String code) {
-        return discountRepository.findByCodeAndIsDeleteFalse(code) != null;
+        return discountRepository.findByCodeAndActiveTrue(code) != null;
     }
 
     public Boolean findByCodeAndIdNot(String code, Long id) {
-        return discountRepository.findByCodeAndIdNotAndIsDeleteFalse(code, id) != null;
+        return discountRepository.findByCodeAndIdNotAndActiveTrue(code, id) != null;
     }
 
     public Page<Discount> getAllDiscountsByBranchId(Optional<Long> branchId, Pageable pageable) {
-        return discountRepository.findDiscountsByBranchId(branchId.get(), pageable);
+        return discountRepository.findDiscountsByBranchIdAndActiveTrue(branchId.get(), pageable);
     }
 
     public Page<Map<String, Object>> getDiscountStatsByMonth(Pageable pageable) {

@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -78,7 +79,7 @@ public class UserService {
     public Page<User> getUsers(Pageable pageable) {
         Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
                 pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "Id"));
-        return userRepository.findUserByIsDeleteFalse(pageableSorted);
+        return userRepository.findUsersByActiveTrue(pageableSorted);
     }
 
     public User getUser(Long id) {
@@ -86,11 +87,11 @@ public class UserService {
     }
 
     public Page<User> getUserByPhoneNumber(String phoneNumber, Long branchId, Pageable pageable) {
-        return userRepository.findByPhoneNumberContainingAndBranchId(phoneNumber, branchId, pageable);
+        return userRepository.findByPhoneNumberContainingAndBranchIdAndActiveTrue(phoneNumber, branchId, pageable);
     }
 
     public Page<User> findByPhoneNumberAndBranchId(String phoneNumber, Long branchId, Pageable pageable) {
-        return userRepository.findByPhoneNumberAndBranchId(phoneNumber, branchId, pageable);
+        return userRepository.findByPhoneNumberAndBranchIdAndActiveTrue(phoneNumber, branchId, pageable);
     }
 
     public Page<User> getEmployee(Optional<String> branch, Pageable pageable) {
@@ -99,21 +100,20 @@ public class UserService {
         return userRepository.findUsersByBranchAndRole(Long.parseLong(branch.get()), pageableSorted);
     }
 
-    public Boolean deleteUser(Long id) {
-        return userRepository.findById(id).map(user -> {
-            user.setIsDelete(true);
-            userRepository.save(user);
-            return true;
-        }).orElse(false);
+    public User deleteUser(Long id) {
+        return userRepository.findById(id).map(existingUser -> {
+            existingUser.setActive(false);
+            return userRepository.save(existingUser);
+        }).orElse(null);
     }
 
     // check email + phone number
     public Boolean userEmailExists(User user) {
-        return userRepository.findByEmailAndIsDeleteFalse(user.getEmail()).isPresent();
+        return userRepository.findByEmailAndActiveTrue(user.getEmail()).isPresent();
     }
 
     public Boolean userPhoneNumberExists(User user) {
-        return userRepository.findByPhoneNumber(user.getPhoneNumber()).isPresent();
+        return userRepository.findByPhoneNumberAndActiveTrue(user.getPhoneNumber()).isPresent();
     }
 
 //    public Page<User> getUsersByBranch(String branchId, Pageable pageable) {
@@ -125,7 +125,7 @@ public class UserService {
 //    }
 
     public Optional<User> findUserByEmail(String email) {
-        return userRepository.findByEmailAndIsDeleteFalse(email);
+        return userRepository.findByEmailAndActiveTrue(email);
     }
 
     public Optional<User> findUserById(Long userId) {
@@ -143,7 +143,16 @@ public class UserService {
     }
 
     public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email).orElse(null);
+        return userRepository.findByEmailAndActiveTrue(email).orElse(null);
+    }
+
+    public String changeRole(Integer userId, Integer branchId, String role) {
+        if (role.equals("EMPLOYEE")) {
+            userRepository.updateRole(userId, branchId, role);
+        } else if (role.equals("NON_ADMIN")) {
+            userRepository.updateRole(userId, branchId, role);
+        }
+        return "OK";
     }
 }
 

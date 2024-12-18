@@ -28,7 +28,7 @@ public class BranchController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getBranchByUserId(@PathVariable Long id  ) {
+    public ResponseEntity<?> getBranchByUserId(@PathVariable Long id) {
         var response = BranchService.findByUserId(id);
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
@@ -77,11 +77,11 @@ public class BranchController {
         var response = BranchService.deleteBranch(id);
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
+
     @GetMapping("/statistics")
     public ResponseEntity<?> getBranchStatisticsByStatus(Pageable pageable) {
-      var response = BranchService.getBranchStatisticsByStatus(pageable);
+        var response = BranchService.getBranchStatisticsByStatus(pageable);
         return ResponseEntity.ok(ApiResponse.SUCCESS(response));
     }
-
 
 }

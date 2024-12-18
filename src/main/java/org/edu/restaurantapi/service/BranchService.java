@@ -34,9 +34,9 @@ public class BranchService {
         Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
                 pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
         if (name.isPresent()) {
-            return branchRepository.findByNameContainingAndIsDeleteFalse(name.get(), pageableSorted);
+            return branchRepository.findByNameContainingAndActiveTrue(name.get(), pageableSorted);
         } else {
-            return branchRepository.findByIsDeleteFalse(pageable);
+            return branchRepository.findByActiveTrue(pageable);
         }
     }
 
@@ -53,7 +53,6 @@ public class BranchService {
                 .wardName(request.getWardName())
                 .address(request.getAddress())
                 .branchStatus(branchStatusRepository.findById(request.getBranchStatus()).get())
-                .isDelete(false)
                 .build();
         return branchRepository.save(branch);
     }
@@ -75,7 +74,6 @@ public class BranchService {
                 .address(request.getAddress() != null ? request.getAddress() : existingBranch.getAddress())
                 .user(request.getUser() != null ? userRepository.findById(request.getUser()).orElse(existingBranch.getUser()) : existingBranch.getUser())
                 .branchStatus(request.getBranchStatus() != null ? branchStatusRepository.findById(request.getBranchStatus()).orElse(existingBranch.getBranchStatus()) : existingBranch.getBranchStatus())
-                .isDelete(existingBranch.getIsDelete())
                 .build();
 
         return branchRepository.save(branch);
@@ -98,33 +96,32 @@ public class BranchService {
                 .address(request.getAddress() != null ? request.getAddress() : existingBranch.getAddress())
                 .user(request.getUser() != null ? request.getUser() : existingBranch.getUser())
                 .branchStatus(request.getBranchStatus() != null ? request.getBranchStatus() : existingBranch.getBranchStatus())
-                .isDelete(existingBranch.getIsDelete())
                 .build();
 
         return branchRepository.save(branch);
     }
 
-    public Boolean deleteBranch(Long id) {
-        if (branchRepository.existsById(id)) {
-            branchRepository.deleteById(id);
-        }
-        return !branchRepository.existsById(id);
+    public Branch deleteBranch(Long id) {
+       return branchRepository.findById(id).map(branch -> {
+           branch.setActive(false);
+           return branchRepository.save(branch);
+       }).orElse(null);
     }
 
     public Boolean findByName(String name) {
-        return branchRepository.findByNameAndIsDeleteFalse(name) != null;
+        return branchRepository.findByNameAndActiveTrue(name) != null;
     }
 
     public Boolean findByPhoneNumber(String name) {
-        return branchRepository.findByPhoneNumberAndIsDeleteFalse(name) != null;
+        return branchRepository.findByPhoneNumberAndActiveTrue(name) != null;
     }
 
     public Boolean findByNameAndIdNot(String name, Long id) {
-        return branchRepository.findByNameAndIsDeleteFalseAndIdNot(name, id) != null;
+        return branchRepository.findByNameAndActiveTrueAndIdNot(name, id) != null;
     }
 
     public Boolean findByPhoneNumberAndIdNot(String name, Long id) {
-        return branchRepository.findByPhoneNumberAndIsDeleteFalseAndIdNot(name, id) != null;
+        return branchRepository.findByPhoneNumberAndActiveTrueAndIdNot(name, id) != null;
     }
 
     public Page<Map<String, Object>> getBranchStatisticsByStatus(Pageable pageable) {

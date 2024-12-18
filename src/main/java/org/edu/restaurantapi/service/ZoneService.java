@@ -21,7 +21,7 @@ public class ZoneService {
         Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
                 pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
        if (name.isPresent()) {
-           return repository.findByNameContainingAndBranchId(name.get(), branch, pageableSorted);
+           return repository.findByNameContainingAndBranchIdAndActiveTrue(name.get(), branch, pageableSorted);
        }
        return repository.findAll(pageableSorted);
     }
@@ -38,18 +38,18 @@ public class ZoneService {
         }).orElse(null);
     }
 
-    public Boolean delete(Long id) {
-        if (repository.existsById(id)) {
-            repository.deleteById(id);
-        }
-        return !repository.existsById(id);
+    public Zone delete(Long id) {
+        return repository.findById(id).map(b -> {
+            b.setActive(false);
+            return repository.save(b);
+        }).orElse(null);
     }
 
     public Boolean findByName(String name) {
-        return repository.findByName(name) != null;
+        return repository.findByNameAndActiveTrue(name) != null;
     }
 
     public Boolean findByNameAndIdNot(String name, Long id) {
-        return repository.findByNameAndIdNot(name, id) != null;
+        return repository.findByNameAndIdNotAndActiveTrue(name, id) != null;
     }
 }

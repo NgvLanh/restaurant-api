@@ -36,4 +36,7 @@ public class OrderItem {
     @JoinColumn(name = "dish_id")
     Dish dish;
 
+    @Builder.Default
+    Boolean active = true;
+
 }

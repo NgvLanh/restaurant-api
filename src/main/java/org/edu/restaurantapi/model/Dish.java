@@ -38,6 +38,6 @@ public class Dish {
     @JsonBackReference
     Branch branch;
 
-    @JsonIgnore
-    Boolean isDelete = false;
+    @Builder.Default
+    Boolean active = true;
 }

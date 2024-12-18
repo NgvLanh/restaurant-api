@@ -11,21 +11,21 @@ import java.util.List;
 import java.util.Map;
 
 public interface BranchRepository extends JpaRepository<Branch, Long> {
-   Page<Branch> findByNameContainingAndIsDeleteFalse(String name, Pageable pageable);
+   Page<Branch> findByNameContainingAndActiveTrue(String name, Pageable pageable);
 
-   Page<Branch> findByIsDeleteFalse(Pageable pageable);
+   Page<Branch> findByActiveTrue(Pageable pageable);
 
-   Branch findByNameAndIsDeleteFalse(String name);
+   Branch findByNameAndActiveTrue(String name);
 
-   Branch findByPhoneNumberAndIsDeleteFalse(String name);
+   Branch findByPhoneNumberAndActiveTrue(String name);
 
-   Branch findByNameAndIsDeleteFalseAndIdNot(String name, Long id);
+   Branch findByNameAndActiveTrueAndIdNot(String name, Long id);
 
-   Branch findByPhoneNumberAndIsDeleteFalseAndIdNot(String name, Long id);
+   Branch findByPhoneNumberAndActiveTrueAndIdNot(String name, Long id);
   
    @Query("SELECT bs.name AS BranchStatus, COUNT(b.id) AS TotalBranches " +
            "FROM branches b JOIN b.branchStatus bs " +
-           "WHERE b.isDelete = false " +
+           "WHERE b.active = true " +
            "GROUP BY bs.name " +
            "ORDER BY TotalBranches DESC")
    Page<Map<String, Object>> getBranchStatisticsByStatus(Pageable pageable);

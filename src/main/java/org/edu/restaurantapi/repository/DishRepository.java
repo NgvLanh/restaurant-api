@@ -11,16 +11,16 @@ import java.util.Optional;
 
 public interface DishRepository extends JpaRepository<Dish, Long> {
 
-    Page<Dish> findByBranchIdAndNameContainingAndIsDeleteFalse(Long branchId, String name, Pageable pageable);
+    Page<Dish> findByBranchIdAndNameContainingAndActiveTrue(Long branchId, String name, Pageable pageable);
 
-    Dish findByNameAndIsDeleteFalse(String name);
+    Dish findByNameAndActiveTrue(String name);
 
-    Dish findByNameAndIdNotAndIsDeleteFalse(String name, Long id);
+    Dish findByNameAndIdNotAndActiveTrue(String name, Long id);
 
     Page<Dish> findByBranchIdAndCategoryId(Long branchId, Long categoryId, Pageable pageable);
 
-    Page<Dish> findByBranchIdAndIsDeleteFalse(Long branchId, Pageable pageableSorted);
+    Page<Dish> findByBranchIdAndActiveTrue(Long branchId, Pageable pageableSorted);
 
-    @Query("SELECT COUNT(d) FROM dishes d WHERE d.isDelete = false")
+    @Query("SELECT COUNT(d) FROM dishes d WHERE d.active = true")
     long countTotalDishes();
 }

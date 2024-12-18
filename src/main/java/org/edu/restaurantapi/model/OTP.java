@@ -3,14 +3,12 @@ package org.edu.restaurantapi.model;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
 
+@Builder
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
@@ -36,4 +34,6 @@ public class OTP {
     @Column(name = "expires_at")
     LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(5);
 
+    @Builder.Default
+    Boolean active = true;
 }

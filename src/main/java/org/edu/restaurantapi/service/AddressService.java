@@ -17,13 +17,7 @@ public class AddressService {
     private AddressRepository addressRepository;
 
     public Address createAddress(Address address){
-//        Address addressExists = addressRepository
-//                .findAddressByProvinceIdAndDistrictIdAndWardId(address.getProvinceId(),
-//                address.getDistrictId(), address.getWardId());
-//        if (addressExists == null) {
             return addressRepository.save(address);
-//        }
-//        return null;
     }
 
     public Page<Address> getAddresses(Pageable pageable) {
@@ -63,7 +57,7 @@ public class AddressService {
     }
 
     public List<Address> getAddressByUserId(Long userId) {
-        return addressRepository.findAddressByUserId(userId);
+        return addressRepository.findAddressByUserIdAndActiveTrue(userId);
     }
 
 }

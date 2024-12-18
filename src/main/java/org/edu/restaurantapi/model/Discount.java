@@ -56,6 +56,6 @@ public class Discount {
     Branch branch;
 
     @Builder.Default
-    Boolean isDelete = false;
+    Boolean active = true;
 
 }

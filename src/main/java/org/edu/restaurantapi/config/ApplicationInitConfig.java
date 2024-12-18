@@ -23,14 +23,13 @@ public class ApplicationInitConfig {
     @Bean
     ApplicationRunner applicationRunner(UserRepository userRepository) {
         return args -> {
-            if (userRepository.findByEmail(email).isEmpty()) {
+            if (userRepository.findByEmailAndActiveTrue(email).isEmpty()) {
                 User user = User.builder()
                         .fullName(adminName)
                         .phoneNumber("0000000000")
                         .email(email)
                         .password(PasswordUtil.hashPassword(password))
                         .roles(Set.of(adminName))
-                        .isDelete(true)
                         .build();
                 userRepository.save(user);
                 log.info("ADMIN ACCOUNT ==> EMAIL: admin@gmail.com - PASSWORD: admin");

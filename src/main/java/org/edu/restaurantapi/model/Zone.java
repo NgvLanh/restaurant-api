@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+@Builder
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
@@ -28,6 +29,8 @@ public class Zone {
     @JsonBackReference
     Branch branch;
 
+    @Builder.Default
+    Boolean active = true;
 
 }
 

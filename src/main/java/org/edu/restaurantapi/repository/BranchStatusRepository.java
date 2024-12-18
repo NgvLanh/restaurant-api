@@ -7,9 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BranchStatusRepository extends JpaRepository<BranchStatus, Long> {
 
-    Page<BranchStatus> findByNameContaining(String name, Pageable pageable);
+    Page<BranchStatus> findByNameContainingAndActiveTrue(String name, Pageable pageable);
 
-    BranchStatus findByName(String name); 
+    BranchStatus findByNameAndActiveTrue(String name);
 
-    BranchStatus findByNameAndIdNot(String name, Long id);
+    BranchStatus findByNameAndIdNotAndActiveTrue(String name, Long id);
 }

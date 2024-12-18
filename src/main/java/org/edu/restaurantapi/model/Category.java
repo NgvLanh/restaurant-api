@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+@Builder
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
@@ -21,4 +22,7 @@ public class Category {
     String image;
 
     String description;
+
+    @Builder.Default
+    Boolean active = true;
 }

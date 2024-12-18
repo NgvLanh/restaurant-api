@@ -67,7 +67,7 @@ public class CartItemService {
     }
 
     public List<CartItem> updateSelectAllCartItem(Long userId, Boolean status) {
-        Optional<Cart> cart = cartRepository.findCartByUserId(userId);
+        Optional<Cart> cart = cartRepository.findCartByUserIdAndActiveTrue(userId);
         List<CartItem> cartItem = cartItemRepository.findCartItemByCartId(cart.get().getId());
         cartItem.forEach(e->{
             e.setStatus(status);
@@ -86,7 +86,7 @@ public class CartItemService {
     }
 
     public CartItem addDishToCart(Long userId, Long dishId, Integer quantity) {
-        Optional<Cart> cart = cartRepository.findCartByUserId(userId);
+        Optional<Cart> cart = cartRepository.findCartByUserIdAndActiveTrue(userId);
         Optional<Dish> dish = dishRepository.findById(dishId);
         List<CartItem> cartItems = cartItemRepository.findCartItemByCartId(cart.get().getId());
         for (CartItem existingCartItem : cartItems) {

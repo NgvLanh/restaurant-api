@@ -81,4 +81,10 @@ public class InvoiceController {
         var response = invoiceService.getMonthlyOrderStatistics();
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
+
+    @GetMapping("/daily-orders")
+    public ResponseEntity<?> getDailyOrderStatistics() {
+        var response = invoiceService.getDailyOrderStatistics();
+        return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
+    }
 }

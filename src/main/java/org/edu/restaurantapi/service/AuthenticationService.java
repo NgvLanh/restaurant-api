@@ -39,7 +39,7 @@ public class AuthenticationService {
     private CartService cartService;
 
     public AuthenticationResponse authenticated(AuthenticationRequest request) {
-        var user = userRepository.findByEmail(request.getEmail())
+        var user = userRepository.findByEmailAndActiveTrue(request.getEmail())
                 .orElse(null);
         if (user != null) {
             var result = PasswordUtil.checkPassword(request.getPassword(), user.getPassword());
@@ -81,7 +81,7 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticatedWithGoogle(AuthenticationGoogleRequest request) {
-        var user = userRepository.findByEmail(request.getEmail())
+        var user = userRepository.findByEmailAndActiveTrue(request.getEmail())
                 .orElse(null);
         if (user != null) {
             var result = PasswordUtil.checkPassword(request.getGoogleId(), user.getPassword());

@@ -33,7 +33,7 @@ public class AddressController {
                     .body(ApiResponse.CREATED(response));
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
-                    .body(ApiResponse.SERVER_ERROR("Created Address failed: " + e.getMessage()));
+                    .body(ApiResponse.SERVER_ERROR("Tạo địa chỉ thất bại"));
         }
 
     }
@@ -67,7 +67,7 @@ public class AddressController {
                     .body(ApiResponse.SUCCESS(response));
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
-                    .body(ApiResponse.SERVER_ERROR("Updated Address failed: " + e.getMessage()));
+                    .body(ApiResponse.SERVER_ERROR("Cập nhật địa chỉ thất bại: " + e.getMessage()));
         }
     }
 
