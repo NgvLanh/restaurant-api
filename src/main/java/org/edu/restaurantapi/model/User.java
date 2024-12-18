@@ -1,5 +1,6 @@
 package org.edu.restaurantapi.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
@@ -38,7 +39,7 @@ public class User {
     @Column(unique = true)
     String email;
 
-//    @NotBlank(message = "Mật khẩu không được để trống")
+    //    @NotBlank(message = "Mật khẩu không được để trống")
 //    @Size(min = 6, message = "Mật khẩu phải có ít nhất 6 ký tự")
     String password;
 
@@ -50,6 +51,7 @@ public class User {
 
     @ManyToOne
     @JoinColumn(name = "branch_id")
+    @JsonBackReference
     Branch branch;
 
     @Builder.Default
