@@ -53,9 +53,9 @@ email:
   owner: ${EMAIL}
 
 # level log
-logging:
-  level:
-    root: ERROR
+#logging:
+#  level:
+#    root: ERROR
 
 
 
