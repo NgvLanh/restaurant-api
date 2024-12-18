@@ -68,6 +68,8 @@ public class UserService {
                     != null ? updatedUser.getFullName() : existingUser.getFullName());
             existingUser.setPhoneNumber(updatedUser.getPhoneNumber()
                     != null ? updatedUser.getPhoneNumber() : existingUser.getPhoneNumber());
+            existingUser.setEmail(updatedUser.getEmail()
+                    != null ? updatedUser.getEmail() : existingUser.getEmail());
             existingUser.setImage(updatedUser.getImage()
                     != null ? updatedUser.getImage() : existingUser.getImage());
             existingUser.setBranch(updatedUser.getBranch() != null

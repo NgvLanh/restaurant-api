@@ -136,9 +136,9 @@ public class ReservationService {
                 "        <div class='footer'>" +
                 "            <p>Trân trọng,</p>" +
                 "            <p><strong>FooDY</strong></p>" +
-                "            <p>Địa chỉ chi nhánh: [Địa chỉ Chi nhánh]</p>" +
-                "            <p>Hotline: 1800-1234-567</p>" +
-                "            <p>Email: <a href='mailto:[email@example.com]'>[email@example.com]</a></p>" +
+                "            <p>Địa chỉ chi nhánh: " + branch.getName() + "</p>" +
+                "            <p>Hotline: " + branch.getPhoneNumber() + "</p>" +
+//                "            <p>Email: <a href='mailto:[email@example.com]'>[email@example.com]</a></p>" +
                 "        </div>" +
                 "    </div>" +
                 "</body>" +

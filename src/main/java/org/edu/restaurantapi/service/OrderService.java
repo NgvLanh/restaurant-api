@@ -97,7 +97,7 @@ public class OrderService {
         Address address = addressRepository.findById(request.getAddressId()).orElse(null);
         Optional<Discount> discount = discountRepository.findById(request.getDiscountId() == null ? 0 : request.getDiscountId());
         if (discount.isPresent()) {
-            discount.get().setQuantity(discount.get().getQuantity() -1);
+            discount.get().setQuantity(discount.get().getQuantity() - 1);
             discountRepository.save(discount.get());
         }
 
@@ -108,7 +108,7 @@ public class OrderService {
                 .user(user)
                 .orderStatus(request.getOrderStatus())
                 .total(request.getTotal())
-                .paymentStatus(true)
+                .paymentStatus(false)
                 .build();
         Order response = orderRepository.save(requestOrder);
         Optional<Cart> cart = cartRepository.findCartByUserIdAndActiveTrue(user.getId());
@@ -276,6 +276,7 @@ public class OrderService {
 //        table.setTableStatus(true);
         Reservation reservation = reservationRepository.findReservationsByOrderIdAndActiveTrue(order.getId());
         reservation.setEndTime(LocalTime.now());
+        reservation.setActive(false);
         reservationRepository.save(reservation);
         tableRepository.save(table);
         if (order.getOrderStatus() == OrderStatus.READY_TO_SERVE) {
