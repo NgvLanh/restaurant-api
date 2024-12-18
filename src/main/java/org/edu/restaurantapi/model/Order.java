@@ -66,7 +66,7 @@ public class Order {
     Boolean onLineOrder = false;
 
     @Builder.Default
-    Boolean isDelete = false;
+    Boolean active = true;
 
     @Builder.Default
     Boolean paymentStatus = false;

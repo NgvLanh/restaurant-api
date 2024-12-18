@@ -81,4 +81,8 @@ public class InvoiceService {
     public List<Object[]> getMonthlyOrderStatistics() {
         return invoiceRepository.findMonthlyOrderStatistics();
     }
+
+    public List<Object[]> getDailyOrderStatistics() {
+        return invoiceRepository.findDailyOrderStatistics();
+    }
 }

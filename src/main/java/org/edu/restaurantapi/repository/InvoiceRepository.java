@@ -79,4 +79,18 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
             "ORDER BY " +
             "    month", nativeQuery = true)
     List<Object[]> findMonthlyOrderStatistics();
+
+    @Query(value = "SELECT " +
+            "    DATE(o.time) AS day, " +
+            "    COALESCE(COUNT(CASE WHEN o.address_id IS NOT NULL AND o.table_id IS NULL THEN 1 END), 0) AS orders_with_address, " +
+            "    COALESCE(COUNT(CASE WHEN o.address_id IS NULL AND o.table_id IS NOT NULL THEN 1 END), 0) AS orders_with_table, " +
+            "    COALESCE(SUM(o.total), 0) AS total " +
+            "FROM " +
+            "    orders o " +
+            "WHERE " +
+            "    DATE(o.time) = CURDATE() " +
+            "GROUP BY " +
+            "    DATE(o.time)", nativeQuery = true)
+    List<Object[]> findDailyOrderStatistics();
+
 }

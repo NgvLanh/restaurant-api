@@ -11,9 +11,9 @@ import java.util.List;
 public class CorsConfig {
 
     private final String[] origins = {
-            "http://localhost:3000",
-            "http://localhost:5000",
+            "https://dx9zddr6-4000.asse.devtunnels.ms",
             "http://localhost:4000",
+            "https://ac5a-2402-800-63b5-d781-cc57-e27b-b580-7153.ngrok-free.app",
     };
 
     private final String[] methods = {

@@ -31,9 +31,9 @@ public class DishService {
         Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
                 pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
         if (name.isPresent()) {
-            return repository.findByBranchIdAndNameContainingAndIsDeleteFalse(branch.get(), name.get(), pageableSorted);
+            return repository.findByBranchIdAndNameContainingAndActiveTrue(branch.get(), name.get(), pageableSorted);
         }
-        return repository.findByBranchIdAndIsDeleteFalse(branch.get(), pageableSorted);
+        return repository.findByBranchIdAndActiveTrue(branch.get(), pageableSorted);
     }
 
     public Dish create(Dish request) {
@@ -55,20 +55,19 @@ public class DishService {
         }).orElse(null);
     }
 
-    public Boolean delete(Long id) {
-        return repository.findById(id).map(b -> {
-            b.setIsDelete(true);
-            repository.save(b);
-            return true;
-        }).orElse(false);
+    public Dish delete(Long id) {
+        return repository.findById(id).map(d -> {
+            d.setActive(false);
+            return repository.save(d);
+        }).orElse(null);
     }
 
     public Boolean findByName(String name) {
-        return repository.findByNameAndIsDeleteFalse(name) != null;
+        return repository.findByNameAndActiveTrue(name) != null;
     }
 
     public Boolean findByNameAndIdNot(String name, Long id) {
-        return repository.findByNameAndIdNotAndIsDeleteFalse(name, id) != null;
+        return repository.findByNameAndIdNotAndActiveTrue(name, id) != null;
     }
 
     public Page<Dish> getDishesByCategoryId(Long branchId, Long categoryId, Pageable pageable) {

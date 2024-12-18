@@ -27,7 +27,7 @@ public class CategoryService {
         Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
                 pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
         if (name.isPresent()) {
-            return categoryRepository.findByNameContaining(name.get(), pageableSorted);
+            return categoryRepository.findByNameContainingAndActiveTrue(name.get(), pageableSorted);
         }
         return categoryRepository.findAll(pageableSorted);
 
@@ -51,18 +51,18 @@ public class CategoryService {
     }
 
 
-    public Boolean delete(Long id) {
-        if (categoryRepository.existsById(id)) {
-            categoryRepository.deleteById(id);
-        }
-        return !categoryRepository.existsById(id);
+    public Category delete(Long id) {
+        return categoryRepository.findById(id).map(c -> {
+            c.setActive(false);
+            return categoryRepository.save(c);
+        }).orElse(null);
     }
 
     public Boolean findByName(String name) {
-        return categoryRepository.findByName(name) != null;
+        return categoryRepository.findByNameAndActiveTrue(name) != null;
     }
 
     public Boolean findByNameAndIdNot(String name, Long id) {
-        return categoryRepository.findByNameAndIdNot(name, id) != null;
+        return categoryRepository.findByNameAndIdNotAndActiveTrue(name, id) != null;
     }
 }

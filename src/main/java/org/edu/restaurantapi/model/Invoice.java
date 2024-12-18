@@ -35,4 +35,6 @@ public class Invoice {
     @JoinColumn(name = "branch_id")
     Branch branch;
 
+    @Builder.Default
+    Boolean active = true;
 }

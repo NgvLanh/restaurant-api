@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+@Builder
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
@@ -51,4 +52,7 @@ public class Address {
     @JoinColumn(name = "user_id")
     @JsonBackReference
     User user;
+
+    @Builder.Default
+    Boolean active = true;
 }

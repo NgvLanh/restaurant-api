@@ -60,7 +60,7 @@ public class EmailService {
     }
 
     public Boolean resetPassword(ResetPasswordRequest request) {
-        User user = userRepository.findByEmailAndIsDeleteFalse(request.getEmail()).orElse(null);
+        User user = userRepository.findByEmailAndActiveTrue(request.getEmail()).orElse(null);
         if (user != null) {
             String hashedPassword = PasswordUtil.hashPassword(request.getNewPassword());
             user.setPassword(hashedPassword);

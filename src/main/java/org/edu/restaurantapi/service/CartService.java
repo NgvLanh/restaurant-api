@@ -36,6 +36,6 @@ public class CartService {
     }
 
     public Optional<Cart> findByCartUserId(Long userId) {
-        return cartRepository.findCartByUserId(userId);
+        return cartRepository.findCartByUserIdAndActiveTrue(userId);
     }
 }

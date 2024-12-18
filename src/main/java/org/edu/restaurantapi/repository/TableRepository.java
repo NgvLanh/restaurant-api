@@ -12,14 +12,14 @@ import java.util.List;
 
 public interface TableRepository extends JpaRepository<Table, Long> {
 
-    @Query("SELECT MAX(t.number) FROM tables t WHERE t.isDelete = false AND t.branch.id = :branch")
+    @Query("SELECT MAX(t.number) FROM tables t WHERE t.active = true AND t.branch.id = :branch")
     Integer findMaxNumberByBranchId(Long branch);
 
-    Table findByIsDeleteFalseAndNumberAndBranchId(Integer number, Long branch);
+    Table findByNumberAndBranchIdAndActiveTrue(Integer number, Long branch);
 
-    Page<Table> findByIsDeleteFalseAndBranchId(Long l, Pageable pageableSorted);
+    Page<Table> findByBranchIdAndActiveTrue(Long l, Pageable pageableSorted);
 
-    Page<Table> findByIsDeleteFalseAndBranchIdAndZoneId(Long l, Long z, Pageable pageableSorted);
+    Page<Table> findByBranchIdAndZoneIdAndActiveTrue(Long l, Long z, Pageable pageableSorted);
 //    @Query(value = "SELECT DISTINCT t.* " +
 //            "FROM tables t " +
 //            "LEFT JOIN reservations r " +
@@ -30,7 +30,7 @@ public interface TableRepository extends JpaRepository<Table, Long> {
 
     @Query("SELECT t FROM tables t " +
             "LEFT JOIN FETCH t.reservations r " +
-            "WHERE t.isDelete = FALSE " +
+            "WHERE t.active = true " +
             "AND t.branch.id = :branchId")
     List<Table> findAllWithReservationsByBranchId(Long branchId);
 

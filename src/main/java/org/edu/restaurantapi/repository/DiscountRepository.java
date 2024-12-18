@@ -17,13 +17,13 @@ import java.util.Map;
 @Repository
 public interface DiscountRepository extends JpaRepository<Discount, Long> {
 
-    Page<Discount> findByCodeContainingAndIsDeleteFalse(String code, Pageable pageable);
+    Page<Discount> findByCodeContainingAndActiveTrue(String code, Pageable pageable);
 
-    Discount findByCodeAndIsDeleteFalse(String code);
+    Discount findByCodeAndActiveTrue(String code);
 
-    Discount findByCodeAndIdNotAndIsDeleteFalse(String code, Long id);
+    Discount findByCodeAndIdNotAndActiveTrue(String code, Long id);
 
-    Page<Discount> findDiscountsByBranchId(Long branchId, Pageable pageable);
+    Page<Discount> findDiscountsByBranchIdAndActiveTrue(Long branchId, Pageable pageable);
 
     @Query("SELECT MONTH(d.createDate) AS month, COUNT(d) AS discountCount " +
             "FROM discounts d " +

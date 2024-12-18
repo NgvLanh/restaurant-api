@@ -7,9 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ZoneRepository extends JpaRepository<Zone, Long> {
 
-    Page<Zone> findByNameContainingAndBranchId(String name, Long branch, Pageable pageable);
+    Page<Zone> findByNameContainingAndBranchIdAndActiveTrue(String name, Long branch, Pageable pageable);
 
-    Zone findByName(String name);
+    Zone findByNameAndActiveTrue(String name);
 
-    Zone findByNameAndIdNot(String name, Long id);
+    Zone findByNameAndIdNotAndActiveTrue(String name, Long id);
 }

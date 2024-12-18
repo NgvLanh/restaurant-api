@@ -45,13 +45,14 @@ public class User {
     @ElementCollection(fetch = FetchType.EAGER)
     Set<String> roles;
 
-    @JsonIgnore
-    Boolean isDelete = false;
-
-    LocalDate createDate = LocalDate.now();
+    @Builder.Default
+    LocalDate createAt = LocalDate.now();
 
     @ManyToOne
     @JoinColumn(name = "branch_id")
     Branch branch;
+
+    @Builder.Default
+    Boolean active = true;
 
 }

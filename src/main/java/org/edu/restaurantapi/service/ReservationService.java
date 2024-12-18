@@ -44,7 +44,7 @@ public class ReservationService {
     private OrderRepository orderRepository;
 
     public List<Reservation> getAllReservations(String branch) {
-        return reservationRepository.findByBranchId(Long.parseLong(branch));
+        return reservationRepository.findByBranchIdAndActiveTrue(Long.parseLong(branch));
     }
 
     public Reservation createReservation(ReservationOnlineRequest request) throws MessagingException {
@@ -157,7 +157,7 @@ public class ReservationService {
         List<Reservation> reservations = reservationRepository.findAllById(Arrays.asList(request.getReservationIds()));
         reservations.forEach(r -> {
             r.setCancelReason(request.getReason());
-            r.setIsDelete(true);
+            r.setActive(false);
             r.getOrder().setCancelReason(request.getReason());
             r.getOrder().setOrderStatus(OrderStatus.CANCELLED);
             orderRepository.save(r.getOrder());
@@ -229,7 +229,7 @@ public class ReservationService {
     }
 
     public Page<Reservation> getAllCancelReservations(String branch, Pageable pageable) {
-        return reservationRepository.findByBranchIdAndCancelReasonIsNotNull(Long.parseLong(branch), pageable);
+        return reservationRepository.findByBranchIdAndCancelReasonIsNotNullAndActiveTrue(Long.parseLong(branch), pageable);
     }
 
     public Reservation createReservationOffline(ReserTableOffLineRequest request) {

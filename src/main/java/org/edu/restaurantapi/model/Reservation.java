@@ -57,5 +57,5 @@ public class Reservation {
     String cancelReason;
 
     @Builder.Default
-    Boolean isDelete = false;
+    Boolean active = true;
 }

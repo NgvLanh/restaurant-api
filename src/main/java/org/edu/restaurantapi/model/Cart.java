@@ -20,4 +20,6 @@ public class Cart {
     @JoinColumn(name = "user_id")
     User user;
 
+    @Builder.Default
+    Boolean active = true;
 }

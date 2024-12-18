@@ -14,11 +14,11 @@ import java.util.List;
 
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
-    List<Reservation> findByBranchId(Long branch);
+    List<Reservation> findByBranchIdAndActiveTrue(Long branch);
 
-    Reservation findReservationsByOrderId(Long orderId);
+    Reservation findReservationsByOrderIdAndActiveTrue(Long orderId);
 
-    Page<Reservation> findByBranchIdAndCancelReasonIsNotNull(Long branch, Pageable pageable);
+    Page<Reservation> findByBranchIdAndCancelReasonIsNotNullAndActiveTrue(Long branch, Pageable pageable);
 
 //    @Query("SELECT CASE WHEN COUNT(r) > 0 THEN TRUE ELSE FALSE END " +
 //            "FROM reservations r " +

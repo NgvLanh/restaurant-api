@@ -60,34 +60,34 @@ public class OrderService {
         Pageable pageableSorted = PageRequest.of(pageable.getPageNumber(),
                 pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
         if (branchId.isEmpty() && time.isEmpty() && orderStatus.isEmpty()) {
-            return orderRepository.findByIsDeleteFalseAndPaymentStatusTrue(pageableSorted);
+            return orderRepository.findByPaymentStatusTrueAndActiveTrue(pageableSorted);
         }
         if (branchId.isPresent() && time.isPresent() && orderStatus.isPresent()) {
-            return orderRepository.findByIsDeleteFalseAndBranchIdAndTimeAndOrderStatusAndPaymentStatusTrue(
+            return orderRepository.findByBranchIdAndTimeAndOrderStatusAndPaymentStatusTrueAndActiveTrue(
                     branchId.get(), time.get(), orderStatus.get(), pageableSorted);
         }
         if (branchId.isPresent() && orderStatus.isPresent()) {
-            return orderRepository.findByIsDeleteFalseAndBranchIdAndOrderStatusAndPaymentStatusTrue(
+            return orderRepository.findByBranchIdAndOrderStatusAndPaymentStatusTrueAndActiveTrue(
                     branchId.get(), orderStatus.get(), pageableSorted);
         }
         if (branchId.isPresent() && time.isPresent()) {
-            return orderRepository.findByIsDeleteFalseAndBranchIdAndTimeAndPaymentStatusTrue(
+            return orderRepository.findByBranchIdAndTimeAndPaymentStatusTrueAndActiveTrue(
                     branchId.get(), time.get(), pageableSorted);
         }
         if (time.isPresent() && orderStatus.isPresent()) {
-            return orderRepository.findByIsDeleteFalseAndTimeAndOrderStatusAndPaymentStatusTrue(
+            return orderRepository.findByTimeAndOrderStatusAndPaymentStatusTrueAndActiveTrue(
                     time.get(), orderStatus.get(), pageableSorted);
         }
         if (branchId.isPresent()) {
-            return orderRepository.findByIsDeleteFalseAndBranchIdAndPaymentStatusTrue(branchId.get(), pageableSorted);
+            return orderRepository.findByBranchIdAndPaymentStatusTrueAndActiveTrue(branchId.get(), pageableSorted);
         }
         if (time.isPresent()) {
-            return orderRepository.findByIsDeleteFalseAndTimeAndPaymentStatusTrue(time.get(), pageableSorted);
+            return orderRepository.findByTimeAndPaymentStatusTrueAndActiveTrue(time.get(), pageableSorted);
         }
         if (orderStatus.isPresent()) {
-            return orderRepository.findByIsDeleteFalseAndOrderStatusAndPaymentStatusTrue(orderStatus.get(), pageableSorted);
+            return orderRepository.findByOrderStatusAndPaymentStatusTrueAndActiveTrue(orderStatus.get(), pageableSorted);
         }
-        return orderRepository.findByIsDeleteFalseAndPaymentStatusTrue(pageableSorted);
+        return orderRepository.findByPaymentStatusTrueAndActiveTrue(pageableSorted);
     }
 
 
@@ -111,7 +111,7 @@ public class OrderService {
                 .paymentStatus(true)
                 .build();
         Order response = orderRepository.save(requestOrder);
-        Optional<Cart> cart = cartRepository.findCartByUserId(user.getId());
+        Optional<Cart> cart = cartRepository.findCartByUserIdAndActiveTrue(user.getId());
         List<CartItem> items = cartItemRepository.findCartItemByCartId(cart.get().getId());
         items.forEach(e -> {
             OrderItem orderItem = OrderItem
@@ -174,10 +174,7 @@ public class OrderService {
     }
 
     public Boolean delete(Long id) {
-        return orderRepository.findById(id).map(o -> {
-            o.setIsDelete(true);
-            return true;
-        }).orElse(false);
+       return null;
     }
 
     public Long getTotalOrder() {
@@ -208,9 +205,9 @@ public class OrderService {
 
     public List<Order> getAllOrdersByUserId(Optional<Long> branchId, Optional<Long> userId, Optional<OrderStatus> orderStatus) {
         if (orderStatus.isPresent() && orderStatus.get() == OrderStatus.ALL) {
-            return orderRepository.findOrdersByBranchIdAndUserIdAndPaymentStatusTrue(branchId.get(), userId.get());
+            return orderRepository.findOrdersByBranchIdAndUserIdAndPaymentStatusTrueAndActiveTrue(branchId.get(), userId.get());
         }
-        return orderRepository.findOrdersByBranchIdAndUserIdAndOrderStatusAndIsDeleteFalseAndPaymentStatusTrue(branchId.get(), userId.get(), orderStatus.get());
+        return orderRepository.findOrdersByBranchIdAndUserIdAndOrderStatusAndPaymentStatusTrue(branchId.get(), userId.get(), orderStatus.get());
     }
 
     public Order cancelOrder(Long orderId, Optional<String> reason) {
@@ -240,7 +237,7 @@ public class OrderService {
         Date startOfDay = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Date endOfDay = Date.from(localDate.atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant());
 
-        return orderRepository.findOrdersByBranchIdAndOrderStatusAndTimeBetweenAndAddressIdIsNull(
+        return orderRepository.findOrdersByBranchIdAndOrderStatusAndTimeBetweenAndAddressIdIsNullAndActiveTrue(
                 branchId.get(),
                 OrderStatus.READY_TO_SERVE,
                 startOfDay,
@@ -250,7 +247,7 @@ public class OrderService {
 
 
     public Order createOrderManual(OrderManualRequest request) {
-        User user = userRepository.findByPhoneNumber(request.getPhoneNumber()).orElse(null);
+        User user = userRepository.findByPhoneNumberAndActiveTrue(request.getPhoneNumber()).orElse(null);
 //        request.getTable().setTableStatus(false);
         tableRepository.save(request.getTable());
         Order order = Order
@@ -260,7 +257,6 @@ public class OrderService {
                 .fullName(request.getFullName())
                 .table(request.getTable())
                 .phoneNumber(request.getPhoneNumber())
-                .isDelete(false)
                 .total(0.0)
                 .time(new Date())
                 .orderStatus(OrderStatus.READY_TO_SERVE)
@@ -278,8 +274,7 @@ public class OrderService {
         });
         Table table = order.getTable();
 //        table.setTableStatus(true);
-        Reservation reservation = reservationRepository.findReservationsByOrderId(order.getId());
-        reservation.setIsDelete(true);
+        Reservation reservation = reservationRepository.findReservationsByOrderIdAndActiveTrue(order.getId());
         reservation.setEndTime(LocalTime.now());
         reservationRepository.save(reservation);
         tableRepository.save(table);
