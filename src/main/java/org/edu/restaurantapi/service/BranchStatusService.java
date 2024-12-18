@@ -25,7 +25,7 @@ public class BranchStatusService {
         if (name.isPresent()) {
             return repository.findByNameContainingAndActiveTrue(name.get(), pageableSorted);
         } else {
-            return repository.findAll(pageable);
+            return repository.findBranchStatusByActiveTrue(pageable);
         }
     }
 

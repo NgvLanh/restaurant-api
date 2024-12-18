@@ -29,7 +29,7 @@ public class CategoryService {
         if (name.isPresent()) {
             return categoryRepository.findByNameContainingAndActiveTrue(name.get(), pageableSorted);
         }
-        return categoryRepository.findAll(pageableSorted);
+        return categoryRepository.findByActiveTrue(pageableSorted);
 
     }
 

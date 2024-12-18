@@ -16,8 +16,8 @@ public class AddressService {
     @Autowired
     private AddressRepository addressRepository;
 
-    public Address createAddress(Address address){
-            return addressRepository.save(address);
+    public Address createAddress(Address address) {
+        return addressRepository.save(address);
     }
 
     public Page<Address> getAddresses(Pageable pageable) {
@@ -25,8 +25,8 @@ public class AddressService {
     }
 
     public Address updateAddress(Long addressId, Address updatedAddress) {
-        var response = addressRepository.findAll();
-        response.forEach(e->{
+        var response = addressRepository.findAddressByUserIdAndActiveTrue(addressId);
+        response.forEach(e -> {
             e.setDefaultAddress(false);
             addressRepository.save(e);
         });
