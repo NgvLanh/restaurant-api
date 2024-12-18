@@ -23,7 +23,7 @@ public class ZoneService {
        if (name.isPresent()) {
            return repository.findByNameContainingAndBranchIdAndActiveTrue(name.get(), branch, pageableSorted);
        }
-       return repository.findAll(pageableSorted);
+       return repository.findByActiveTrue(pageableSorted);
     }
 
     public Zone create(Zone request) {

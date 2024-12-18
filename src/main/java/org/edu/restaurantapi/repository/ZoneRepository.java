@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ZoneRepository extends JpaRepository<Zone, Long> {
+    Page<Zone> findByActiveTrue(Pageable pageable);
 
     Page<Zone> findByNameContainingAndBranchIdAndActiveTrue(String name, Long branch, Pageable pageable);
 

@@ -9,6 +9,8 @@ public interface BranchStatusRepository extends JpaRepository<BranchStatus, Long
 
     Page<BranchStatus> findByNameContainingAndActiveTrue(String name, Pageable pageable);
 
+    Page<BranchStatus> findBranchStatusByActiveTrue(Pageable pageable);
+
     BranchStatus findByNameAndActiveTrue(String name);
 
     BranchStatus findByNameAndIdNotAndActiveTrue(String name, Long id);
