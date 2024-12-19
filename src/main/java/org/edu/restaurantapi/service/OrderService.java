@@ -205,10 +205,21 @@ public class OrderService {
 
     public List<Order> getAllOrdersByUserId(Optional<Long> branchId, Optional<Long> userId, Optional<OrderStatus> orderStatus) {
         if (orderStatus.isPresent() && orderStatus.get() == OrderStatus.ALL) {
-            return orderRepository.findOrdersByBranchIdAndUserIdAndPaymentStatusTrueAndActiveTrue(branchId.get(), userId.get());
+            return orderRepository.findOrdersByBranchIdAndUserIdAndActiveTrueOrderByIdDesc(branchId.get(), userId.get())
+                    .stream()
+                    .filter(order ->
+                            (order.getPaymentStatus() && order.getOnLineOrder()) ||
+                                    (!order.getOnLineOrder()))
+                    .toList();
         }
-        return orderRepository.findOrdersByBranchIdAndUserIdAndOrderStatusAndPaymentStatusTrue(branchId.get(), userId.get(), orderStatus.get());
+        return orderRepository.findOrdersByBranchIdAndUserIdAndOrderStatusAndActiveTrueOrderByIdDesc(branchId.get(), userId.get(), orderStatus.get())
+                .stream()
+                .filter(order ->
+                        (order.getPaymentStatus() && order.getOnLineOrder()) ||
+                                (!order.getOnLineOrder()))
+                .toList();
     }
+
 
     public Order cancelOrder(Long orderId, Optional<String> reason) {
         Order order = orderRepository.findById(orderId).orElse(null);

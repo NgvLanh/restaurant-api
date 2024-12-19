@@ -77,14 +77,14 @@ public class InvoiceController {
     }
 
     @GetMapping("/monthly-orders")
-    public ResponseEntity<?> getMonthlyOrderStatistics() {
-        var response = invoiceService.getMonthlyOrderStatistics();
+    public ResponseEntity<?> getMonthlyOrderStatistics(@RequestParam(value = "branchId", required = false) Long branchId) {
+        var response = invoiceService.getMonthlyOrderStatistics(branchId);
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
 
     @GetMapping("/daily-orders")
-    public ResponseEntity<?> getDailyOrderStatistics() {
-        var response = invoiceService.getDailyOrderStatistics();
+    public ResponseEntity<?> getDailyOrderStatistics(@RequestParam(value = "branchId", required = false) Long branchId) {
+        var response = invoiceService.getDailyOrderStatistics(branchId);
         return ResponseEntity.ok().body(ApiResponse.SUCCESS(response));
     }
 }

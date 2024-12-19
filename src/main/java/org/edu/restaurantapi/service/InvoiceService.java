@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -78,11 +79,12 @@ public class InvoiceService {
         return invoiceRepository.getWeeklyReservations(branchId);
     }
 
-    public List<Object[]> getMonthlyOrderStatistics() {
-        return invoiceRepository.findMonthlyOrderStatistics();
+    public List<Object[]> getMonthlyOrderStatistics(Long branchId) {
+        return invoiceRepository.findMonthlyOrderStatistics(branchId);
     }
 
-    public List<Object[]> getDailyOrderStatistics() {
-        return invoiceRepository.findDailyOrderStatistics();
+    @Transactional
+    public List<Object[]> getDailyOrderStatistics(Long branchId) {
+        return invoiceRepository.findDailyOrderStatistics(branchId);
     }
 }

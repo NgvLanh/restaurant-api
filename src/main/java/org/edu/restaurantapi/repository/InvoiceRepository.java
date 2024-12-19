@@ -56,41 +56,46 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
     List<Object[]> getWeeklyReservations(@Param("branchId") Long branchId);
 
 
-    @Query(value = "SELECT " +
-            "    CONCAT(YEAR(CURDATE()), '-', LPAD(month, 2, '0')) AS month, " +
-            "    COALESCE(COUNT(CASE WHEN o.address_id IS NOT NULL AND o.table_id IS NULL THEN 1 END), 0) AS orders_with_address, " +
-            "    COALESCE(COUNT(CASE WHEN o.address_id IS NULL AND o.table_id IS NOT NULL THEN 1 END), 0) AS orders_with_table " +
-            "FROM " +
-            "    (SELECT 1 AS month UNION ALL " +
-            "     SELECT 2 UNION ALL " +
-            "     SELECT 3 UNION ALL " +
-            "     SELECT 4 UNION ALL " +
-            "     SELECT 5 UNION ALL " +
-            "     SELECT 6 UNION ALL " +
-            "     SELECT 7 UNION ALL " +
-            "     SELECT 8 UNION ALL " +
-            "     SELECT 9 UNION ALL " +
-            "     SELECT 10 UNION ALL " +
-            "     SELECT 11 UNION ALL " +
-            "     SELECT 12) months " +
-            "LEFT JOIN orders o ON DATE_FORMAT(o.time, '%Y-%m') = CONCAT(YEAR(CURDATE()), '-', LPAD(month, 2, '0')) " +
-            "GROUP BY " +
-            "    month " +
-            "ORDER BY " +
-            "    month", nativeQuery = true)
-    List<Object[]> findMonthlyOrderStatistics();
+    @Query(value = """
+                SELECT 
+                    CONCAT(YEAR(CURDATE()), '-', LPAD(month, 2, '0')) AS month, 
+                    COALESCE(COUNT(CASE WHEN o.address_id IS NOT NULL AND o.table_id IS NULL THEN 1 END), 0) AS orders_with_address, 
+                    COALESCE(COUNT(CASE WHEN o.address_id IS NULL AND o.table_id IS NOT NULL THEN 1 END), 0) AS orders_with_table 
+                FROM 
+                    (SELECT 1 AS month UNION ALL 
+                     SELECT 2 UNION ALL 
+                     SELECT 3 UNION ALL 
+                     SELECT 4 UNION ALL 
+                     SELECT 5 UNION ALL 
+                     SELECT 6 UNION ALL 
+                     SELECT 7 UNION ALL 
+                     SELECT 8 UNION ALL 
+                     SELECT 9 UNION ALL 
+                     SELECT 10 UNION ALL 
+                     SELECT 11 UNION ALL 
+                     SELECT 12) months 
+                LEFT JOIN orders o ON DATE_FORMAT(o.time, '%Y-%m') = CONCAT(YEAR(CURDATE()), '-', LPAD(month, 2, '0')) 
+                WHERE o.branch_id = :branchId
+                GROUP BY 
+                    month 
+                ORDER BY 
+                    month
+            """, nativeQuery = true)
+    List<Object[]> findMonthlyOrderStatistics(@Param("branchId") Long branchId);
 
-    @Query(value = "SELECT " +
-            "    DATE(o.time) AS day, " +
-            "    COALESCE(COUNT(CASE WHEN o.address_id IS NOT NULL AND o.table_id IS NULL THEN 1 END), 0) AS orders_with_address, " +
-            "    COALESCE(COUNT(CASE WHEN o.address_id IS NULL AND o.table_id IS NOT NULL THEN 1 END), 0) AS orders_with_table, " +
-            "    COALESCE(SUM(o.total), 0) AS total " +
-            "FROM " +
-            "    orders o " +
-            "WHERE " +
-            "    DATE(o.time) = CURDATE() " +
-            "GROUP BY " +
-            "    DATE(o.time)", nativeQuery = true)
-    List<Object[]> findDailyOrderStatistics();
+    @Query(value = """
+                SELECT
+                            DATE(o.time) AS day,
+                            COALESCE(COUNT(CASE WHEN o.address_id IS NOT NULL AND o.table_id IS NULL THEN 1 END), 0) AS orders_with_address, 
+                            COALESCE(COUNT(CASE WHEN o.address_id IS NULL AND o.table_id IS NOT NULL THEN 1 END), 0) AS orders_with_table, 
+                            COALESCE(SUM(o.total), 0) AS total 
+                        FROM 
+                           orders o
+                        WHERE 
+                            DATE(o.time) = CURDATE() AND o.branch_id = :branchId 
+                        GROUP BY
+                           DATE(o.time) 
+            """, nativeQuery = true)
+    List<Object[]> findDailyOrderStatistics(@Param("branchId") Long branchId);
 
 }

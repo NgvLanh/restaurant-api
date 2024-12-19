@@ -90,7 +90,7 @@ public class OrderController {
                                           @RequestParam(value = "orderStatus", required = false)
                                           Optional<OrderStatus> orderStatus) {
         var response = orderService.getAllOrdersByUserId(branchId, userId, orderStatus);
-        response.sort((o1, o2) -> Long.compare(o2.getId(), o1.getId()));
+//        response.sort((o1, o2) -> Long.compare(o2.getId(), o1.getId()));
         return ResponseEntity.ok(ApiResponse.SUCCESS(response));
     }
 

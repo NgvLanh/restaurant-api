@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -46,4 +47,10 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     List<Order> findOrdersByBranchIdAndOrderStatusAndTimeBetweenAndAddressIdIsNullAndActiveTrue(
             Long branchId, OrderStatus orderStatus, Date startTime, Date endTime);
+
+    //
+    List<Order> findOrdersByBranchIdAndUserIdAndActiveTrueOrderByIdDesc(Long branchId, Long useId);
+
+    List<Order> findOrdersByBranchIdAndUserIdAndOrderStatusAndActiveTrueOrderByIdDesc(Long branchId, Long useId, OrderStatus orderStatus);
+
 }
